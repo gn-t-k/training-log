@@ -1,25 +1,14 @@
-import { signIn, signOut, useSession } from "next-auth/react";
+import { NextPage } from "next";
+import Link from "next/link";
 
-const IndexPage = () => {
-  const { status, data } = useSession();
+import { pagesPath } from "@/libs/pathpida/$path";
 
-  if (status === "loading") return null;
-
+const IndexPage: NextPage = () => {
   return (
-    <>
-      {!data && (
-        <>
-          Not signed in <br />
-          <button onClick={() => signIn()}>Sign in</button>
-        </>
-      )}
-      {data && (
-        <>
-          Signed in as {data.user?.email} <br />
-          <button onClick={() => signOut()}>Sign out</button>
-        </>
-      )}
-    </>
+    <div>
+      <Link href={pagesPath.login.$url()}>ログインページ</Link>
+      <Link href={pagesPath.logged_in.$url()}>ログイン済ページ</Link>
+    </div>
   );
 };
 
