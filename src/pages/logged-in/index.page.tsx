@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { MouseEventHandler } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
@@ -16,12 +16,15 @@ const LoggedIn: NextPage = () => {
       }`,
     });
   };
-  const hello = trpc.hello.useQuery({ text: "client" });
+  const session = useSession();
+
+  const id = session.data?.user.id;
+  const trainee = trpc.getTraineeById.useQuery({ id });
 
   return (
     <RequireLogin>
       <p>logged in</p>
-      <p>{JSON.stringify(hello)}</p>
+      <p>{JSON.stringify(trainee.data)}</p>
       <button {...{ onClick }}>logout</button>
     </RequireLogin>
   );
