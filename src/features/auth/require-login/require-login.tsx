@@ -4,6 +4,8 @@ import { FC, ReactNode } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
+import { SessionContextProvider } from "../session-context/session-context";
+
 type Props = {
   children: ReactNode;
 };
@@ -22,5 +24,5 @@ export const RequireLogin: FC<Props> = ({ children }) => {
     return null;
   }
 
-  return <>{children}</>;
+  return <SessionContextProvider>{children}</SessionContextProvider>;
 };

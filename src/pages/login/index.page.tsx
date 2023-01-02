@@ -8,6 +8,13 @@ import { pagesPath } from "@/libs/pathpida/$path";
 const Login: NextPage = () => {
   const router = useRouter();
   const session = useSession();
+
+  useEffect(() => {
+    if (session.status === "authenticated") {
+      router.push(pagesPath.logged_in.$url());
+    }
+  }, [router, session.status]);
+
   const onClick: MouseEventHandler = async (e) => {
     e.preventDefault();
     await signIn("google", {
@@ -16,11 +23,6 @@ const Login: NextPage = () => {
       }`,
     });
   };
-  useEffect(() => {
-    if (session.status === "authenticated") {
-      router.push(pagesPath.logged_in.$url());
-    }
-  }, [router, session.status]);
 
   return (
     <div>
