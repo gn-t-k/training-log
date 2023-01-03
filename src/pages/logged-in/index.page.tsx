@@ -20,7 +20,7 @@ export default LoggedInContainer;
 const LoggedIn: FC = () => {
   const router = useRouter();
   const {
-    trainee: { id, name, image },
+    trainee: { id },
   } = useSessionContext();
   const traineeQuery = trpc.getTrainee.useQuery({ id });
 
@@ -31,10 +31,7 @@ const LoggedIn: FC = () => {
     case "success":
       router.push(
         traineeQuery.data === null
-          ? {
-              pathname: pagesPath.onboarding.$url().pathname,
-              query: { id, name, image },
-            }
+          ? pagesPath.onboarding.$url()
           : pagesPath.$url()
       );
       return null;

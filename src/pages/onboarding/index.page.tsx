@@ -6,32 +6,19 @@ import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/trpc";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
-import { Trainee, traineeSchema } from "@/features/trainee/trainee";
+import { useSessionContext } from "@/features/auth/session-context/session-context";
 
 const OnboardingContainer: NextPage = () => {
-  const router = useRouter();
-
-  const { id, name, image } = router.query;
-  const maybeTrainee = traineeSchema.safeParse({ id, name, image });
-  if (!maybeTrainee.success) {
-    router.push(pagesPath.$url());
-
-    return null;
-  }
-  const trainee = maybeTrainee.data;
-
   return (
     <RequireLogin>
-      <Onboarding {...{ trainee }} />
+      <Onboarding />
     </RequireLogin>
   );
 };
 export default OnboardingContainer;
 
-type Props = {
-  trainee: Trainee;
-};
-const Onboarding: FC<Props> = ({ trainee }) => {
+const Onboarding: FC = () => {
+  const { trainee } = useSessionContext();
   const router = useRouter();
   const traineeQuery = trpc.getTrainee.useQuery({ id: trainee.id });
   const registerTraineeMutation = trpc.registerTrainee.useMutation();
