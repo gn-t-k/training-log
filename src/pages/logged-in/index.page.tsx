@@ -1,7 +1,6 @@
 import { NextPage } from "next";
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import { FC, MouseEventHandler } from "react";
+import { FC } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/trpc";
@@ -20,38 +19,27 @@ export default LoggedInContainer;
 
 const LoggedIn: FC = () => {
   const router = useRouter();
-  const onClick: MouseEventHandler = (e) => {
-    e.preventDefault();
-    signOut({
-      callbackUrl: `${window.location.origin}${
-        pagesPath.login.$url().pathname
-      }`,
-    });
-  };
   const {
     trainee: { id, name, image },
   } = useSessionContext();
   const traineeQuery = trpc.getTrainee.useQuery({ id });
 
-  if (traineeQuery.isLoading) {
-    // TODO
-    return <p>loading</p>;
+  switch (traineeQuery.status) {
+    case "loading":
+      // TODO
+      return <p>loading</p>;
+    case "success":
+      router.push(
+        traineeQuery.data === null
+          ? {
+              pathname: pagesPath.onboarding.$url().pathname,
+              query: { id, name, image },
+            }
+          : pagesPath.$url()
+      );
+      return null;
+    case "error":
+      // TODO
+      return <p>error</p>;
   }
-
-  if (traineeQuery.data === null) {
-    router.push({
-      pathname: pagesPath.onboarding.$url().pathname,
-      query: { id, name, image },
-    });
-
-    return null;
-  }
-
-  return (
-    <>
-      <p>logged in</p>
-      <p>{JSON.stringify(traineeQuery.data)}</p>
-      <button {...{ onClick }}>logout</button>
-    </>
-  );
 };

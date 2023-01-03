@@ -66,12 +66,22 @@ export const appRouter = router({
   registerTrainee: procedure
     .input(traineeSchema)
     .mutation(async ({ input }) => {
-      await client.trainee.create({
-        data: {
-          id: input.id,
-          name: input.name,
-          image: input.image,
-        },
+      await client.$transaction(async () => {
+        const trainee = await client.trainee.findUnique({
+          where: {
+            id: input.id,
+          },
+        });
+
+        if (trainee === null) {
+          await client.trainee.create({
+            data: {
+              id: input.id,
+              name: input.name,
+              image: input.image,
+            },
+          });
+        }
       });
     }),
 });

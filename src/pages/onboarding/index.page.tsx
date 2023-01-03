@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { FC, useState } from "react";
+import { FC, useEffect } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/trpc";
@@ -36,8 +36,31 @@ const Onboarding: FC<Props> = ({ trainee }) => {
   const traineeQuery = trpc.getTrainee.useQuery({ id: trainee.id });
   const registerTraineeMutation = trpc.registerTrainee.useMutation();
 
-  // トレイニーの登録が複数回実行されないようにするための変数
-  const [guard, setGuard] = useState(false);
+  useEffect(() => {
+    let ignore = false;
+
+    if (
+      traineeQuery.status === "success" &&
+      registerTraineeMutation.status === "idle" &&
+      ignore === false
+    ) {
+      registerTraineeMutation.mutate({
+        id: trainee.id,
+        name: trainee.name,
+        image: trainee.image,
+      });
+    }
+
+    return () => {
+      ignore = true;
+    };
+  }, [
+    registerTraineeMutation,
+    trainee.id,
+    trainee.image,
+    trainee.name,
+    traineeQuery.status,
+  ]);
 
   if (traineeQuery.isLoading) {
     // TODO
@@ -51,23 +74,12 @@ const Onboarding: FC<Props> = ({ trainee }) => {
   }
 
   switch (registerTraineeMutation.status) {
-    case "idle": {
-      if (!guard) {
-        registerTraineeMutation.mutate({
-          id: trainee.id,
-          name: trainee.name,
-          image: trainee.image,
-        });
-        setGuard(true);
-      }
-      // TODO
-      return <p>トレーニー情報を登録中</p>;
-    }
+    case "idle":
     case "loading":
       // TODO
       return <p>トレーニー情報を登録中</p>;
     case "success": {
-      router.push(pagesPath.logged_in.$url());
+      router.push(pagesPath.$url());
       // TODO
       return <p>リダイレクト中</p>;
     }
