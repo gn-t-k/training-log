@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { FC, useEffect } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
-import { trpc } from "@/libs/trpc/trpc";
+import { trpc } from "@/libs/trpc/client/trpc";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { useSessionContext } from "@/features/auth/session-context/session-context";
@@ -20,10 +20,10 @@ export default OnboardingContainer;
 const Onboarding: FC = () => {
   const { authUser } = useSessionContext();
   const router = useRouter();
-  const traineeQuery = trpc.getTraineeByAuthUserId.useQuery({
+  const traineeQuery = trpc.trainee.getByAuthUserId.useQuery({
     authUserId: authUser.id,
   });
-  const registerTraineeMutation = trpc.registerTrainee.useMutation();
+  const registerTraineeMutation = trpc.trainee.register.useMutation();
 
   useEffect(() => {
     let ignore = false;

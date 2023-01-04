@@ -1,4 +1,4 @@
-import { initTRPC } from "@trpc/server";
+import { Prisma } from "@prisma/client";
 import { ulid } from "ulid";
 import { z } from "zod";
 
@@ -6,10 +6,10 @@ import client from "@/libs/prisma/client";
 
 import { traineeSchema } from "@/features/trainee/trainee";
 
-const { router, procedure } = initTRPC.create();
+import { protectedProcedure, router } from "../trpc";
 
-export const appRouter = router({
-  getTraineeByAuthUserId: procedure
+export const traineeRouter = router({
+  getByAuthUserId: protectedProcedure
     .input(
       z.object({
         authUserId: z.string(),
@@ -33,7 +33,7 @@ export const appRouter = router({
         image: traineeData.image,
       };
     }),
-  registerTrainee: procedure
+  register: protectedProcedure
     .input(
       z.object({
         name: z.string(),
@@ -42,25 +42,28 @@ export const appRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      await client.$transaction(async () => {
-        const trainee = await client.trainee.findUnique({
-          where: {
-            authUserId: input.authUserId,
-          },
-        });
-
-        if (trainee === null) {
-          await client.trainee.create({
-            data: {
-              id: ulid(),
-              name: input.name,
-              image: input.image,
+      await client.$transaction(
+        async (tx) => {
+          const trainee = await tx.trainee.findUnique({
+            where: {
               authUserId: input.authUserId,
             },
           });
+
+          if (trainee === null) {
+            await tx.trainee.create({
+              data: {
+                id: ulid(),
+                name: input.name,
+                image: input.image,
+                authUserId: input.authUserId,
+              },
+            });
+          }
+        },
+        {
+          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
         }
-      });
+      );
     }),
 });
-
-export type AppRouter = typeof appRouter;

@@ -6,26 +6,26 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
 // ↓NextAuthに自動生成されたスキーマ
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -64,18 +64,37 @@ model VerificationToken {
 // ↑NextAuthに自動生成されたスキーマ
 
 model Trainee {
-  id String @id
-  name String
-  image String
-  muscles Muscle[]
+  id         String @id
+  name       String
+  image      String
   authUserId String @unique
+
+  muscles   Muscle[]
+  exercises Exercise[]
 }
 
 model Muscle {
-  id String @id
-  name String @unique
-  trainee Trainee @relation(fields: [traineeId], references: [id])
+  id        String @id
+  name      String
   traineeId String
 
+  exercises Exercise[]
+
+  trainee Trainee @relation(fields: [traineeId], references: [id])
+
+  @@unique([name, traineeId])
   @@index([traineeId])
+}
+
+model Exercise {
+  id        String @id
+  name      String
+  traineeId String
+
+  targets Muscle[]
+
+  trainee Trainee @relation(fields: [traineeId], references: [id])
+
+  @@index([traineeId])
+  @@unique([name, traineeId])
 }
