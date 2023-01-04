@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import { ulid } from "ulid";
 import { z } from "zod";
 
-import client from "@/libs/prisma/client";
+import prisma from "@/libs/prisma/client";
 
 import { traineeSchema } from "@/features/trainee/trainee";
 
@@ -17,7 +17,7 @@ export const traineeRouter = router({
     )
     .output(z.union([traineeSchema, z.null()]))
     .query(async ({ input }) => {
-      const traineeData = await client.trainee.findUnique({
+      const traineeData = await prisma.trainee.findUnique({
         where: {
           authUserId: input.authUserId,
         },
@@ -42,7 +42,7 @@ export const traineeRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      await client.$transaction(
+      await prisma.$transaction(
         async (tx) => {
           const trainee = await tx.trainee.findUnique({
             where: {

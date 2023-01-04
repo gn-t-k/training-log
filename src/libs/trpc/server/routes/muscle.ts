@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import client from "@/libs/prisma/client";
+import prisma from "@/libs/prisma/client";
 
 import { protectedProcedure, router } from "../trpc";
 
@@ -21,7 +21,7 @@ export const muscleRouter = router({
       ])
     )
     .query(async ({ input }) => {
-      const muscle = await client.muscle.findUnique({
+      const muscle = await prisma.muscle.findUnique({
         where: {
           name: input.name,
         },
