@@ -18,9 +18,11 @@ const OnboardingContainer: NextPage = () => {
 export default OnboardingContainer;
 
 const Onboarding: FC = () => {
-  const { trainee } = useSessionContext();
+  const { authUser } = useSessionContext();
   const router = useRouter();
-  const traineeQuery = trpc.getTrainee.useQuery({ id: trainee.id });
+  const traineeQuery = trpc.getTraineeByAuthUserId.useQuery({
+    authUserId: authUser.id,
+  });
   const registerTraineeMutation = trpc.registerTrainee.useMutation();
 
   useEffect(() => {
@@ -28,13 +30,14 @@ const Onboarding: FC = () => {
 
     if (
       traineeQuery.status === "success" &&
+      traineeQuery.data === null &&
       registerTraineeMutation.status === "idle" &&
       ignore === false
     ) {
       registerTraineeMutation.mutate({
-        id: trainee.id,
-        name: trainee.name,
-        image: trainee.image,
+        name: authUser.name,
+        image: authUser.image,
+        authUserId: authUser.id,
       });
     }
 
@@ -42,10 +45,11 @@ const Onboarding: FC = () => {
       ignore = true;
     };
   }, [
+    authUser.id,
+    authUser.image,
+    authUser.name,
     registerTraineeMutation,
-    trainee.id,
-    trainee.image,
-    trainee.name,
+    traineeQuery.data,
     traineeQuery.status,
   ]);
 

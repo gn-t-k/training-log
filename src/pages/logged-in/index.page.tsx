@@ -19,10 +19,10 @@ export default LoggedInContainer;
 
 const LoggedIn: FC = () => {
   const router = useRouter();
-  const {
-    trainee: { id },
-  } = useSessionContext();
-  const traineeQuery = trpc.getTrainee.useQuery({ id });
+  const { authUser } = useSessionContext();
+  const traineeQuery = trpc.getTraineeByAuthUserId.useQuery({
+    authUserId: authUser.id,
+  });
 
   switch (traineeQuery.status) {
     case "loading":

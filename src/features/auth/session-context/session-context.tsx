@@ -4,10 +4,13 @@ import { createContext, FC, ReactNode, useContext } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
-import { Trainee } from "@/features/trainee/trainee";
-
 type Session = {
-  trainee: Trainee;
+  authUser: AuthUser;
+};
+type AuthUser = {
+  id: string;
+  name: string;
+  image: string;
 };
 
 export const useSessionContext = (): Session => {
@@ -46,13 +49,13 @@ export const SessionContextProvider: FC<Props> = ({ children }) => {
     return <p>error</p>;
   }
 
-  const trainee: Trainee = {
+  const authUser: AuthUser = {
     id: user.id,
     name: user.name,
     image: user.image,
   };
   const sessionContext: Session = {
-    trainee,
+    authUser,
   };
 
   return (

@@ -1,4 +1,5 @@
 import { initTRPC } from "@trpc/server";
+import { ulid } from "ulid";
 import { z } from "zod";
 
 import client from "@/libs/prisma/client";
@@ -8,48 +9,17 @@ import { traineeSchema } from "@/features/trainee/trainee";
 const { router, procedure } = initTRPC.create();
 
 export const appRouter = router({
-  getUser: procedure
+  getTraineeByAuthUserId: procedure
     .input(
       z.object({
-        id: z.string(),
-      })
-    )
-    .output(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-        image: z.string(),
-      })
-    )
-    .query(async ({ input }) => {
-      const userData = await client.user.findUnique({
-        where: {
-          id: input.id,
-        },
-      });
-
-      if (!userData?.id || !userData.name || !userData.image) {
-        // TODO: trpcのエラーハンドリング調べる
-        throw new Error();
-      }
-
-      return {
-        id: userData.id,
-        name: userData.name,
-        image: userData.image,
-      };
-    }),
-  getTrainee: procedure
-    .input(
-      z.object({
-        id: z.string(),
+        authUserId: z.string(),
       })
     )
     .output(z.union([traineeSchema, z.null()]))
     .query(async ({ input }) => {
       const traineeData = await client.trainee.findUnique({
         where: {
-          id: input.id,
+          authUserId: input.authUserId,
         },
       });
 
@@ -64,21 +34,28 @@ export const appRouter = router({
       };
     }),
   registerTrainee: procedure
-    .input(traineeSchema)
+    .input(
+      z.object({
+        name: z.string(),
+        image: z.string(),
+        authUserId: z.string(),
+      })
+    )
     .mutation(async ({ input }) => {
       await client.$transaction(async () => {
         const trainee = await client.trainee.findUnique({
           where: {
-            id: input.id,
+            authUserId: input.authUserId,
           },
         });
 
         if (trainee === null) {
           await client.trainee.create({
             data: {
-              id: input.id,
+              id: ulid(),
               name: input.name,
               image: input.image,
+              authUserId: input.authUserId,
             },
           });
         }

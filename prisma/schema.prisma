@@ -68,6 +68,7 @@ model Trainee {
   name String
   image String
   muscles Muscle[]
+  authUserId String @unique
 }
 
 model Muscle {
