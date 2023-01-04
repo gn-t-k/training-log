@@ -3,9 +3,13 @@ import { useRouter } from "next/router";
 import { createContext, FC, ReactNode, useContext } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
+import { trpc } from "@/libs/trpc/client/trpc";
+
+import { Trainee } from "@/features/trainee/trainee";
 
 type Session = {
   authUser: AuthUser;
+  trainee: Trainee;
 };
 type AuthUser = {
   id: string;
@@ -31,6 +35,7 @@ type Props = {
 export const SessionContextProvider: FC<Props> = ({ children }) => {
   const session = useSession();
   const router = useRouter();
+  const trainee = trpc.trainee.getBySession.useQuery();
 
   if (session.status === "loading") {
     // TODO
@@ -49,6 +54,11 @@ export const SessionContextProvider: FC<Props> = ({ children }) => {
     return <p>error</p>;
   }
 
+  if (!trainee.data) {
+    // TODO
+    return <p>loading</p>;
+  }
+
   const authUser: AuthUser = {
     id: user.id,
     name: user.name,
@@ -56,6 +66,7 @@ export const SessionContextProvider: FC<Props> = ({ children }) => {
   };
   const sessionContext: Session = {
     authUser,
+    trainee: trainee.data,
   };
 
   return (

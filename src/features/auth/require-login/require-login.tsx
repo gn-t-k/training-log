@@ -13,16 +13,15 @@ export const RequireLogin: FC<Props> = ({ children }) => {
   const session = useSession();
   const router = useRouter();
 
-  if (session.status === "loading") {
-    // TODO
-    return <p>loading</p>;
+  switch (session.status) {
+    case "loading":
+      // TODO
+      return <p>loading</p>;
+    case "authenticated":
+      return <SessionContextProvider>{children}</SessionContextProvider>;
+    case "unauthenticated": {
+      router.push(pagesPath.login.$url());
+      return null;
+    }
   }
-
-  if (session.status === "unauthenticated") {
-    router.push(pagesPath.login.$url());
-
-    return null;
-  }
-
-  return <SessionContextProvider>{children}</SessionContextProvider>;
 };

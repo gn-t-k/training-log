@@ -8,6 +8,7 @@ export const muscleRouter = router({
   getByName: protectedProcedure
     .input(
       z.object({
+        traineeId: z.string(),
         name: z.string(),
       })
     )
@@ -23,7 +24,10 @@ export const muscleRouter = router({
     .query(async ({ input }) => {
       const muscle = await prisma.muscle.findUnique({
         where: {
-          name: input.name,
+          name_traineeId: {
+            traineeId: input.traineeId,
+            name: input.name,
+          },
         },
       });
 

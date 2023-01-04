@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { ulid } from "ulid";
 import { z } from "zod";
 
@@ -9,17 +10,18 @@ import { traineeSchema } from "@/features/trainee/trainee";
 import { protectedProcedure, router } from "../trpc";
 
 export const traineeRouter = router({
-  getByAuthUserId: protectedProcedure
-    .input(
-      z.object({
-        authUserId: z.string(),
-      })
-    )
+  getBySession: protectedProcedure
     .output(z.union([traineeSchema, z.null()]))
-    .query(async ({ input }) => {
+    .query(async ({ ctx }) => {
+      const authUserId = ctx.session.user.id;
+
+      if (!authUserId) {
+        return null;
+      }
+
       const traineeData = await prisma.trainee.findUnique({
         where: {
-          authUserId: input.authUserId,
+          authUserId,
         },
       });
 
@@ -38,15 +40,22 @@ export const traineeRouter = router({
       z.object({
         name: z.string(),
         image: z.string(),
-        authUserId: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      const authUserId = ctx.session.user.id;
+
+      if (!authUserId) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+        });
+      }
+
       await prisma.$transaction(
         async (tx) => {
           const trainee = await tx.trainee.findUnique({
             where: {
-              authUserId: input.authUserId,
+              authUserId,
             },
           });
 
@@ -56,7 +65,7 @@ export const traineeRouter = router({
                 id: ulid(),
                 name: input.name,
                 image: input.image,
-                authUserId: input.authUserId,
+                authUserId,
               },
             });
           }

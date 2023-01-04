@@ -20,9 +20,7 @@ export default OnboardingContainer;
 const Onboarding: FC = () => {
   const { authUser } = useSessionContext();
   const router = useRouter();
-  const traineeQuery = trpc.trainee.getByAuthUserId.useQuery({
-    authUserId: authUser.id,
-  });
+  const traineeQuery = trpc.trainee.getBySession.useQuery();
   const registerTraineeMutation = trpc.trainee.register.useMutation();
 
   useEffect(() => {
@@ -37,7 +35,6 @@ const Onboarding: FC = () => {
       registerTraineeMutation.mutate({
         name: authUser.name,
         image: authUser.image,
-        authUserId: authUser.id,
       });
     }
 
@@ -45,7 +42,6 @@ const Onboarding: FC = () => {
       ignore = true;
     };
   }, [
-    authUser.id,
     authUser.image,
     authUser.name,
     registerTraineeMutation,

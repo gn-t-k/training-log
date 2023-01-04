@@ -6,7 +6,6 @@ import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
-import { useSessionContext } from "@/features/auth/session-context/session-context";
 
 const LoggedInContainer: NextPage = () => {
   return (
@@ -19,10 +18,7 @@ export default LoggedInContainer;
 
 const LoggedIn: FC = () => {
   const router = useRouter();
-  const { authUser } = useSessionContext();
-  const traineeQuery = trpc.trainee.getByAuthUserId.useQuery({
-    authUserId: authUser.id,
-  });
+  const traineeQuery = trpc.trainee.getBySession.useQuery();
 
   switch (traineeQuery.status) {
     case "loading":
