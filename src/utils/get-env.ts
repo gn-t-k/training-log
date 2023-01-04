@@ -1,4 +1,4 @@
-type Keys = "GOOGLE_CLIENT_ID" | "GOOGLE_CLIENT_SECRET";
+type Keys = "GOOGLE_CLIENT_ID" | "GOOGLE_CLIENT_SECRET" | "NEXT_AUTH_SECRET";
 
 type GetEnv = () => { [key in Keys]: string };
 export const getEnv: GetEnv = () => ({
@@ -7,6 +7,7 @@ export const getEnv: GetEnv = () => ({
     process.env.GOOGLE_CLIENT_SECRET,
     "GOOGLE_CLIENT_SECRET"
   ),
+  NEXT_AUTH_SECRET: unwrap(process.env.NEXT_AUTH_SECRET, "NEXT_AUTH_SECRET"),
 });
 
 type Unwrap = (value: string | undefined, key: Keys) => string;
