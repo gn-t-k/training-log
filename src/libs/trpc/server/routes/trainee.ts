@@ -7,10 +7,10 @@ import prisma from "@/libs/prisma/client";
 
 import { traineeSchema } from "@/features/trainee/trainee";
 
-import { protectedProcedure, router } from "../trpc";
+import { authenticatedProcedure, router } from "../trpc";
 
 export const traineeRouter = router({
-  getBySession: protectedProcedure
+  getBySession: authenticatedProcedure
     .output(z.union([traineeSchema, z.null()]))
     .query(async ({ ctx }) => {
       const authUserId = ctx.session.user.id;
@@ -35,7 +35,7 @@ export const traineeRouter = router({
         image: traineeData.image,
       };
     }),
-  register: protectedProcedure
+  register: authenticatedProcedure
     .input(
       z.object({
         name: z.string(),
