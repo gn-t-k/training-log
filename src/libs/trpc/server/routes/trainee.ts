@@ -47,7 +47,7 @@ export const traineeRouter = router({
 
       if (!authUserId) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
+          code: "PARSE_ERROR",
         });
       }
 

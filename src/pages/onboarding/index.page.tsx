@@ -51,13 +51,14 @@ const Onboarding: FC = () => {
 
   if (traineeQuery.isLoading) {
     // TODO
-    return <p>トレーニー情報を読込中</p>;
+    return <p>トレーニー情報を取得中</p>;
   }
 
-  if (traineeQuery.data !== null) {
+  if (traineeQuery.data) {
     router.push(pagesPath.$url());
 
-    return null;
+    // TODO
+    return <p>トップページにリダイレクト中</p>;
   }
 
   switch (registerTraineeMutation.status) {
@@ -68,7 +69,7 @@ const Onboarding: FC = () => {
     case "success": {
       router.push(pagesPath.$url());
       // TODO
-      return <p>リダイレクト中</p>;
+      return <p>トップページにリダイレクト中</p>;
     }
     case "error":
       // TODO

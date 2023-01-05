@@ -19,12 +19,12 @@ const IndexPage: NextPage = () => {
   switch (session.status) {
     case "loading":
       // TODO
-      return <p>loading</p>;
+      return <p>セッション情報を取得中</p>;
     case "authenticated":
       return (
         <div>
           <p>session: {JSON.stringify(session.data)}</p>
-          <button onClick={onClickLogout}>logout</button>
+          <button onClick={onClickLogout}>ログアウト</button>
         </div>
       );
     case "unauthenticated":

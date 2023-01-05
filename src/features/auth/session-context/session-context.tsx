@@ -3,13 +3,9 @@ import { useRouter } from "next/router";
 import { createContext, FC, ReactNode, useContext } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
-import { trpc } from "@/libs/trpc/client/trpc";
-
-import { Trainee } from "@/features/trainee/trainee";
 
 type Session = {
   authUser: AuthUser;
-  trainee: Trainee;
 };
 type AuthUser = {
   id: string;
@@ -35,45 +31,39 @@ type Props = {
 export const SessionContextProvider: FC<Props> = ({ children }) => {
   const session = useSession();
   const router = useRouter();
-  const trainee = trpc.trainee.getBySession.useQuery();
 
-  if (session.status === "loading") {
-    // TODO
-    return <p>loading</p>;
+  switch (session.status) {
+    case "loading":
+      // TODO
+      return <p>セッション情報を取得中</p>;
+    case "authenticated": {
+      const user = session.data?.user;
+      if (!user || !user.id || !user.name || !user.image) {
+        // TODO
+        return <p>セッション情報の取得に失敗しました</p>;
+      }
+
+      const sessionContext: Session = {
+        authUser: {
+          id: user.id,
+          name: user.name,
+          image: user.image,
+        },
+      };
+
+      return (
+        <SessionContext.Provider value={sessionContext}>
+          {children}
+        </SessionContext.Provider>
+      );
+    }
+    case "unauthenticated": {
+      router.push(pagesPath.login.$url());
+
+      // TODO
+      return <p>ログインページにリダイレクト中</p>;
+    }
   }
-
-  if (session.status === "unauthenticated") {
-    router.push(pagesPath.login.$url());
-
-    return null;
-  }
-
-  const user = session.data?.user;
-  if (!user || !user.id || !user.name || !user.image) {
-    // TODO
-    return <p>error</p>;
-  }
-
-  if (!trainee.data) {
-    // TODO
-    return <p>loading</p>;
-  }
-
-  const authUser: AuthUser = {
-    id: user.id,
-    name: user.name,
-    image: user.image,
-  };
-  const sessionContext: Session = {
-    authUser,
-    trainee: trainee.data,
-  };
-
-  return (
-    <SessionContext.Provider value={sessionContext}>
-      {children}
-    </SessionContext.Provider>
-  );
 };
 
 const SessionContext = createContext<Session | null>(null);

@@ -23,16 +23,16 @@ const LoggedIn: FC = () => {
   switch (traineeQuery.status) {
     case "loading":
       // TODO
-      return <p>loading</p>;
+      return <p>トレーニー情報を取得中</p>;
     case "success":
       router.push(
         traineeQuery.data === null
           ? pagesPath.onboarding.$url()
           : pagesPath.$url()
       );
-      return null;
+      return <p>リダイレクト中</p>;
     case "error":
       // TODO
-      return <p>error</p>;
+      return <p>トレーニー情報の取得に失敗しました</p>;
   }
 };
