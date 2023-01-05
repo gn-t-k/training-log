@@ -6,10 +6,10 @@ import prisma from "@/libs/prisma/client";
 
 import { muscleSchema } from "@/features/muscle/muscle";
 
-import { protectedProcedure, router } from "../trpc";
+import { authenticatedProcedure, initializedProcedure, router } from "../trpc";
 
 export const muscleRouter = router({
-  register: protectedProcedure
+  register: authenticatedProcedure
     .input(
       z.object({
         name: z.string(),
@@ -53,40 +53,21 @@ export const muscleRouter = router({
         name: registered.name,
       };
     }),
-  getAll: protectedProcedure
+  getAll: initializedProcedure
     .output(z.array(muscleSchema))
     .query(async ({ ctx }) => {
-      const authUserId = ctx.session.user.id;
-
-      if (!authUserId) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-        });
-      }
-
-      const traineeData = await prisma.trainee.findUnique({
+      const musclesData = await prisma.muscle.findMany({
         where: {
-          authUserId,
-        },
-        include: {
-          muscles: true,
+          traineeId: ctx.trainee.id,
         },
       });
-
-      if (traineeData === null) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-        });
-      }
-
-      const musclesData = traineeData.muscles;
 
       return musclesData.map((muscle) => ({
         id: muscle.id,
         name: muscle.name,
       }));
     }),
-  getByName: protectedProcedure
+  getByName: initializedProcedure
     .input(
       z.object({
         name: z.string(),
@@ -94,38 +75,18 @@ export const muscleRouter = router({
     )
     .output(z.union([muscleSchema, z.null()]))
     .query(async ({ input, ctx }) => {
-      const authUserId = ctx.session.user.id;
-
-      if (!authUserId) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-        });
-      }
-
-      const traineeData = await prisma.trainee.findUnique({
+      const muscleData = await prisma.muscle.findUnique({
         where: {
-          authUserId,
-        },
-        include: {
-          muscles: {
-            where: {
-              name: input.name,
-            },
+          name_traineeId: {
+            name: input.name,
+            traineeId: ctx.trainee.id,
           },
         },
       });
 
-      if (traineeData === null) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-        });
-      }
-
-      const muscleData = traineeData.muscles[0];
-
       return muscleData ? { id: muscleData.id, name: muscleData.name } : null;
     }),
-  updateName: protectedProcedure
+  updateName: initializedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -148,7 +109,7 @@ export const muscleRouter = router({
         name: updated.name,
       };
     }),
-  delete: protectedProcedure
+  delete: initializedProcedure
     .input(
       z.object({
         id: z.string(),
