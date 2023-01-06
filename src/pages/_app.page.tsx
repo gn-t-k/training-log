@@ -1,3 +1,4 @@
+import { ChakraProvider } from "@chakra-ui/react";
 import { SessionProvider } from "next-auth/react";
 import { FC } from "react";
 import { RecoilRoot } from "recoil";
@@ -10,7 +11,9 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <RecoilRoot>
       <SessionProvider>
-        <Component {...pageProps} />
+        <ChakraProvider>
+          <Component {...pageProps} />
+        </ChakraProvider>
       </SessionProvider>
     </RecoilRoot>
   );

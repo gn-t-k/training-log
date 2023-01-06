@@ -1,3 +1,4 @@
+import { List, Text, UnorderedList } from "@chakra-ui/react";
 import { FC } from "react";
 
 import { Muscle } from "../muscle";
@@ -7,13 +8,13 @@ type Props = {
 };
 export const MuscleList: FC<Props> = ({ muscles }) => {
   return (
-    <ul>
+    <UnorderedList>
       {muscles.map((muscle) => (
-        <li key={muscle.id}>
-          <p>{muscle.id}</p>
-          <p>{muscle.name}</p>
-        </li>
+        <List key={muscle.id}>
+          <Text>{muscle.id}</Text>
+          <Text>{muscle.name}</Text>
+        </List>
       ))}
-    </ul>
+    </UnorderedList>
   );
 };
