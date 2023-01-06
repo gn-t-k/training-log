@@ -5,4 +5,4 @@ export const muscleSchema = z.object({
   name: z.string(),
 });
 
-export type Trainee = z.infer<typeof muscleSchema>;
+export type Muscle = z.infer<typeof muscleSchema>;
