@@ -1,10 +1,13 @@
+import { ChakraProvider } from '@chakra-ui/react'
 import { addDecorator } from '@storybook/react'
 import { MemoryRouterProvider } from 'next-router-mock/MemoryRouterProvider/next-12'
 import * as NextImage from 'next/image'
 
 addDecorator((Story) => (
   <MemoryRouterProvider>
+    <ChakraProvider>
     <Story />
+    </ChakraProvider>
   </MemoryRouterProvider>
 ))
 

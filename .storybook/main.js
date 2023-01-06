@@ -19,6 +19,9 @@ module.exports = {
         ...config.resolve.alias,
         // "@"でimportする設定をstorybookにも適用
         '@': path.resolve(__dirname, '../src'),
+        // emotionはchakraに必要
+        '@emotion/core': path.resolve(__dirname, '../node_modules/@emotion/react'),
+        'emotion-theming': path.resolve(__dirname, '../node_modules/@emotion/react'),
       },
     },
   }),
