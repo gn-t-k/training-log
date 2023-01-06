@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "pathpida": "pathpida --output ./src/libs/pathpida",
+    "test": "jest --watch",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
