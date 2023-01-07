@@ -4,6 +4,7 @@ import { FC, MouseEventHandler } from "react";
 import { trpc } from "@/libs/trpc/client/trpc";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
+import { MuscleForm } from "@/features/muscle/muscle-form/muscle-form";
 
 const HelloContainer: NextPage = () => {
   return (
@@ -17,11 +18,6 @@ export default HelloContainer;
 const Hello: FC = () => {
   const utils = trpc.useContext();
   const musclesQuery = trpc.muscle.getAll.useQuery();
-  const muscleRegisterMutator = trpc.muscle.register.useMutation({
-    onSuccess: () => {
-      utils.muscle.getAll.invalidate();
-    },
-  });
   const muscleUpdateMutator = trpc.muscle.updateName.useMutation({
     onSuccess: () => {
       utils.muscle.getAll.invalidate();
@@ -39,10 +35,6 @@ const Hello: FC = () => {
     muscleUpdateMutator.isLoading ||
     muscleDeleteMutator.isLoading;
 
-  const onClickRegister: MouseEventHandler = (e) => {
-    e.preventDefault();
-    muscleRegisterMutator.mutate({ name: `部位${String(new Date())}` });
-  };
   const onClickUpdateHOF =
     (id: string): MouseEventHandler =>
     (e) => {
@@ -62,16 +54,12 @@ const Hello: FC = () => {
     case "success": {
       return musclesQuery.data.length === 0 ? (
         <div>
-          <button onClick={onClickRegister} disabled={isProcessing}>
-            登録
-          </button>
+          <MuscleForm />
           <p>まだ部位が登録されていません</p>
         </div>
       ) : (
         <div>
-          <button onClick={onClickRegister} disabled={isProcessing}>
-            登録
-          </button>
+          <MuscleForm />
           <ul>
             {musclesQuery.data.map((muscle) => (
               <li key={muscle.id}>
