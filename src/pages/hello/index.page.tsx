@@ -4,7 +4,7 @@ import { FC, MouseEventHandler } from "react";
 import { trpc } from "@/libs/trpc/client/trpc";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
-import { MuscleForm } from "@/features/muscle/muscle-form/muscle-form";
+import { RegisterMuscleForm } from "@/features/muscle/register-muscle-form/register-muscle-form";
 
 const HelloContainer: NextPage = () => {
   return (
@@ -54,12 +54,12 @@ const Hello: FC = () => {
     case "success": {
       return musclesQuery.data.length === 0 ? (
         <div>
-          <MuscleForm />
+          <RegisterMuscleForm />
           <p>まだ部位が登録されていません</p>
         </div>
       ) : (
         <div>
-          <MuscleForm />
+          <RegisterMuscleForm />
           <ul>
             {musclesQuery.data.map((muscle) => (
               <li key={muscle.id}>

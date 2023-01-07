@@ -1,14 +1,14 @@
 import { ComponentMeta, ComponentStoryObj } from "@storybook/react";
 import { ComponentProps } from "react";
 
-import { MuscleList } from "./muscle-list";
+import { MuscleListView } from "./muscle-list";
 
-type Meta = ComponentMeta<typeof MuscleList>;
-type Props = ComponentProps<typeof MuscleList>;
-type Story = ComponentStoryObj<typeof MuscleList>;
+type Meta = ComponentMeta<typeof MuscleListView>;
+type Props = ComponentProps<typeof MuscleListView>;
+type Story = ComponentStoryObj<typeof MuscleListView>;
 
 const componentMeta: Meta = {
-  component: MuscleList,
+  component: MuscleListView,
 };
 export default componentMeta;
 
@@ -27,7 +27,7 @@ const Template: Story = {
       ],
     };
 
-    return <MuscleList {...args} />;
+    return <MuscleListView {...args} />;
   },
 };
 

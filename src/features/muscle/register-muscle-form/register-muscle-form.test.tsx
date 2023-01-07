@@ -1,7 +1,7 @@
 import { composeStories } from "@storybook/testing-react";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 
-import * as stories from "./muscle-form.stories";
+import * as stories from "./register-muscle-form.stories";
 
 describe("MuscleForm", () => {
   const Stories = composeStories(stories);
@@ -11,6 +11,6 @@ describe("MuscleForm", () => {
       render(<Stories.Default />);
     });
 
-    test.todo("", () => {});
+    test.todo("初期状態のテスト");
   });
 });

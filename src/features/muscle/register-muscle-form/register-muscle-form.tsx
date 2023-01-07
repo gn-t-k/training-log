@@ -4,50 +4,53 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  Spinner,
   useToast,
 } from "@chakra-ui/react";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useEffect } from "react";
 import { SubmitHandler } from "react-hook-form";
-import { z } from "zod";
 
-import { useForm } from "@/libs/react-hook-form/use-form";
 import { trpc } from "@/libs/trpc/client/trpc";
 
 import { Muscle } from "../muscle";
+import { useMuscleForm, MuscleField } from "../use-muscle-form";
 
-const muscleFieldSchema = z.object({
-  name: z.string().min(1, "部位名を入力してください"),
-});
-type MuscleField = z.infer<typeof muscleFieldSchema>;
-
-export const MuscleForm: FC = () => {
+export const RegisterMuscleForm: FC = () => {
   const util = trpc.useContext();
   const registerMuscleMutator = trpc.muscle.register.useMutation({
     onSuccess: () => {
       util.muscle.invalidate();
     },
   });
-
   const muscles = util.muscle.getAll.getData() ?? [];
   const registerMuscle = (name: string): void => {
     registerMuscleMutator.mutate({ name });
   };
+  const isRegisterMuscleLoading = registerMuscleMutator.isLoading;
   const isRegisterMuscleError = registerMuscleMutator.isError;
 
   return (
-    <MuscleFormView {...{ muscles, registerMuscle, isRegisterMuscleError }} />
+    <RegisterMuscleFormView
+      {...{
+        muscles,
+        registerMuscle,
+        isRegisterMuscleLoading,
+        isRegisterMuscleError,
+      }}
+    />
   );
 };
 
 type Props = {
   muscles: Muscle[];
   registerMuscle: (name: string) => void;
+  isRegisterMuscleLoading: boolean;
   isRegisterMuscleError: boolean;
 };
-export const MuscleFormView: FC<Props> = ({
+export const RegisterMuscleFormView: FC<Props> = ({
   muscles,
   registerMuscle,
+  isRegisterMuscleLoading,
   isRegisterMuscleError,
 }) => {
   const toast = useToast();
@@ -64,23 +67,10 @@ export const MuscleFormView: FC<Props> = ({
     register,
     handleSubmit,
     setError,
-    formState: { errors, isSubmitting },
-  } = useForm<MuscleField>({
-    resolver: zodResolver(muscleFieldSchema),
-    defaultValues: {
-      name: "",
-    },
-  });
+    formState: { errors },
+  } = useMuscleForm();
 
   const onSubmit: SubmitHandler<MuscleField> = (formValue) => {
-    if (muscles === undefined) {
-      setError("name", {
-        type: "custom",
-        message: "部位の登録に失敗しました",
-      });
-      return;
-    }
-
     const isSameNameMuscleExist = muscles.some(
       (muscle) => muscle.name === formValue.name
     );
@@ -104,8 +94,8 @@ export const MuscleFormView: FC<Props> = ({
           <FormErrorMessage>{errors.name.message}</FormErrorMessage>
         )}
       </FormControl>
-      <Button type="submit" isDisabled={isSubmitting}>
-        登録する
+      <Button type="submit" isDisabled={isRegisterMuscleLoading}>
+        {isRegisterMuscleLoading ? <Spinner /> : "登録する"}
       </Button>
     </form>
   );
