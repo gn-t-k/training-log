@@ -35,7 +35,7 @@ const Template: Story = {
           action("muscle registered")();
         })();
       },
-      isRegisterMuscleError: true,
+      isRegisterMuscleError: false,
     };
 
     return <MuscleFormView {...args} />;
