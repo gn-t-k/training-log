@@ -6,45 +6,20 @@ import prisma from "@/libs/prisma/client";
 
 import { muscleSchema } from "@/features/muscle/muscle";
 
-import { authenticatedProcedure, initializedProcedure, router } from "../trpc";
+import { initializedProcedure, router } from "../trpc";
 
 export const muscleRouter = router({
-  register: authenticatedProcedure
-    .input(
-      z.object({
-        name: z.string(),
-      })
-    )
+  register: initializedProcedure
+    .input(muscleSchema.omit({ id: true }))
     .output(muscleSchema)
     .mutation(async ({ input, ctx }) => {
-      const authUserId = ctx.session.user.id;
-
-      if (!authUserId) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-        });
-      }
-
-      const traineeData = await prisma.trainee.findUnique({
-        where: {
-          authUserId,
-        },
-        select: {
-          id: true,
-        },
-      });
-
-      if (!traineeData) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-        });
-      }
+      const traineeId = ctx.trainee.id;
 
       const registered = await prisma.muscle.create({
         data: {
           id: ulid(),
           name: input.name,
-          traineeId: traineeData.id,
+          traineeId,
         },
       });
 
@@ -94,10 +69,25 @@ export const muscleRouter = router({
       })
     )
     .output(muscleSchema)
-    .mutation(async ({ input }) => {
-      const updated = await prisma.muscle.update({
+    .mutation(async ({ input, ctx }) => {
+      const muscle = await prisma.muscle.findUnique({
         where: {
           id: input.id,
+        },
+      });
+
+      if (
+        muscle === null ||
+        (muscle !== null && muscle.traineeId !== ctx.trainee.id)
+      ) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+        });
+      }
+
+      const updated = await prisma.muscle.update({
+        where: {
+          id: muscle.id,
         },
         data: {
           name: input.name,
@@ -116,10 +106,25 @@ export const muscleRouter = router({
       })
     )
     .output(muscleSchema)
-    .mutation(async ({ input }) => {
-      const deleted = await prisma.muscle.delete({
+    .mutation(async ({ input, ctx }) => {
+      const muscle = await prisma.muscle.findUnique({
         where: {
           id: input.id,
+        },
+      });
+
+      if (
+        muscle === null ||
+        (muscle !== null && muscle.traineeId !== ctx.trainee.id)
+      ) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+        });
+      }
+
+      const deleted = await prisma.muscle.delete({
+        where: {
+          id: muscle.id,
         },
       });
 
