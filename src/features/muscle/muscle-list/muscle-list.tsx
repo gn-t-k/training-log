@@ -1,4 +1,12 @@
-import { Card, CardBody, List, Text, UnorderedList } from "@chakra-ui/react";
+import { EditIcon } from "@chakra-ui/icons";
+import {
+  Button,
+  List,
+  Spacer,
+  Stack,
+  Text,
+  UnorderedList,
+} from "@chakra-ui/react";
 import { FC, MouseEventHandler } from "react";
 
 import { trpc } from "@/libs/trpc/client/trpc";
@@ -6,9 +14,9 @@ import { trpc } from "@/libs/trpc/client/trpc";
 import { Muscle } from "../muscle";
 
 type Props = {
-  onClickHOF: (muscle: Muscle) => MouseEventHandler;
+  onClickEditHOF: (muscle: Muscle) => MouseEventHandler;
 };
-export const MuscleList: FC<Props> = ({ onClickHOF }) => {
+export const MuscleList: FC<Props> = ({ onClickEditHOF }) => {
   const musclesQuery = trpc.muscle.getAll.useQuery();
 
   switch (musclesQuery.status) {
@@ -18,7 +26,7 @@ export const MuscleList: FC<Props> = ({ onClickHOF }) => {
     case "success": {
       const muscles = musclesQuery.data;
 
-      return <MuscleListView {...{ muscles, onClickHOF }} />;
+      return <MuscleListView {...{ muscles, onClickEditHOF }} />;
     }
     case "error":
       // TODO
@@ -28,20 +36,22 @@ export const MuscleList: FC<Props> = ({ onClickHOF }) => {
 
 type ViewProps = {
   muscles: Muscle[];
-  onClickHOF: Props["onClickHOF"];
+  onClickEditHOF: Props["onClickEditHOF"];
 };
-export const MuscleListView: FC<ViewProps> = ({ muscles, onClickHOF }) => {
+export const MuscleListView: FC<ViewProps> = ({ muscles, onClickEditHOF }) => {
   return (
     <UnorderedList>
       {muscles.map((muscle) => {
-        const onClick = onClickHOF(muscle);
+        const onClick = onClickEditHOF(muscle);
         return (
-          <List key={muscle.id} mb={4}>
-            <Card {...{ onClick }}>
-              <CardBody>
-                <Text>{muscle.name}</Text>
-              </CardBody>
-            </Card>
+          <List key={muscle.id} mb={4} borderBottom={"2px"}>
+            <Stack direction="row">
+              <Text>{muscle.name}</Text>
+              <Spacer />
+              <Button {...{ onClick }}>
+                <EditIcon />
+              </Button>
+            </Stack>
           </List>
         );
       })}

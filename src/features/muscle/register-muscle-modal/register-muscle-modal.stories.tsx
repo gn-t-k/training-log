@@ -3,6 +3,7 @@ import { action } from "@storybook/addon-actions";
 import { ComponentMeta, ComponentStoryObj } from "@storybook/react";
 import { ComponentProps, FC, useState } from "react";
 
+import { MutationState } from "@/utils/mutation-state";
 import { sleep } from "@/utils/sleep";
 
 import { RegisterMuscleModalView } from "./register-muscle-modal";
@@ -18,8 +19,7 @@ export default componentMeta;
 
 const Wrapper: FC<Partial<Props>> = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [status, setStatus] =
-    useState<"idle" | "loading" | "success" | "error">("idle");
+  const [status, setStatus] = useState<MutationState>("idle");
   const dummyRegisterMuscle: Props["registerMuscle"] = () => {
     (async (): Promise<void> => {
       setStatus("loading");

@@ -19,6 +19,8 @@ import { SubmitHandler } from "react-hook-form";
 
 import { trpc } from "@/libs/trpc/client/trpc";
 
+import { MutationState } from "@/utils/mutation-state";
+
 import { Muscle } from "../muscle";
 import { MuscleField, useMuscleForm } from "../use-muscle-form";
 
@@ -60,7 +62,7 @@ type ViewProps = {
   onClose: () => void;
   muscles: Muscle[];
   registerMuscle: (name: string) => void;
-  registerMuscleStatus: "idle" | "loading" | "success" | "error";
+  registerMuscleStatus: MutationState;
 };
 export const RegisterMuscleModalView: FC<ViewProps> = (props) => {
   const {
@@ -101,7 +103,7 @@ export const RegisterMuscleModalView: FC<ViewProps> = (props) => {
     if (isSameNameMuscleExist) {
       setError("name", {
         type: "custom",
-        message: `部位${formValue.name}はすでに登録されています`,
+        message: `部位「${formValue.name}」はすでに登録されています`,
       });
       return;
     }

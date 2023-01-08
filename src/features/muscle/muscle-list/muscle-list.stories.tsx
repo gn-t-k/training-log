@@ -32,7 +32,7 @@ const Template: Story = {
           name: "上腕三頭筋",
         },
       ],
-      onClickHOF: props.onClickHOF ?? dummyOnClickHOF,
+      onClickEditHOF: props.onClickEditHOF ?? dummyOnClickHOF,
     };
 
     return <MuscleListView {...args} />;

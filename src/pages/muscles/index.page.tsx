@@ -1,4 +1,13 @@
-import { Stack, useToast } from "@chakra-ui/react";
+import { AddIcon, ChevronLeftIcon } from "@chakra-ui/icons";
+import {
+  Button,
+  Container,
+  Heading,
+  Spacer,
+  Stack,
+  useDisclosure,
+  useToast,
+} from "@chakra-ui/react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { FC, MouseEventHandler, useEffect } from "react";
@@ -7,7 +16,7 @@ import { z } from "zod";
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { Muscle } from "@/features/muscle/muscle";
 import { MuscleList } from "@/features/muscle/muscle-list/muscle-list";
-import { RegisterMuscleForm } from "@/features/muscle/register-muscle-form/register-muscle-form";
+import { RegisterMuscleModal } from "@/features/muscle/register-muscle-modal/register-muscle-modal";
 
 const MusclesContainer: NextPage = () => {
   return (
@@ -26,6 +35,7 @@ type Query = z.infer<typeof querySchema>;
 const Muscles: FC = () => {
   const router = useRouter();
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const query = ((): Query | null => {
     const maybeQuery = querySchema.safeParse(router.query);
 
@@ -36,9 +46,14 @@ const Muscles: FC = () => {
     if (query !== null) {
       console.log({ id: query.id });
     }
-  }, [query]);
+  }, [isOpen, query]);
 
-  const onClickHOF =
+  const onClickAdd: MouseEventHandler = (e) => {
+    e.preventDefault();
+
+    onOpen();
+  };
+  const onClickEditHOF =
     (muscle: Muscle): MouseEventHandler =>
     (e) => {
       e.preventDefault();
@@ -49,9 +64,22 @@ const Muscles: FC = () => {
     };
 
   return (
-    <Stack p={8}>
-      <RegisterMuscleForm />
-      <MuscleList {...{ onClickHOF }} />
-    </Stack>
+    <Container>
+      <Stack direction="column">
+        <RegisterMuscleModal {...{ isOpen, onClose }} />
+        <Stack direction="row">
+          <Button>
+            <ChevronLeftIcon />
+          </Button>
+          <Spacer />
+          <Heading>部位</Heading>
+          <Spacer />
+          <Button onClick={onClickAdd}>
+            <AddIcon />
+          </Button>
+        </Stack>
+        <MuscleList {...{ onClickEditHOF }} />
+      </Stack>
+    </Container>
   );
 };
