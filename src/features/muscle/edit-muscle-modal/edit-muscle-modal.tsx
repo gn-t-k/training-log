@@ -15,7 +15,7 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
-import { FC, MouseEventHandler, useEffect } from "react";
+import { FC, MouseEventHandler, useEffect, useMemo } from "react";
 import { SubmitHandler } from "react-hook-form";
 
 import { trpc } from "@/libs/trpc/client/trpc";
@@ -39,7 +39,10 @@ type Props = {
 export const EditMuscleModal: FC<Props> = (props) => {
   const { isOpen, onClose } = props;
   const util = trpc.useContext();
-  const registeredMuscles = util.muscle.getAll.getData() ?? [];
+  const registeredMuscles = useMemo(
+    () => util.muscle.getAll.getData() ?? [],
+    [util.muscle.getAll]
+  );
   const updateMuscleMutator = trpc.muscle.updateName.useMutation({
     onSuccess: () => {
       util.muscle.invalidate();
@@ -52,15 +55,24 @@ export const EditMuscleModal: FC<Props> = (props) => {
       onClose();
     },
   });
+
   const updateMuscleStatus = updateMuscleMutator.status;
   const deleteMuscleStatus = deleteMuscleMutator.status;
-  const args = isOpen
+
+  const args:
+    | {
+        isOpen: true;
+        muscle: Muscle;
+      }
+    | {
+        isOpen: false;
+      } = isOpen
     ? {
         isOpen,
         muscle: props.muscle,
       }
     : {
-        isOpen,
+        isOpen: false,
       };
   const updateMuscleName = (props: { id: string; name: string }): void => {
     updateMuscleMutator.mutate({ id: props.id, name: props.name });
@@ -101,15 +113,6 @@ type ViewProps = {
     }
 );
 export const EditMuscleModalView: FC<ViewProps> = (props) => {
-  const {
-    getValues,
-    setError,
-    handleSubmit,
-    formState: { errors },
-    register,
-  } = useMuscleForm({
-    name: props.isOpen ? props.muscle.name : "",
-  });
   const toast = useToast();
 
   useEffect(() => {
@@ -119,7 +122,7 @@ export const EditMuscleModalView: FC<ViewProps> = (props) => {
         return;
       case "success":
         toast({
-          title: `部位の名前を「${getValues().name}」に変更しました`,
+          title: `部位の名前を変更しました`,
           status: "success",
         });
         return;
@@ -130,7 +133,7 @@ export const EditMuscleModalView: FC<ViewProps> = (props) => {
         });
         return;
     }
-  }, [getValues, props.updateMuscleStatus, toast]);
+  }, [props.updateMuscleStatus, toast]);
 
   useEffect(() => {
     switch (props.deleteMuscleStatus) {
@@ -139,7 +142,7 @@ export const EditMuscleModalView: FC<ViewProps> = (props) => {
         return;
       case "success":
         toast({
-          title: `部位「${getValues().name}」を削除しました`,
+          title: `部位を削除しました`,
           status: "success",
         });
         return;
@@ -150,13 +153,39 @@ export const EditMuscleModalView: FC<ViewProps> = (props) => {
         });
         return;
     }
-  }, [getValues, props.deleteMuscleStatus, toast]);
+  }, [props.deleteMuscleStatus, toast]);
+
+  return (
+    <Modal isOpen={props.isOpen} onClose={props.onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>部位を編集</ModalHeader>
+        <ModalCloseButton />
+        {props.isOpen && <EditMuscleForm {...props} />}
+      </ModalContent>
+    </Modal>
+  );
+};
+
+type FormProps = {
+  muscle: Muscle;
+  registeredMuscles: Muscle[];
+  updateMuscleName: (props: { id: string; name: string }) => void;
+  deleteMuscle: (id: string) => void;
+  updateMuscleStatus: MutationState;
+  deleteMuscleStatus: MutationState;
+};
+const EditMuscleForm: FC<FormProps> = (props) => {
+  const {
+    setError,
+    handleSubmit,
+    formState: { errors },
+    register,
+  } = useMuscleForm({
+    name: props.muscle.name,
+  });
 
   const onSubmit: SubmitHandler<MuscleField> = (formValue) => {
-    if (!props.isOpen) {
-      return;
-    }
-
     const isSameNameMuscleExist = props.registeredMuscles.some(
       (muscle) => muscle.name === formValue.name
     );
@@ -173,55 +202,45 @@ export const EditMuscleModalView: FC<ViewProps> = (props) => {
 
   const onClickDelete: MouseEventHandler = (e) => {
     e.preventDefault();
-    if (!props.isOpen) {
-      return;
-    }
 
     props.deleteMuscle(props.muscle.id);
   };
 
   return (
-    <Modal isOpen={props.isOpen} onClose={props.onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>部位を編集</ModalHeader>
-        <ModalCloseButton />
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <ModalBody>
-            <FormControl isInvalid={!!errors.name}>
-              <FormLabel>部位の名前</FormLabel>
-              <Input {...register("name")} />
-              {!!errors.name && (
-                <FormErrorMessage>{errors.name.message}</FormErrorMessage>
-              )}
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Stack direction="column">
-              <Button
-                type="submit"
-                isDisabled={props.updateMuscleStatus === "loading"}
-              >
-                {props.updateMuscleStatus === "loading" ? (
-                  <Spinner />
-                ) : (
-                  "変更を保存する"
-                )}
-              </Button>
-              <Button
-                onClick={onClickDelete}
-                isDisabled={props.deleteMuscleStatus === "loading"}
-              >
-                {props.deleteMuscleStatus === "loading" ? (
-                  <Spinner />
-                ) : (
-                  "部位を削除する"
-                )}
-              </Button>
-            </Stack>
-          </ModalFooter>
-        </form>
-      </ModalContent>
-    </Modal>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <ModalBody>
+        <FormControl isInvalid={!!errors.name}>
+          <FormLabel>部位の名前</FormLabel>
+          <Input {...register("name")} />
+          {!!errors.name && (
+            <FormErrorMessage>{errors.name.message}</FormErrorMessage>
+          )}
+        </FormControl>
+      </ModalBody>
+      <ModalFooter>
+        <Stack direction="column">
+          <Button
+            type="submit"
+            isDisabled={props.updateMuscleStatus === "loading"}
+          >
+            {props.updateMuscleStatus === "loading" ? (
+              <Spinner />
+            ) : (
+              "変更を保存する"
+            )}
+          </Button>
+          <Button
+            onClick={onClickDelete}
+            isDisabled={props.deleteMuscleStatus === "loading"}
+          >
+            {props.deleteMuscleStatus === "loading" ? (
+              <Spinner />
+            ) : (
+              "部位を削除する"
+            )}
+          </Button>
+        </Stack>
+      </ModalFooter>
+    </form>
   );
 };

@@ -6,14 +6,12 @@ import {
   Spacer,
   Stack,
   useDisclosure,
-  useToast,
 } from "@chakra-ui/react";
 import { NextPage } from "next";
-import { useRouter } from "next/router";
-import { FC, MouseEventHandler, useEffect } from "react";
-import { z } from "zod";
+import { ComponentProps, FC, MouseEventHandler, useState } from "react";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
+import { EditMuscleModal } from "@/features/muscle/edit-muscle-modal/edit-muscle-modal";
 import { Muscle } from "@/features/muscle/muscle";
 import { MuscleList } from "@/features/muscle/muscle-list/muscle-list";
 import { RegisterMuscleModal } from "@/features/muscle/register-muscle-modal/register-muscle-modal";
@@ -27,46 +25,55 @@ const MusclesContainer: NextPage = () => {
 };
 export default MusclesContainer;
 
-const querySchema = z.object({
-  id: z.string(),
-});
-type Query = z.infer<typeof querySchema>;
-
 const Muscles: FC = () => {
-  const router = useRouter();
-  const toast = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const query = ((): Query | null => {
-    const maybeQuery = querySchema.safeParse(router.query);
-
-    return maybeQuery.success ? maybeQuery.data : null;
-  })();
-
-  useEffect(() => {
-    if (query !== null) {
-      console.log({ id: query.id });
-    }
-  }, [isOpen, query]);
+  const [selectedMuscle, setSelectedMuscle] = useState<Muscle | null>(null);
+  const {
+    isOpen: isRegisterModalOpen,
+    onOpen: onRegisterModalOpen,
+    onClose: onRegisterModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: isEditModalOpen,
+    onOpen: onEditModalOpen,
+    onClose: _onEditModalClose,
+  } = useDisclosure();
+  const onEditModalClose = (): void => {
+    _onEditModalClose();
+    setSelectedMuscle(null);
+  };
 
   const onClickAdd: MouseEventHandler = (e) => {
     e.preventDefault();
 
-    onOpen();
+    onRegisterModalOpen();
   };
   const onClickEditHOF =
     (muscle: Muscle): MouseEventHandler =>
-    (e) => {
+    async (e) => {
       e.preventDefault();
 
-      toast({
-        title: muscle.name,
-      });
+      setSelectedMuscle(muscle);
+      onEditModalOpen();
     };
+  const editMuscleModalArgs: ComponentProps<typeof EditMuscleModal> =
+    isEditModalOpen && selectedMuscle !== null
+      ? {
+          onClose: onEditModalClose,
+          isOpen: isEditModalOpen,
+          muscle: selectedMuscle,
+        }
+      : {
+          onClose: onEditModalClose,
+          isOpen: false,
+        };
 
   return (
     <Container>
       <Stack direction="column">
-        <RegisterMuscleModal {...{ isOpen, onClose }} />
+        <RegisterMuscleModal
+          {...{ isOpen: isRegisterModalOpen, onClose: onRegisterModalClose }}
+        />
+        <EditMuscleModal {...editMuscleModalArgs} />
         <Stack direction="row">
           <Button>
             <ChevronLeftIcon />

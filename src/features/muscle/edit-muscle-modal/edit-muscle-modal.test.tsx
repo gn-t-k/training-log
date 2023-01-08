@@ -1,5 +1,5 @@
 import { composeStories } from "@storybook/testing-react";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 
 import * as stories from "./edit-muscle-modal.stories";
 
@@ -11,6 +11,6 @@ describe("EditMuscleModal", () => {
       render(<Stories.Default />);
     });
 
-    test.todo("", () => {});
+    test.todo("初期状態のテスト");
   });
 });
