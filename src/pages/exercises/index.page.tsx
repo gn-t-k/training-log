@@ -19,6 +19,21 @@ const Exercises: NextPage = () => {
       util.exercise.invalidate();
     },
   });
+  const updateExerciseNameMutation = trpc.exercise.updateName.useMutation({
+    onSuccess: () => {
+      util.exercise.invalidate();
+    },
+  });
+  const updateExerciseTargetMutation = trpc.exercise.updateTargets.useMutation({
+    onSuccess: () => {
+      util.exercise.invalidate();
+    },
+  });
+  const deleteExerciseMutation = trpc.exercise.delete.useMutation({
+    onSuccess: () => {
+      util.exercise.invalidate();
+    },
+  });
 
   const onClickRegister: MouseEventHandler = (e) => {
     e.preventDefault();
@@ -32,22 +47,25 @@ const Exercises: NextPage = () => {
     (id: string): MouseEventHandler =>
     (e) => {
       e.preventDefault();
-      // TODO
-      console.log(id);
+
+      updateExerciseNameMutation.mutate({ id, name: `種目${new Date()}` });
     };
   const onClickUpdateTargetsHOF =
     (id: string): MouseEventHandler =>
     (e) => {
       e.preventDefault();
-      // TODO
-      console.log(id);
+
+      updateExerciseTargetMutation.mutate({
+        id,
+        targets: [{ id: "01GP7D1JQKK0SZJE2E3CGVQA80", name: "上腕三頭筋" }],
+      });
     };
   const onClickDeleteHOF =
     (id: string): MouseEventHandler =>
     (e) => {
       e.preventDefault();
-      // TODO
-      console.log(id);
+
+      deleteExerciseMutation.mutate({ id });
     };
 
   return (

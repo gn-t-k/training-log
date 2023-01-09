@@ -114,30 +114,31 @@ export const exerciseRouter = router({
     )
     .output(exerciseSchema)
     .mutation(async ({ input, ctx }) => {
-      const exercise = await prisma.exercise.findUnique({
+      const currentExerciseData = await prisma.exercise.findUnique({
         where: {
           id: input.id,
+        },
+        include: {
+          targets: true,
         },
       });
 
       if (
-        exercise === null ||
-        (exercise !== null && exercise.traineeId !== ctx.trainee.id)
+        currentExerciseData === null ||
+        (currentExerciseData !== null &&
+          currentExerciseData.traineeId !== ctx.trainee.id)
       ) {
         throw new TRPCError({
           code: "NOT_FOUND",
         });
       }
 
-      const isValidTargets = await (async (): Promise<boolean> => {
-        const musclesData = await prisma.muscle.findMany({
-          where: {
-            OR: input.targets.map((target) => ({ id: target.id })),
-          },
-        });
-
-        return musclesData.length === input.targets.length;
-      })();
+      const musclesData = await prisma.muscle.findMany({
+        where: {
+          id: { in: input.targets.map((target) => target.id) },
+        },
+      });
+      const isValidTargets = musclesData.length === input.targets.length;
 
       if (!isValidTargets) {
         throw new TRPCError({
@@ -145,18 +146,42 @@ export const exerciseRouter = router({
         });
       }
 
-      const updated = await prisma.exercise.update({
-        where: {
-          id: exercise.id,
-        },
-        data: {
-          targets: {
-            connect: input.targets.map((target) => ({ id: target.id })),
+      const updated = await prisma.$transaction(async (tx) => {
+        const deleted = await tx.exercise.update({
+          where: {
+            id: currentExerciseData.id,
           },
-        },
-        include: {
-          targets: true,
-        },
+          data: {
+            targets: {
+              disconnect: currentExerciseData.targets.map((muscle) => ({
+                id: muscle.id,
+              })),
+            },
+          },
+          include: {
+            targets: true,
+          },
+        });
+
+        if (deleted.targets.length !== 0) {
+          throw new Error("更新処理に失敗しました");
+        }
+
+        const updated = await tx.exercise.update({
+          where: {
+            id: currentExerciseData.id,
+          },
+          data: {
+            targets: {
+              connect: input.targets.map((target) => ({ id: target.id })),
+            },
+          },
+          include: {
+            targets: true,
+          },
+        });
+
+        return updated;
       });
 
       return updated;
