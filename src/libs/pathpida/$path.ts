@@ -1,4 +1,7 @@
 export const pagesPath = {
+  "exercises": {
+    $url: (url?: { hash?: string }) => ({ pathname: '/exercises' as const, hash: url?.hash })
+  },
   "logged_in": {
     $url: (url?: { hash?: string }) => ({ pathname: '/logged-in' as const, hash: url?.hash })
   },
