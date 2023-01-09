@@ -12,7 +12,9 @@
     "test": "jest --watch",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "gen:component": "yarn run scaffdog generate component"
+    "gen:component": "yarn run scaffdog generate component",
+    "gen:resolver": "yarn run scaffdog generate resolver",
+    "gen:prisma": "yarn run scaffdog generate prisma"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.0.15",

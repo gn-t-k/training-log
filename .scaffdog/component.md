@@ -14,8 +14,14 @@ import { FC } from "react";
 
 type Props = {
 };
+export const {{ inputs.name | pascal }}: FC<Props> = (props) => {
+  return <{{ inputs.name | pascal }}View />
+};
 
-export const {{ inputs.name | pascal }}: FC<Props> = (props) => <></>;
+type ViewProps = {
+}
+export const {{ inputs.name | pascal }}View: FC<ViewProps> = (props) => {
+};
 ```
 
 # `{{ inputs.name | kebab }}/{{ inputs.name | kebab }}.stories.tsx`
@@ -25,28 +31,34 @@ import { action } from "@storybook/addon-actions";
 import { ComponentMeta, ComponentStoryObj } from "@storybook/react";
 import { within } from "@storybook/testing-library";
 import userEvent from "@testing-library/user-event";
-import { ComponentProps } from "react";
+import { ComponentProps, FC } from "react";
 
 import { sleep } from "@/utils/sleep";
 
-import { {{ inputs.name | pascal }} } from "./{{ inputs.name | kebab }}";
+import { {{ inputs.name | pascal }}View } from "./{{ inputs.name | kebab }}";
 
-type Meta = ComponentMeta<typeof {{ inputs.name | pascal }}>;
-type Props = ComponentProps<typeof {{ inputs.name | pascal }}>;
-type Story = ComponentStoryObj<typeof {{ inputs.name | pascal }}>;
+type Meta = ComponentMeta<typeof {{ inputs.name | pascal }}View>;
+type Props = ComponentProps<typeof {{ inputs.name | pascal }}View>;
+type Story = ComponentStoryObj<typeof {{ inputs.name | pascal }}View>;
 
 const componentMeta: Meta = {
-  component: {{ inputs.name | pascal }},
+  component: {{ inputs.name | pascal }}View,
 };
 export default componentMeta;
 
+const Wrapper: FC<Partial<Props>> = (props) => {
+  const args: Props = {
+  }
+
+  return <{{ inputs.name | pascal }}View {...args} />
+}
+
 const Template: Story = {
   render: (props: Partial<Props>) => {
-    const args: Props = {}
-
-    return <{{ inputs.name | pascal }} {...args} />
+    return <Wrapper {...props} />;
   },
 };
+
 export const Default: Story = {
   ...Template,
 };

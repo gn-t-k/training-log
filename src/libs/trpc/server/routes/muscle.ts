@@ -1,11 +1,14 @@
 import { TRPCError } from "@trpc/server";
-import { ulid } from "ulid";
 import { z } from "zod";
 
 import prisma from "@/libs/prisma/client";
+import { registerMuscleCommand } from "@/libs/prisma/commands/register-muscle-command";
+import { getAllMusclesQuery } from "@/libs/prisma/queries/get-all-muscles-query";
 
 import { muscleSchema } from "@/features/muscle/muscle";
 
+import { getAllMusclesResolver } from "../resolvers/get-all-muscles-resolver/get-all-muscles-resolver";
+import { registerMuscleResolver } from "../resolvers/register-muscle-resolver/register-muscle-resolver";
 import { initializedProcedure, router } from "../trpc";
 
 export const muscleRouter = router({
@@ -13,34 +16,23 @@ export const muscleRouter = router({
     .input(muscleSchema.omit({ id: true }))
     .output(muscleSchema)
     .mutation(async ({ input, ctx }) => {
-      const traineeId = ctx.trainee.id;
-
-      const registered = await prisma.muscle.create({
-        data: {
-          id: ulid(),
-          name: input.name,
-          traineeId,
-        },
+      const registered = await registerMuscleResolver({
+        registerMuscleCommand,
+      })({
+        traineeId: ctx.trainee.id,
+        name: input.name,
       });
 
-      return {
-        id: registered.id,
-        name: registered.name,
-      };
+      return registered;
     }),
   getAll: initializedProcedure
     .output(z.array(muscleSchema))
     .query(async ({ ctx }) => {
-      const musclesData = await prisma.muscle.findMany({
-        where: {
-          traineeId: ctx.trainee.id,
-        },
+      const muscles = await getAllMusclesResolver({ getAllMusclesQuery })({
+        traineeId: ctx.trainee.id,
       });
 
-      return musclesData.map((muscle) => ({
-        id: muscle.id,
-        name: muscle.name,
-      }));
+      return muscles;
     }),
   getByName: initializedProcedure
     .input(
