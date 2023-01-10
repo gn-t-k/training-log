@@ -1,4 +1,4 @@
-import { Muscle } from "@/features/muscle/muscle";
+import { Muscle } from "@prisma/client";
 
 import { Deps, getAllMusclesResolver, Props } from "./get-all-muscles-resolver";
 
@@ -6,22 +6,23 @@ describe("getAllMusclesResolver", () => {
   test("すべての部位が取得できる", async () => {
     const deps: Deps = {
       getAllMusclesQuery: async ({ traineeId: _ }) => {
-        return Promise.resolve(muscles);
+        return Promise.resolve(musclesData);
       },
     };
     const props: Props = {
       traineeId: "id",
     };
-    const muscles: Muscle[] = [
+    const musclesData: Muscle[] = [
       {
         id: "id",
         name: "大胸筋",
+        traineeId: "trainee1",
       },
     ];
 
     const result = await getAllMusclesResolver(deps)(props);
 
     expect(result).toHaveLength(1);
-    expect(result[0]).toEqual(muscles[0]);
+    expect(result[0]).toEqual(musclesData[0]);
   });
 });

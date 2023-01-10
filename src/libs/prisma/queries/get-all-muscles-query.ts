@@ -1,4 +1,4 @@
-import { Muscle } from "@/features/muscle/muscle";
+import { Muscle } from "@prisma/client";
 
 import prisma from "../client";
 

@@ -1,6 +1,5 @@
+import { Muscle } from "@prisma/client";
 import { ulid } from "ulid";
-
-import { Muscle } from "@/features/muscle/muscle";
 
 import prisma from "../client";
 

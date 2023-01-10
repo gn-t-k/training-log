@@ -1,12 +1,13 @@
-import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { ulid } from "ulid";
 import { z } from "zod";
 
-import prisma from "@/libs/prisma/client";
+import { registerTraineeCommand } from "@/libs/prisma/commands/register-trainee-command";
+import { getTraineeByAuthUserIdQuery } from "@/libs/prisma/queries/get-trainee-by-auth-user-id-query";
 
 import { traineeSchema } from "@/features/trainee/trainee";
 
+import { getTraineeBySessionResolver } from "../resolvers/get-trainee-by-session-resolver/get-trainee-by-session-resolver";
+import { registerTraineeResolver } from "../resolvers/register-trainee-resolver/register-trainee-resolver";
 import { authenticatedProcedure, router } from "../trpc";
 
 export const traineeRouter = router({
@@ -19,21 +20,13 @@ export const traineeRouter = router({
         return null;
       }
 
-      const traineeData = await prisma.trainee.findUnique({
-        where: {
-          authUserId,
-        },
+      const trainee = await getTraineeBySessionResolver({
+        getTraineeByAuthUserIdQuery,
+      })({
+        authUserId,
       });
 
-      if (!traineeData?.id || !traineeData.name || !traineeData.image) {
-        return null;
-      }
-
-      return {
-        id: traineeData.id,
-        name: traineeData.name,
-        image: traineeData.image,
-      };
+      return trainee;
     }),
   register: authenticatedProcedure
     .input(
@@ -47,32 +40,16 @@ export const traineeRouter = router({
 
       if (!authUserId) {
         throw new TRPCError({
-          code: "PARSE_ERROR",
+          code: "INTERNAL_SERVER_ERROR",
         });
       }
 
-      await prisma.$transaction(
-        async (tx) => {
-          const trainee = await tx.trainee.findUnique({
-            where: {
-              authUserId,
-            },
-          });
-
-          if (trainee === null) {
-            await tx.trainee.create({
-              data: {
-                id: ulid(),
-                name: input.name,
-                image: input.image,
-                authUserId,
-              },
-            });
-          }
-        },
-        {
-          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-        }
-      );
+      await registerTraineeResolver({
+        registerTraineeCommand,
+      })({
+        authUserId,
+        name: input.name,
+        image: input.image,
+      });
     }),
 });

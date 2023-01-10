@@ -1,14 +1,19 @@
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import prisma from "@/libs/prisma/client";
+import { deleteMuscleCommand } from "@/libs/prisma/commands/delete-muscle-command";
 import { registerMuscleCommand } from "@/libs/prisma/commands/register-muscle-command";
+import { updateMuscleNameCommand } from "@/libs/prisma/commands/update-muscle-name-command";
 import { getAllMusclesQuery } from "@/libs/prisma/queries/get-all-muscles-query";
+import { getMuscleByIdQuery } from "@/libs/prisma/queries/get-muscle-by-id-query";
+import { getMuscleByNameQuery } from "@/libs/prisma/queries/get-muscle-by-name-query";
 
 import { muscleSchema } from "@/features/muscle/muscle";
 
+import { deleteMuscleResolver } from "../resolvers/delete-muscle-resolver/delete-muscle-resolver";
 import { getAllMusclesResolver } from "../resolvers/get-all-muscles-resolver/get-all-muscles-resolver";
+import { getMuscleByNameResolver } from "../resolvers/get-muscle-by-name-resolver/get-muscle-by-name-resolver";
 import { registerMuscleResolver } from "../resolvers/register-muscle-resolver/register-muscle-resolver";
+import { updateMuscleNameResolver } from "../resolvers/update-muscle-name-resolver/update-muscle-name-resolver";
 import { initializedProcedure, router } from "../trpc";
 
 export const muscleRouter = router({
@@ -40,18 +45,14 @@ export const muscleRouter = router({
         name: z.string(),
       })
     )
-    .output(z.union([muscleSchema, z.null()]))
+    .output(muscleSchema)
     .query(async ({ input, ctx }) => {
-      const muscleData = await prisma.muscle.findUnique({
-        where: {
-          name_traineeId: {
-            name: input.name,
-            traineeId: ctx.trainee.id,
-          },
-        },
+      const muscle = await getMuscleByNameResolver({ getMuscleByNameQuery })({
+        name: input.name,
+        traineeId: ctx.trainee.id,
       });
 
-      return muscleData ? { id: muscleData.id, name: muscleData.name } : null;
+      return muscle;
     }),
   updateName: initializedProcedure
     .input(
@@ -62,34 +63,16 @@ export const muscleRouter = router({
     )
     .output(muscleSchema)
     .mutation(async ({ input, ctx }) => {
-      const muscle = await prisma.muscle.findUnique({
-        where: {
-          id: input.id,
-        },
+      const updated = await updateMuscleNameResolver({
+        getMuscleByIdQuery,
+        updateMuscleNameCommand,
+      })({
+        id: input.id,
+        name: input.name,
+        traineeId: ctx.trainee.id,
       });
 
-      if (
-        muscle === null ||
-        (muscle !== null && muscle.traineeId !== ctx.trainee.id)
-      ) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-        });
-      }
-
-      const updated = await prisma.muscle.update({
-        where: {
-          id: muscle.id,
-        },
-        data: {
-          name: input.name,
-        },
-      });
-
-      return {
-        id: updated.id,
-        name: updated.name,
-      };
+      return updated;
     }),
   delete: initializedProcedure
     .input(
@@ -99,30 +82,14 @@ export const muscleRouter = router({
     )
     .output(muscleSchema)
     .mutation(async ({ input, ctx }) => {
-      const muscle = await prisma.muscle.findUnique({
-        where: {
-          id: input.id,
-        },
+      const deleted = await deleteMuscleResolver({
+        getMuscleByIdQuery,
+        deleteMuscleCommand,
+      })({
+        id: input.id,
+        traineeId: ctx.trainee.id,
       });
 
-      if (
-        muscle === null ||
-        (muscle !== null && muscle.traineeId !== ctx.trainee.id)
-      ) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-        });
-      }
-
-      const deleted = await prisma.muscle.delete({
-        where: {
-          id: muscle.id,
-        },
-      });
-
-      return {
-        id: deleted.id,
-        name: deleted.name,
-      };
+      return deleted;
     }),
 });
