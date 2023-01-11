@@ -20,7 +20,6 @@ import prisma from "../client";
 
 export type {{inputs.name | pascal}}{{inputs.operation | pascal}} = (props: {
 }) => Promise<>
-export const {{inputs.name | camel}}{{inputs.operation | pascal}}: {{inputs.name | pascal}}{{inputs.operation | pascal}} = async ({
-}) => {
+export const {{inputs.name | camel}}{{inputs.operation | pascal}}: {{inputs.name | pascal}}{{inputs.operation | pascal}} = async (props) => {
 }
 ```
