@@ -1,11 +1,20 @@
-import { TRPCError } from "@trpc/server";
-import { ulid } from "ulid";
 import { z } from "zod";
 
-import prisma from "@/libs/prisma/client";
+import { deleteExerciseCommand } from "@/libs/prisma/commands/delete-exercise-command";
+import { registerExerciseCommand } from "@/libs/prisma/commands/register-exercise-command";
+import { updateExerciseNameCommand } from "@/libs/prisma/commands/update-exercise-name-command";
+import { updateExerciseTargetsCommand } from "@/libs/prisma/commands/update-exercise-targets-command";
+import { getExerciseByIdQuery } from "@/libs/prisma/queries/get-exercise-by-id-query";
+import { getExercisesByTraineeIdQuery } from "@/libs/prisma/queries/get-exercises-by-trainee-id-query";
+import { getMusclesByIdsQuery } from "@/libs/prisma/queries/get-muscles-by-ids-query";
 
 import { exerciseSchema } from "@/features/exercise/exercise";
 
+import { deleteExerciseResolver } from "../resolvers/delete-exercise-resolver/delete-exercise-resolver";
+import { getAllExercisesResolver } from "../resolvers/get-all-exercises-resolver/get-all-exercises-resolver";
+import { registerExerciseResolver } from "../resolvers/register-exercise-resolver/register-exercise-resolver";
+import { updateExerciseNameResolver } from "../resolvers/update-exercise-name-resolver/update-exercise-name-resolver";
+import { updateExerciseTargetsResolver } from "../resolvers/update-exercise-targets-resolver/update-exercise-targets-resolver";
 import { initializedProcedure, router } from "../trpc";
 
 export const exerciseRouter = router({
@@ -13,34 +22,13 @@ export const exerciseRouter = router({
     .input(exerciseSchema.omit({ id: true }))
     .output(exerciseSchema)
     .mutation(async ({ input, ctx }) => {
-      const isValidTargets = await (async (): Promise<boolean> => {
-        const musclesData = await prisma.muscle.findMany({
-          where: {
-            OR: input.targets.map((target) => ({ id: target.id })),
-          },
-        });
-
-        return musclesData.length === input.targets.length;
-      })();
-
-      if (!isValidTargets) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-        });
-      }
-
-      const registered = await prisma.exercise.create({
-        data: {
-          id: ulid(),
-          name: input.name,
-          targets: {
-            connect: input.targets.map((target) => ({ id: target.id })),
-          },
-          traineeId: ctx.trainee.id,
-        },
-        include: {
-          targets: true,
-        },
+      const registered = await registerExerciseResolver({
+        getMusclesByIdsQuery,
+        registerExerciseCommand,
+      })({
+        name: input.name,
+        musclesIds: input.targets.map((target) => target.id),
+        traineeId: ctx.trainee.id,
       });
 
       return registered;
@@ -48,23 +36,13 @@ export const exerciseRouter = router({
   getAll: initializedProcedure
     .output(z.array(exerciseSchema))
     .query(async ({ ctx }) => {
-      const exercisesData = await prisma.exercise.findMany({
-        where: {
-          traineeId: ctx.trainee.id,
-        },
-        include: {
-          targets: true,
-        },
+      const exercises = await getAllExercisesResolver({
+        getExercisesByTraineeIdQuery,
+      })({
+        traineeId: ctx.trainee.id,
       });
 
-      return exercisesData.map((exercise) => ({
-        id: exercise.id,
-        name: exercise.name,
-        targets: exercise.targets.map((target) => ({
-          id: target.id,
-          name: target.name,
-        })),
-      }));
+      return exercises;
     }),
   updateName: initializedProcedure
     .input(
@@ -75,31 +53,13 @@ export const exerciseRouter = router({
     )
     .output(exerciseSchema)
     .mutation(async ({ input, ctx }) => {
-      const exercise = await prisma.exercise.findUnique({
-        where: {
-          id: input.id,
-        },
-      });
-
-      if (
-        exercise === null ||
-        (exercise !== null && exercise.traineeId !== ctx.trainee.id)
-      ) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-        });
-      }
-
-      const updated = await prisma.exercise.update({
-        where: {
-          id: exercise.id,
-        },
-        data: {
-          name: input.name,
-        },
-        include: {
-          targets: true,
-        },
+      const updated = updateExerciseNameResolver({
+        getExerciseByIdQuery,
+        updateExerciseNameCommand,
+      })({
+        id: input.id,
+        name: input.name,
+        traineeId: ctx.trainee.id,
       });
 
       return updated;
@@ -114,74 +74,14 @@ export const exerciseRouter = router({
     )
     .output(exerciseSchema)
     .mutation(async ({ input, ctx }) => {
-      const currentExerciseData = await prisma.exercise.findUnique({
-        where: {
-          id: input.id,
-        },
-        include: {
-          targets: true,
-        },
-      });
-
-      if (
-        currentExerciseData === null ||
-        (currentExerciseData !== null &&
-          currentExerciseData.traineeId !== ctx.trainee.id)
-      ) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-        });
-      }
-
-      const musclesData = await prisma.muscle.findMany({
-        where: {
-          id: { in: input.targets.map((target) => target.id) },
-        },
-      });
-      const isValidTargets = musclesData.length === input.targets.length;
-
-      if (!isValidTargets) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-        });
-      }
-
-      const updated = await prisma.$transaction(async (tx) => {
-        const deleted = await tx.exercise.update({
-          where: {
-            id: currentExerciseData.id,
-          },
-          data: {
-            targets: {
-              disconnect: currentExerciseData.targets.map((muscle) => ({
-                id: muscle.id,
-              })),
-            },
-          },
-          include: {
-            targets: true,
-          },
-        });
-
-        if (deleted.targets.length !== 0) {
-          throw new Error("更新処理に失敗しました");
-        }
-
-        const updated = await tx.exercise.update({
-          where: {
-            id: currentExerciseData.id,
-          },
-          data: {
-            targets: {
-              connect: input.targets.map((target) => ({ id: target.id })),
-            },
-          },
-          include: {
-            targets: true,
-          },
-        });
-
-        return updated;
+      const updated = await updateExerciseTargetsResolver({
+        getExerciseByIdQuery,
+        getMusclesByIdsQuery,
+        updateExerciseTargetsCommand,
+      })({
+        id: input.id,
+        traineeId: ctx.trainee.id,
+        targetIds: input.targets.map((target) => target.id),
       });
 
       return updated;
@@ -194,28 +94,12 @@ export const exerciseRouter = router({
     )
     .output(exerciseSchema)
     .mutation(async ({ input, ctx }) => {
-      const exercise = await prisma.exercise.findUnique({
-        where: {
-          id: input.id,
-        },
-      });
-
-      if (
-        exercise === null ||
-        (exercise !== null && exercise.traineeId !== ctx.trainee.id)
-      ) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-        });
-      }
-
-      const deleted = await prisma.exercise.delete({
-        where: {
-          id: exercise.id,
-        },
-        include: {
-          targets: true,
-        },
+      const deleted = await deleteExerciseResolver({
+        getExerciseByIdQuery,
+        deleteExerciseCommand,
+      })({
+        id: input.id,
+        traineeId: ctx.trainee.id,
       });
 
       return deleted;
