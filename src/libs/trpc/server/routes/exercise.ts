@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { deleteExerciseCommand } from "@/libs/prisma/commands/delete-exercise-command";
 import { registerExerciseCommand } from "@/libs/prisma/commands/register-exercise-command";
+import { updateExerciseCommand } from "@/libs/prisma/commands/update-exercise-command";
 import { updateExerciseNameCommand } from "@/libs/prisma/commands/update-exercise-name-command";
 import { updateExerciseTargetsCommand } from "@/libs/prisma/commands/update-exercise-targets-command";
 import { getExerciseByIdQuery } from "@/libs/prisma/queries/get-exercise-by-id-query";
@@ -12,8 +13,10 @@ import { exerciseSchema } from "@/features/exercise/exercise";
 
 import { deleteExerciseResolver } from "../resolvers/delete-exercise-resolver/delete-exercise-resolver";
 import { getAllExercisesResolver } from "../resolvers/get-all-exercises-resolver/get-all-exercises-resolver";
+import { getExerciseByIdResolver } from "../resolvers/get-exercise-by-id-resolver/get-exercise-by-id-resolver";
 import { registerExerciseResolver } from "../resolvers/register-exercise-resolver/register-exercise-resolver";
 import { updateExerciseNameResolver } from "../resolvers/update-exercise-name-resolver/update-exercise-name-resolver";
+import { updateExerciseResolver } from "../resolvers/update-exercise-resolver/update-exercise-resolver";
 import { updateExerciseTargetsResolver } from "../resolvers/update-exercise-targets-resolver/update-exercise-targets-resolver";
 import { initializedProcedure, router } from "../trpc";
 
@@ -43,6 +46,47 @@ export const exerciseRouter = router({
       });
 
       return exercises;
+    }),
+  getById: initializedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .output(exerciseSchema)
+    .query(async ({ input, ctx }) => {
+      const exercise = await getExerciseByIdResolver({
+        getExerciseByIdQuery,
+      })({
+        id: input.id,
+        traineeId: ctx.trainee.id,
+      });
+
+      return exercise;
+    }),
+  update: initializedProcedure
+    .input(
+      z
+        .object({
+          id: z.string(),
+          name: z.string(),
+        })
+        .and(exerciseSchema.pick({ targets: true }))
+    )
+    .output(exerciseSchema)
+    .mutation(async ({ input, ctx }) => {
+      const updated = await updateExerciseResolver({
+        getExerciseByIdQuery,
+        getMusclesByIdsQuery,
+        updateExerciseCommand,
+      })({
+        id: input.id,
+        name: input.name,
+        targetIds: input.targets.map((target) => target.id),
+        traineeId: ctx.trainee.id,
+      });
+
+      return updated;
     }),
   updateName: initializedProcedure
     .input(

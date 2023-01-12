@@ -32,7 +32,7 @@ export const RegisterMuscleModal: FC<Props> = (props) => {
   const util = trpc.useContext();
   const registerMuscleMutator = trpc.muscle.register.useMutation({
     onSuccess: () => {
-      util.muscle.invalidate();
+      util.muscle.getAll.invalidate();
       onClose();
     },
   });

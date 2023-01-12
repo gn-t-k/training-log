@@ -16,16 +16,16 @@ import { Muscle } from "@/features/muscle/muscle";
 import { MuscleList } from "@/features/muscle/muscle-list/muscle-list";
 import { RegisterMuscleModal } from "@/features/muscle/register-muscle-modal/register-muscle-modal";
 
-const MusclesContainer: NextPage = () => {
+const Muscles: NextPage = () => {
   return (
     <RequireLogin>
-      <Muscles />
+      <MusclesView />
     </RequireLogin>
   );
 };
-export default MusclesContainer;
+export default Muscles;
 
-const Muscles: FC = () => {
+const MusclesView: FC = () => {
   const [selectedMuscle, setSelectedMuscle] = useState<Muscle | null>(null);
   const {
     isOpen: isRegisterModalOpen,

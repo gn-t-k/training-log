@@ -1,96 +1,104 @@
+import { AddIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import {
   Button,
   Container,
+  Divider,
+  Heading,
   List,
+  Spacer,
   Stack,
   Text,
   UnorderedList,
 } from "@chakra-ui/react";
 import { NextPage } from "next";
-import { MouseEventHandler } from "react";
+import { useRouter } from "next/router";
+import { FC, MouseEventHandler } from "react";
 
+import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
-const Exercises: NextPage = () => {
-  const util = trpc.useContext();
-  const exercisesQuery = trpc.exercise.getAll.useQuery();
-  const registerExerciseMutation = trpc.exercise.register.useMutation({
-    onSuccess: () => {
-      util.exercise.invalidate();
-    },
-  });
-  const updateExerciseNameMutation = trpc.exercise.updateName.useMutation({
-    onSuccess: () => {
-      util.exercise.invalidate();
-    },
-  });
-  const updateExerciseTargetMutation = trpc.exercise.updateTargets.useMutation({
-    onSuccess: () => {
-      util.exercise.invalidate();
-    },
-  });
-  const deleteExerciseMutation = trpc.exercise.delete.useMutation({
-    onSuccess: () => {
-      util.exercise.invalidate();
-    },
-  });
+import { Exercise } from "@/features/exercise/exercise";
 
-  const onClickRegister: MouseEventHandler = (e) => {
+const Exercises: NextPage = () => {
+  const exercisesQuery = trpc.exercise.getAll.useQuery();
+  const router = useRouter();
+
+  const goToRegisterPage: ViewProps["goToRegisterPage"] = (e) => {
     e.preventDefault();
 
-    registerExerciseMutation.mutate({
-      name: `種目${new Date()}`,
-      targets: [{ id: "01GP4JSSDVEXC6RR701TGPYR3N", name: "上腕二頭筋" }],
-    });
+    router.push(pagesPath.exercises.register.$url());
   };
-  const onClickUpdateNameHOF =
-    (id: string): MouseEventHandler =>
-    (e) => {
-      e.preventDefault();
+  const goToEditPageHOF: ViewProps["goToEditPageHOF"] = (id) => (e) => {
+    e.preventDefault();
 
-      updateExerciseNameMutation.mutate({ id, name: `種目${new Date()}` });
-    };
-  const onClickUpdateTargetsHOF =
-    (id: string): MouseEventHandler =>
-    (e) => {
-      e.preventDefault();
+    router.push(pagesPath.exercises._id(id).$url());
+  };
 
-      updateExerciseTargetMutation.mutate({
-        id,
-        targets: [{ id: "01GP7D1JQKK0SZJE2E3CGVQA80", name: "上腕三頭筋" }],
-      });
-    };
-  const onClickDeleteHOF =
-    (id: string): MouseEventHandler =>
-    (e) => {
-      e.preventDefault();
+  switch (exercisesQuery.status) {
+    case "loading":
+      // TODO
+      return <p>種目データを取得中</p>;
+    case "success":
+      return (
+        <ExercisesView
+          exercises={exercisesQuery.data}
+          goToRegisterPage={goToRegisterPage}
+          goToEditPageHOF={goToEditPageHOF}
+        />
+      );
+    case "error":
+      // TODO
+      return <p>種目データの取得に失敗しました</p>;
+  }
+};
+export default Exercises;
 
-      deleteExerciseMutation.mutate({ id });
-    };
-
+type ViewProps = {
+  exercises: Exercise[];
+  goToRegisterPage: MouseEventHandler;
+  goToEditPageHOF: (id: string) => MouseEventHandler;
+};
+const ExercisesView: FC<ViewProps> = (props) => {
   return (
     <Container>
+      <Stack direction="row">
+        <Button>
+          <ChevronLeftIcon />
+        </Button>
+        <Spacer />
+        <Heading>種目</Heading>
+        <Spacer />
+        <Button onClick={props.goToRegisterPage}>
+          <AddIcon />
+        </Button>
+      </Stack>
       <Stack direction="column">
-        <Button onClick={onClickRegister}>登録</Button>
-        {exercisesQuery.status === "success" && (
-          <UnorderedList>
-            {exercisesQuery.data.map((exercise) => (
+        <UnorderedList>
+          {props.exercises.map((exercise) => {
+            const goToEditPage = props.goToEditPageHOF(exercise.id);
+
+            return (
               <List key={exercise.id}>
-                <Text>{exercise.name}</Text>
-                <Text>{exercise.targets.map((target) => target.name)}</Text>
-                <Button onClick={onClickUpdateNameHOF(exercise.id)}>
-                  名前を更新
-                </Button>
-                <Button onClick={onClickUpdateTargetsHOF(exercise.id)}>
-                  種目を更新
-                </Button>
-                <Button onClick={onClickDeleteHOF(exercise.id)}>削除</Button>
+                <Stack direction="column">
+                  <Stack direction="row">
+                    <Stack direction="column">
+                      <Text>{exercise.name}</Text>
+                      <Text>
+                        {exercise.targets.map((target) => target.name)}
+                      </Text>
+                    </Stack>
+                    <Spacer />
+                    <Button onClick={goToEditPage}>
+                      <ChevronRightIcon />
+                    </Button>
+                  </Stack>
+                  <Divider />
+                </Stack>
               </List>
-            ))}
-          </UnorderedList>
-        )}
+            );
+          })}
+        </UnorderedList>
       </Stack>
     </Container>
   );
 };
-export default Exercises;

@@ -1,6 +1,7 @@
 import { EditIcon } from "@chakra-ui/icons";
 import {
   Button,
+  Divider,
   List,
   Spacer,
   Stack,
@@ -44,13 +45,16 @@ export const MuscleListView: FC<ViewProps> = ({ muscles, onClickEditHOF }) => {
       {muscles.map((muscle) => {
         const onClick = onClickEditHOF(muscle);
         return (
-          <List key={muscle.id} mb={4} borderBottom={"2px"}>
-            <Stack direction="row">
-              <Text>{muscle.name}</Text>
-              <Spacer />
-              <Button {...{ onClick }}>
-                <EditIcon />
-              </Button>
+          <List key={muscle.id} mb={4}>
+            <Stack direction="column">
+              <Stack direction="row">
+                <Text>{muscle.name}</Text>
+                <Spacer />
+                <Button {...{ onClick }}>
+                  <EditIcon />
+                </Button>
+              </Stack>
+              <Divider />
             </Stack>
           </List>
         );
