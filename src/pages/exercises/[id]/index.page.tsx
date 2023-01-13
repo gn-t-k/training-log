@@ -12,8 +12,8 @@ import {
 } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { FC, MouseEventHandler } from "react";
-import { SubmitHandler } from "react-hook-form";
+import { FC, MouseEventHandler, ReactElement } from "react";
+import { SubmitHandler, Controller } from "react-hook-form";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
@@ -26,7 +26,7 @@ import {
 import { useGetExerciseId } from "@/features/exercise/use-get-exercise-id";
 import { Muscle } from "@/features/muscle/muscle";
 
-const Exercise: NextPage = () => {
+const ExercisePage: NextPage = () => {
   const id = useGetExerciseId();
   const router = useRouter();
 
@@ -39,7 +39,7 @@ const Exercise: NextPage = () => {
 
   return <ExerciseContainer {...{ id }} />;
 };
-export default Exercise;
+export default ExercisePage;
 
 type ContainerProps = {
   id: string;
@@ -105,17 +105,16 @@ type ViewProps = {
   updateExercise: (exercise: Exercise) => void;
   deleteExercise: (id: string) => void;
 };
-const ExerciseView: FC<ViewProps> = (props) => {
+export const ExerciseView: FC<ViewProps> = (props) => {
   const {
     handleSubmit,
     formState: { errors },
     register,
-    getValues,
+    control,
   } = useExerciseForm({
     name: props.exercise.name,
     muscleIds: props.exercise.targets.map((t) => t.id),
   });
-  console.log({ values: getValues() });
 
   const onSubmit: SubmitHandler<ExerciseField> = (formValue) => {
     const targets = formValue.muscleIds.flatMap((id) => {
@@ -148,26 +147,22 @@ const ExerciseView: FC<ViewProps> = (props) => {
           </FormControl>
           <FormControl isInvalid={!!errors.muscleIds}>
             <FormLabel>この種目で鍛えられる部位</FormLabel>
-            <CheckboxGroup>
-              <Stack direction="column">
-                {props.targets.map((target) => {
-                  // TODO
-                  const isChecked =
-                    props.exercise.targets.find((t) => t.id === target.id) !==
-                    undefined;
-
-                  return (
-                    <Checkbox
-                      key={target.id}
-                      value={target.id}
-                      {...register("muscleIds")}
-                    >
-                      {target.name}
-                    </Checkbox>
-                  );
-                })}
-              </Stack>
-            </CheckboxGroup>
+            <Controller
+              control={control}
+              name="muscleIds"
+              render={({ field }): ReactElement => (
+                // FIXME: forwardRef使えエラーが出る
+                <CheckboxGroup {...field}>
+                  <Stack direction="column">
+                    {props.targets.map((target) => (
+                      <Checkbox key={target.id} value={target.id}>
+                        {target.name}
+                      </Checkbox>
+                    ))}
+                  </Stack>
+                </CheckboxGroup>
+              )}
+            />
             {!!errors.muscleIds && (
               <FormErrorMessage>{errors.muscleIds.message}</FormErrorMessage>
             )}
