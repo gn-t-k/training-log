@@ -1,3 +1,4 @@
+import { Button, Container, Stack } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -22,10 +23,13 @@ const IndexPage: NextPage = () => {
       return <p>セッション情報を取得中</p>;
     case "authenticated":
       return (
-        <div>
-          <p>session: {JSON.stringify(session.data)}</p>
-          <button onClick={onClickLogout}>ログアウト</button>
-        </div>
+        <Container>
+          <Stack direction="column">
+            <Link href={pagesPath.muscles.$url()}>部位</Link>
+            <Link href={pagesPath.exercises.$url()}>種目</Link>
+            <Button onClick={onClickLogout}>ログアウト</Button>
+          </Stack>
+        </Container>
       );
     case "unauthenticated":
       return <Link href={pagesPath.login.$url()}>ログインページ</Link>;

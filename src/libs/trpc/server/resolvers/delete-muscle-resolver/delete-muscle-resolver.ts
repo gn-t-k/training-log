@@ -18,10 +18,10 @@ export const deleteMuscleResolver: DeleteMuscleResolver =
   (deps) => async (props) => {
     const muscleData = await deps.getMuscleByIdQuery({ id: props.id });
 
-    const isOtherTraineesMuscle =
-      muscleData !== null && muscleData.traineeId !== props.traineeId;
+    const isOwnMuscle =
+      muscleData !== null && muscleData.traineeId === props.traineeId;
 
-    if (muscleData === null || isOtherTraineesMuscle) {
+    if (muscleData === null || !isOwnMuscle) {
       throw new TRPCError({
         code: "NOT_FOUND",
       });

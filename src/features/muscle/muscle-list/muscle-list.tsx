@@ -1,8 +1,10 @@
 import { EditIcon } from "@chakra-ui/icons";
 import {
   Button,
+  Divider,
   List,
   Spacer,
+  Spinner,
   Stack,
   Text,
   UnorderedList,
@@ -26,7 +28,13 @@ export const MuscleList: FC<Props> = ({ onClickEditHOF }) => {
     case "success": {
       const muscles = musclesQuery.data;
 
-      return <MuscleListView {...{ muscles, onClickEditHOF }} />;
+      return (
+        <MuscleListView
+          muscles={muscles}
+          onClickEditHOF={onClickEditHOF}
+          isFetching={musclesQuery.isFetching}
+        />
+      );
     }
     case "error":
       // TODO
@@ -37,24 +45,35 @@ export const MuscleList: FC<Props> = ({ onClickEditHOF }) => {
 type ViewProps = {
   muscles: Muscle[];
   onClickEditHOF: Props["onClickEditHOF"];
+  isFetching: boolean;
 };
-export const MuscleListView: FC<ViewProps> = ({ muscles, onClickEditHOF }) => {
+export const MuscleListView: FC<ViewProps> = ({
+  muscles,
+  onClickEditHOF,
+  isFetching,
+}) => {
   return (
-    <UnorderedList>
-      {muscles.map((muscle) => {
-        const onClick = onClickEditHOF(muscle);
-        return (
-          <List key={muscle.id} mb={4} borderBottom={"2px"}>
-            <Stack direction="row">
-              <Text>{muscle.name}</Text>
-              <Spacer />
-              <Button {...{ onClick }}>
-                <EditIcon />
-              </Button>
-            </Stack>
-          </List>
-        );
-      })}
-    </UnorderedList>
+    <Stack direction="column">
+      {isFetching && <Spinner />}
+      <UnorderedList>
+        {muscles.map((muscle) => {
+          const onClick = onClickEditHOF(muscle);
+          return (
+            <List key={muscle.id} mb={4}>
+              <Stack direction="column">
+                <Stack direction="row">
+                  <Text>{muscle.name}</Text>
+                  <Spacer />
+                  <Button {...{ onClick }}>
+                    <EditIcon />
+                  </Button>
+                </Stack>
+                <Divider />
+              </Stack>
+            </List>
+          );
+        })}
+      </UnorderedList>
+    </Stack>
   );
 };

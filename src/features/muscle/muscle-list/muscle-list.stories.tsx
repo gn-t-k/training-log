@@ -33,6 +33,7 @@ const Template: Story = {
         },
       ],
       onClickEditHOF: props.onClickEditHOF ?? dummyOnClickHOF,
+      isFetching: props.isFetching ?? false,
     };
 
     return <MuscleListView {...args} />;
