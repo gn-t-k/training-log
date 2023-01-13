@@ -45,13 +45,13 @@ export const EditMuscleModal: FC<Props> = (props) => {
   );
   const updateMuscleMutator = trpc.muscle.updateName.useMutation({
     onSuccess: () => {
-      util.muscle.getAll.invalidate();
+      util.muscle.invalidate();
       onClose();
     },
   });
   const deleteMuscleMutator = trpc.muscle.delete.useMutation({
     onSuccess: () => {
-      util.muscle.getAll.invalidate();
+      util.muscle.invalidate();
       onClose();
     },
   });

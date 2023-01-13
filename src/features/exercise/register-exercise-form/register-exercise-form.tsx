@@ -24,7 +24,7 @@ export const RegisterExerciseForm: FC = () => {
   const musclesQuery = trpc.muscle.getAll.useQuery();
   const registerExerciseMutation = trpc.exercise.register.useMutation({
     onSuccess: () => {
-      util.exercise.getAll.invalidate();
+      util.exercise.invalidate();
       router.push(pagesPath.exercises.$url());
     },
   });

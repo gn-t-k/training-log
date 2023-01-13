@@ -6,6 +6,7 @@ import {
   Heading,
   List,
   Spacer,
+  Spinner,
   Stack,
   Text,
   UnorderedList,
@@ -23,15 +24,14 @@ const Exercises: NextPage = () => {
   const exercisesQuery = trpc.exercise.getAll.useQuery();
   const router = useRouter();
 
-  const goToRegisterPage: ViewProps["goToRegisterPage"] = (e) => {
-    e.preventDefault();
-
+  const goToRegisterPage: ViewProps["goToRegisterPage"] = () => {
     router.push(pagesPath.exercises.register.$url());
   };
-  const goToEditPageHOF: ViewProps["goToEditPageHOF"] = (id) => (e) => {
-    e.preventDefault();
-
+  const goToEditPageHOF: ViewProps["goToEditPageHOF"] = (id) => () => {
     router.push(pagesPath.exercises._id(id).$url());
+  };
+  const goToTopPage: ViewProps["goToTopPage"] = () => {
+    router.push(pagesPath.$url());
   };
 
   switch (exercisesQuery.status) {
@@ -44,6 +44,8 @@ const Exercises: NextPage = () => {
           exercises={exercisesQuery.data}
           goToRegisterPage={goToRegisterPage}
           goToEditPageHOF={goToEditPageHOF}
+          goToTopPage={goToTopPage}
+          isFetching={exercisesQuery.isFetching}
         />
       );
     case "error":
@@ -55,27 +57,44 @@ export default Exercises;
 
 type ViewProps = {
   exercises: Exercise[];
-  goToRegisterPage: MouseEventHandler;
-  goToEditPageHOF: (id: string) => MouseEventHandler;
+  goToRegisterPage: () => void;
+  goToEditPageHOF: (id: string) => () => void;
+  goToTopPage: () => void;
+  isFetching: boolean;
 };
 const ExercisesView: FC<ViewProps> = (props) => {
+  const goToRegisterPage: MouseEventHandler = (e) => {
+    e.preventDefault();
+
+    props.goToRegisterPage();
+  };
+  const goToTopPage: MouseEventHandler = (e) => {
+    e.preventDefault();
+
+    props.goToTopPage();
+  };
+
   return (
     <Container>
       <Stack direction="row">
-        <Button>
+        <Button onClick={goToTopPage}>
           <ChevronLeftIcon />
         </Button>
         <Spacer />
         <Heading>種目</Heading>
         <Spacer />
-        <Button onClick={props.goToRegisterPage}>
+        <Button onClick={goToRegisterPage}>
           <AddIcon />
         </Button>
       </Stack>
       <Stack direction="column">
+        {props.isFetching && <Spinner />}
         <UnorderedList>
           {props.exercises.map((exercise) => {
-            const goToEditPage = props.goToEditPageHOF(exercise.id);
+            const goToEditPage: MouseEventHandler = (e) => {
+              e.preventDefault();
+              props.goToEditPageHOF(exercise.id)();
+            };
 
             return (
               <List key={exercise.id}>

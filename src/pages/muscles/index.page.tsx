@@ -8,7 +8,10 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { NextPage } from "next";
+import { useRouter } from "next/router";
 import { ComponentProps, FC, MouseEventHandler, useState } from "react";
+
+import { pagesPath } from "@/libs/pathpida/$path";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { EditMuscleModal } from "@/features/muscle/edit-muscle-modal/edit-muscle-modal";
@@ -17,15 +20,23 @@ import { MuscleList } from "@/features/muscle/muscle-list/muscle-list";
 import { RegisterMuscleModal } from "@/features/muscle/register-muscle-modal/register-muscle-modal";
 
 const Muscles: NextPage = () => {
+  const router = useRouter();
+  const goToTopPage: Props["goToTopPage"] = () => {
+    router.push(pagesPath.$url());
+  };
+
   return (
     <RequireLogin>
-      <MusclesView />
+      <MusclesView goToTopPage={goToTopPage} />
     </RequireLogin>
   );
 };
 export default Muscles;
 
-const MusclesView: FC = () => {
+type Props = {
+  goToTopPage: () => void;
+};
+const MusclesView: FC<Props> = (props) => {
   const [selectedMuscle, setSelectedMuscle] = useState<Muscle | null>(null);
   const {
     isOpen: isRegisterModalOpen,
@@ -66,6 +77,11 @@ const MusclesView: FC = () => {
           onClose: onEditModalClose,
           isOpen: false,
         };
+  const goToTopPage: MouseEventHandler = (e) => {
+    e.preventDefault();
+
+    props.goToTopPage();
+  };
 
   return (
     <Container>
@@ -75,7 +91,7 @@ const MusclesView: FC = () => {
         />
         <EditMuscleModal {...editMuscleModalArgs} />
         <Stack direction="row">
-          <Button>
+          <Button onClick={goToTopPage}>
             <ChevronLeftIcon />
           </Button>
           <Spacer />

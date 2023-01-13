@@ -1,3 +1,4 @@
+import { ChevronLeftIcon } from "@chakra-ui/icons";
 import {
   Button,
   Checkbox,
@@ -8,15 +9,19 @@ import {
   FormLabel,
   Heading,
   Input,
+  Spinner,
   Stack,
+  useToast,
 } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { FC, MouseEventHandler, ReactElement } from "react";
+import { FC, MouseEventHandler, ReactElement, useEffect } from "react";
 import { SubmitHandler, Controller } from "react-hook-form";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
+
+import { MutationState } from "@/utils/mutation-state";
 
 import { Exercise } from "@/features/exercise/exercise";
 import {
@@ -53,13 +58,13 @@ const ExerciseContainer: FC<ContainerProps> = (props) => {
   const musclesQuery = trpc.muscle.getAll.useQuery();
   const updateExerciseMutation = trpc.exercise.update.useMutation({
     onSuccess: () => {
-      util.exercise.getAll.invalidate;
+      util.exercise.invalidate();
       router.push(pagesPath.exercises.$url());
     },
   });
   const deleteExerciseMutation = trpc.exercise.delete.useMutation({
     onSuccess: () => {
-      util.exercise.getAll.invalidate;
+      util.exercise.invalidate();
       router.push(pagesPath.exercises.$url());
     },
   });
@@ -69,6 +74,9 @@ const ExerciseContainer: FC<ContainerProps> = (props) => {
   };
   const deleteExercise: ViewProps["deleteExercise"] = (id) => {
     deleteExerciseMutation.mutate({ id });
+  };
+  const goToExercisesPage: ViewProps["goToExercisesPage"] = () => {
+    router.push(pagesPath.exercises.$url());
   };
 
   switch (exerciseQuery.status) {
@@ -95,6 +103,9 @@ const ExerciseContainer: FC<ContainerProps> = (props) => {
       targets={musclesQuery.data}
       updateExercise={updateExercise}
       deleteExercise={deleteExercise}
+      updateExerciseStatus={updateExerciseMutation.status}
+      deleteExerciseStatus={deleteExerciseMutation.status}
+      goToExercisesPage={goToExercisesPage}
     />
   );
 };
@@ -104,6 +115,9 @@ type ViewProps = {
   targets: Muscle[];
   updateExercise: (exercise: Exercise) => void;
   deleteExercise: (id: string) => void;
+  updateExerciseStatus: MutationState;
+  deleteExerciseStatus: MutationState;
+  goToExercisesPage: () => void;
 };
 export const ExerciseView: FC<ViewProps> = (props) => {
   const {
@@ -115,6 +129,45 @@ export const ExerciseView: FC<ViewProps> = (props) => {
     name: props.exercise.name,
     muscleIds: props.exercise.targets.map((t) => t.id),
   });
+  const toast = useToast();
+  useEffect(() => {
+    switch (props.updateExerciseStatus) {
+      case "idle":
+      case "loading":
+        return;
+      case "success":
+        toast({
+          title: "種目の変更を保存しました",
+          status: "success",
+        });
+        return;
+      case "error":
+        toast({
+          title: "種目の変更の保存に失敗しました",
+          status: "error",
+        });
+        return;
+    }
+  }, [props.updateExerciseStatus, toast]);
+  useEffect(() => {
+    switch (props.deleteExerciseStatus) {
+      case "idle":
+      case "loading":
+        return;
+      case "success":
+        toast({
+          title: "種目を削除しました",
+          status: "success",
+        });
+        return;
+      case "error":
+        toast({
+          title: "種目の削除に失敗しました",
+          status: "error",
+        });
+        return;
+    }
+  }, [props.deleteExerciseStatus, toast]);
 
   const onSubmit: SubmitHandler<ExerciseField> = (formValue) => {
     const targets = formValue.muscleIds.flatMap((id) => {
@@ -133,19 +186,31 @@ export const ExerciseView: FC<ViewProps> = (props) => {
 
     props.deleteExercise(props.exercise.id);
   };
+  const isLoading =
+    props.updateExerciseStatus === "loading" ||
+    props.deleteExerciseStatus === "loading";
+  const goToExercisesPage: MouseEventHandler = (e) => {
+    e.preventDefault();
+
+    props.goToExercisesPage();
+  };
+
   return (
     <Container>
+      <Button onClick={goToExercisesPage}>
+        <ChevronLeftIcon />
+      </Button>
       <Heading>種目を編集</Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack direction="column">
-          <FormControl isInvalid={!!errors.name}>
+          <FormControl isInvalid={!!errors.name} isDisabled={isLoading}>
             <FormLabel>種目の名前</FormLabel>
             <Input {...register("name")} />
             {!!errors.name && (
               <FormErrorMessage>{errors.name.message}</FormErrorMessage>
             )}
           </FormControl>
-          <FormControl isInvalid={!!errors.muscleIds}>
+          <FormControl isInvalid={!!errors.muscleIds} isDisabled={isLoading}>
             <FormLabel>この種目で鍛えられる部位</FormLabel>
             <Controller
               control={control}
@@ -167,8 +232,12 @@ export const ExerciseView: FC<ViewProps> = (props) => {
               <FormErrorMessage>{errors.muscleIds.message}</FormErrorMessage>
             )}
           </FormControl>
-          <Button type="submit">変更を保存</Button>
-          <Button onClick={onClickDelete}>種目を削除</Button>
+          <Button type="submit" isDisabled={isLoading}>
+            {isLoading ? <Spinner /> : "変更を保存"}
+          </Button>
+          <Button onClick={onClickDelete} isDisabled={isLoading}>
+            {isLoading ? <Spinner /> : "種目を削除"}
+          </Button>
         </Stack>
       </form>
     </Container>

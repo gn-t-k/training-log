@@ -1,6 +1,9 @@
 import { action } from "@storybook/addon-actions";
 import { ComponentMeta, ComponentStoryObj } from "@storybook/react";
-import { ComponentProps, FC } from "react";
+import { ComponentProps, FC, useState } from "react";
+
+import { MutationState } from "@/utils/mutation-state";
+import { sleep } from "@/utils/sleep";
 
 import { ExerciseView } from "./index.page";
 
@@ -14,11 +17,29 @@ const componentMeta: Meta = {
 export default componentMeta;
 
 const Wrapper: FC<Partial<Props>> = (props) => {
+  const [updateMutationStatus, setUpdateMutationStatus] =
+    useState<MutationState>("idle");
+  const [deleteMutationStatus, setDeleteMutationStatus] =
+    useState<MutationState>("idle");
+
   const dummyUpdateExercise: Props["updateExercise"] = (exercise) => {
-    action("update exercise")(exercise);
+    (async (): Promise<void> => {
+      setUpdateMutationStatus("loading");
+      await sleep(1000);
+      action("update exercise")(exercise);
+      setUpdateMutationStatus("success");
+    })();
   };
   const dummyDeleteExercise: Props["deleteExercise"] = (id) => {
-    action("delete exercise")(id);
+    (async (): Promise<void> => {
+      setDeleteMutationStatus("loading");
+      await sleep(1000);
+      action("delete exercise")(id);
+      setDeleteMutationStatus("success");
+    })();
+  };
+  const dummyGoToExercisesPage: Props["goToExercisesPage"] = () => {
+    action("go to exercises page")();
   };
   const args: Props = {
     exercise: props.exercise ?? {
@@ -51,6 +72,9 @@ const Wrapper: FC<Partial<Props>> = (props) => {
     ],
     updateExercise: props.updateExercise ?? dummyUpdateExercise,
     deleteExercise: props.deleteExercise ?? dummyDeleteExercise,
+    updateExerciseStatus: props.updateExerciseStatus ?? updateMutationStatus,
+    deleteExerciseStatus: props.deleteExerciseStatus ?? deleteMutationStatus,
+    goToExercisesPage: props.goToExercisesPage ?? dummyGoToExercisesPage,
   };
 
   return <ExerciseView {...args} />;
