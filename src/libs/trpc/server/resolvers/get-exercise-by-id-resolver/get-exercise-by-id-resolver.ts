@@ -20,9 +20,10 @@ export const getExerciseByIdResolver: GetExerciseByIdResolver =
       id: props.id,
     });
 
-    const isOtherTraineesExercise =
-      exerciseData !== null && exerciseData.traineeId !== props.traineeId;
-    if (exerciseData === null || isOtherTraineesExercise) {
+    const isOwnExercise =
+      exerciseData !== null && exerciseData.traineeId === props.traineeId;
+
+    if (exerciseData === null || !isOwnExercise) {
       throw new TRPCError({
         code: "NOT_FOUND",
       });

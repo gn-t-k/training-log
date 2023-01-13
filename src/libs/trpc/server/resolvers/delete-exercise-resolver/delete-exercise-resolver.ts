@@ -20,10 +20,10 @@ export const deleteExerciseResolver: DeleteExerciseResolver =
   (deps) => async (props) => {
     const exerciseData = await deps.getExerciseByIdQuery({ id: props.id });
 
-    const isOtherTraineesExercise =
-      exerciseData !== null && exerciseData.traineeId !== props.traineeId;
+    const isOwnExercise =
+      exerciseData !== null && exerciseData.traineeId === props.traineeId;
 
-    if (exerciseData === null || isOtherTraineesExercise) {
+    if (exerciseData === null || !isOwnExercise) {
       throw new TRPCError({
         code: "NOT_FOUND",
       });

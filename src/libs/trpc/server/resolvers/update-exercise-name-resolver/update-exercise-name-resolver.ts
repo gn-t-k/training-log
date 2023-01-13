@@ -21,9 +21,10 @@ export const updateExerciseNameResolver: UpdateExerciseNameResolver =
   (deps) => async (props) => {
     const exerciseData = await deps.getExerciseByIdQuery({ id: props.id });
 
-    const isOtherTraineesMuscle =
-      exerciseData !== null && exerciseData.traineeId !== props.traineeId;
-    if (exerciseData === null || isOtherTraineesMuscle) {
+    const isOwnMuscle =
+      exerciseData !== null && exerciseData.traineeId === props.traineeId;
+
+    if (exerciseData === null || !isOwnMuscle) {
       throw new TRPCError({
         code: "NOT_FOUND",
       });

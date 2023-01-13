@@ -24,11 +24,11 @@ export const updateExerciseTargetsResolver: UpdateExerciseTargetsResolver =
     const currentExerciseData = await deps.getExerciseByIdQuery({
       id: props.id,
     });
-    const isOtherTraineesExercise =
+    const isOwnExercise =
       currentExerciseData !== null &&
-      currentExerciseData.traineeId !== props.traineeId;
+      currentExerciseData.traineeId === props.traineeId;
 
-    if (currentExerciseData === null || isOtherTraineesExercise) {
+    if (currentExerciseData === null || !isOwnExercise) {
       throw new TRPCError({
         code: "NOT_FOUND",
       });
