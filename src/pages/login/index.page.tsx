@@ -10,9 +10,15 @@ const Login: NextPage = () => {
   const session = useSession();
 
   useEffect(() => {
-    if (session.status === "authenticated") {
+    let ignore = false;
+
+    if (!ignore && session.status === "authenticated") {
       router.push(pagesPath.logged_in.$url());
     }
+
+    return () => {
+      ignore = true;
+    };
   }, [router, session.status]);
 
   const onClick: MouseEventHandler = async (e) => {
