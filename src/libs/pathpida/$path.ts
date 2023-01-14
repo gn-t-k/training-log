@@ -20,6 +20,9 @@ export const pagesPath = {
   "onboarding": {
     $url: (url?: { hash?: string }) => ({ pathname: '/onboarding' as const, hash: url?.hash })
   },
+  "trainings": {
+    $url: (url?: { hash?: string }) => ({ pathname: '/trainings' as const, hash: url?.hash })
+  },
   $url: (url?: { hash?: string }) => ({ pathname: '/' as const, hash: url?.hash })
 }
 
