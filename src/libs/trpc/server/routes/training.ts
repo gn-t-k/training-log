@@ -12,21 +12,17 @@ import { initializedProcedure, router } from "../trpc";
 export const trainingRouter = router({
   register: initializedProcedure
     .input(trainingSchema.omit({ id: true }))
-    .output(trainingSchema)
     .mutation(async ({ input, ctx }) => {
-      const registered = await registerTrainingResolver({
+      await registerTrainingResolver({
         registerTrainingCommand,
       })({
         traineeId: ctx.trainee.id,
         todaysDate: input.createdAt,
-        trainingSets: input.trainingSets.map((trainingSet) => ({
-          exerciseId: trainingSet.exercise.id,
-          weight: trainingSet.weight,
-          repetition: trainingSet.repetition,
+        exercises: input.exercises.map((exercise) => ({
+          exercise: exercise.exercise,
+          sets: exercise.sets,
         })),
       });
-
-      return registered;
     }),
   getMonthlyTrainings: initializedProcedure
     .input(z.object({ year: z.number(), month: z.number() }))

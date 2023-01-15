@@ -1,4 +1,3 @@
-import { Exercise, Muscle, Training, TrainingSet } from "@prisma/client";
 import { ulid } from "ulid";
 
 import prisma from "../client";
@@ -6,50 +5,57 @@ import prisma from "../client";
 export type RegisterTrainingCommand = (props: {
   traineeId: string;
   todaysDate: Date;
-  trainingSets: {
+  exercises: {
     exerciseId: string;
-    weight: number;
-    repetition: number;
+    sets: {
+      weight: number;
+      repetition: number;
+    }[];
   }[];
-}) => Promise<
-  Training & {
-    trainingSets: (TrainingSet & {
-      exercise: Exercise & { targets: Muscle[] };
-    })[];
-  }
->;
+}) => Promise<void>;
 export const registerTrainingCommand: RegisterTrainingCommand = async (
   props
 ) => {
-  const registered = await prisma.training.create({
-    data: {
-      id: ulid(),
-      traineeId: props.traineeId,
-      createdAt: props.todaysDate,
-      updatedAt: props.todaysDate,
-      trainingSets: {
-        createMany: {
-          data: props.trainingSets.map((trainingSet) => ({
-            id: ulid(),
-            exerciseId: trainingSet.exerciseId,
-            weight: trainingSet.weight,
-            repetition: trainingSet.weight,
-          })),
-        },
-      },
-    },
-    include: {
-      trainingSets: {
-        include: {
-          exercise: {
-            include: {
-              targets: true,
-            },
-          },
-        },
-      },
-    },
-  });
+  await prisma.$transaction(async (tx) => {
+    const trainingId = ulid();
 
-  return registered;
+    await tx.training.create({
+      data: {
+        id: trainingId,
+        createdAt: props.todaysDate,
+        updatedAt: props.todaysDate,
+        traineeId: props.traineeId,
+      },
+    });
+
+    const trainingExerciseIdMap = props.exercises.map((exercise) => ({
+      exerciseId: exercise.exerciseId,
+      trainingExerciseId: ulid(),
+    }));
+
+    await tx.trainingExercise.createMany({
+      data: trainingExerciseIdMap.map((v) => ({
+        trainingId,
+        id: v.trainingExerciseId,
+        exerciseId: v.exerciseId,
+      })),
+    });
+
+    await tx.trainingExerciseSet.createMany({
+      data: props.exercises.flatMap((exercise) => {
+        const trainingExerciseId = trainingExerciseIdMap.find(
+          (v) => v.exerciseId === exercise.exerciseId
+        )?.trainingExerciseId;
+
+        return trainingExerciseId
+          ? exercise.sets.map((set) => ({
+              id: ulid(),
+              trainingExerciseId,
+              weight: set.weight,
+              repetition: set.repetition,
+            }))
+          : [];
+      }),
+    });
+  });
 };

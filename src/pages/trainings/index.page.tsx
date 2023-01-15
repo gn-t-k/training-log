@@ -20,15 +20,20 @@ export default TrainingsPage;
 const Trainings: FC = () => {
   const today = new Date();
   const [thisYear, thisMonth] = [getYear(today), getMonth(today)];
+  const util = trpc.useContext();
   const getTrainingsQuery = trpc.training.getMonthlyTrainings.useQuery({
     year: thisYear,
     month: thisMonth,
   });
-  const registerTrainingMutation = trpc.training.register.useMutation();
+  const registerTrainingMutation = trpc.training.register.useMutation({
+    onSuccess: () => {
+      util.training.invalidate();
+    },
+  });
   const registerTraining: ViewProps["registerTraining"] = (training) => {
     registerTrainingMutation.mutate({
-      trainingSets: training.trainingSets,
       createdAt: training.createdAt,
+      exercises: training.exercises,
     });
   };
 
@@ -58,7 +63,8 @@ const TrainingsView: FC<ViewProps> = (props) => {
     e.preventDefault();
 
     props.registerTraining({
-      trainingSets: [
+      createdAt: new Date(2020, 0),
+      exercises: [
         {
           exercise: {
             id: "01GPSAEFGBEMS8YRPCJ45E2EJX",
@@ -70,11 +76,40 @@ const TrainingsView: FC<ViewProps> = (props) => {
               },
             ],
           },
-          weight: 10,
-          repetition: 20,
+          sets: [
+            {
+              weight: 10,
+              repetition: 20,
+            },
+            {
+              weight: 10,
+              repetition: 20,
+            },
+          ],
+        },
+        {
+          exercise: {
+            id: "01GPVPNA3JXP7D7191FXV83AWM",
+            name: "	ベンチプレス",
+            targets: [
+              {
+                id: "01GP10MPJ7SFD1K26CZ9KZMTA1",
+                name: "大胸筋",
+              },
+            ],
+          },
+          sets: [
+            {
+              weight: 60,
+              repetition: 10,
+            },
+            {
+              weight: 60,
+              repetition: 10,
+            },
+          ],
         },
       ],
-      createdAt: new Date(),
     });
   };
   return (
@@ -92,11 +127,17 @@ const TrainingsView: FC<ViewProps> = (props) => {
               {year}年{month}月{date}日
             </Text>
             <Stack direction="column">
-              {training.trainingSets.map((set, index) => (
-                <Stack key={index} direction="row">
-                  <Text>{set.exercise.name}</Text>
-                  <Text>{set.weight}kg</Text>
-                  <Text>{set.repetition}回</Text>
+              {training.exercises.map((exercise) => (
+                <Stack key={exercise.exercise.id}>
+                  <Text>{exercise.exercise.name}</Text>
+                  <Stack direction="column">
+                    {exercise.sets.map((set, index) => (
+                      <Stack key={index} direction="row">
+                        <Text>{set.weight}kg</Text>
+                        <Text>{set.repetition} rep</Text>
+                      </Stack>
+                    ))}
+                  </Stack>
                 </Stack>
               ))}
             </Stack>

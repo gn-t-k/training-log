@@ -93,7 +93,7 @@ model Exercise {
   traineeId String
 
   targets Muscle[]
-  trainings TrainingSet[]
+  trainingExercises TrainingExercise[]
 
   trainee Trainee @relation(fields: [traineeId], references: [id])
 
@@ -108,22 +108,33 @@ model Training {
   traineeId String
 
   trainee Trainee @relation(fields: [traineeId], references: [id])
-
-  trainingSets TrainingSet[]
+  exercises TrainingExercise[]
 
   @@index([traineeId])
 }
 
-model TrainingSet {
+model TrainingExercise {
   id String @id
-  weight Int
-  repetition Int
   trainingId String
   exerciseId String
+
+  sets TrainingExerciseSet[]
 
   training Training @relation(fields: [trainingId], references: [id])
   exercise Exercise @relation(fields: [exerciseId], references: [id])
 
   @@index([trainingId])
   @@index([exerciseId])
+  @@unique([trainingId, exerciseId])
+}
+
+model TrainingExerciseSet {
+  id String @id
+  trainingExerciseId String
+  weight Int
+  repetition Int
+
+  trainingExercise TrainingExercise @relation(fields: [trainingExerciseId], references: [id])
+
+  @@index([trainingExerciseId])
 }
