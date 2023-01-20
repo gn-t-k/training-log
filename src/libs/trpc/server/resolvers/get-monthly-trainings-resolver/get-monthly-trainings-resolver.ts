@@ -36,15 +36,5 @@ export const getMonthlyTrainingsResolver: GetMonthlyTrainingsResolver =
       traineeId: props.traineeId,
     });
 
-    return trainingsData.map((training) => ({
-      id: training.id,
-      createdAt: training.createdAt,
-      exercises: training.exercises.map((exercise) => ({
-        exercise: exercise.exercise,
-        sets: exercise.sets.map((set) => ({
-          weight: set.weight,
-          repetition: set.repetition,
-        })),
-      })),
-    }));
+    return trainingsData;
   };

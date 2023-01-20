@@ -4,6 +4,10 @@ import { NextPage } from "next";
 import { FC, MouseEventHandler } from "react";
 
 import { trpc } from "@/libs/trpc/client/trpc";
+import {
+  RegisterTrainingInput,
+  UpdateTrainingInput,
+} from "@/libs/trpc/server/routes/training";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { Training } from "@/features/training/training";
@@ -30,11 +34,24 @@ const Trainings: FC = () => {
       util.training.invalidate();
     },
   });
-  const registerTraining: ViewProps["registerTraining"] = (training) => {
-    registerTrainingMutation.mutate({
-      createdAt: training.createdAt,
-      exercises: training.exercises,
-    });
+  const updateTrainingMutation = trpc.training.updateTraining.useMutation({
+    onSuccess: () => {
+      util.training.invalidate();
+    },
+  });
+  const deleteTrainingMutation = trpc.training.deleteTraining.useMutation({
+    onSuccess: () => {
+      util.training.invalidate();
+    },
+  });
+  const registerTraining: ViewProps["registerTraining"] = (props) => {
+    registerTrainingMutation.mutate(props);
+  };
+  const updateTraining: ViewProps["updateTraining"] = (props) => {
+    updateTrainingMutation.mutate(props);
+  };
+  const deleteTraining: ViewProps["deleteTraining"] = (props) => {
+    deleteTrainingMutation.mutate(props);
   };
 
   switch (getTrainingsQuery.status) {
@@ -46,6 +63,8 @@ const Trainings: FC = () => {
         <TrainingsView
           trainings={getTrainingsQuery.data}
           registerTraining={registerTraining}
+          updateTraining={updateTraining}
+          deleteTraining={deleteTraining}
         />
       );
     case "error":
@@ -56,15 +75,16 @@ const Trainings: FC = () => {
 
 type ViewProps = {
   trainings: Training[];
-  registerTraining: (training: Omit<Training, "id">) => void;
+  registerTraining: (props: RegisterTrainingInput) => void;
+  updateTraining: (props: UpdateTrainingInput) => void;
+  deleteTraining: (props: { id: string }) => void;
 };
 const TrainingsView: FC<ViewProps> = (props) => {
   const onClickRegister: MouseEventHandler = (e) => {
     e.preventDefault();
 
     props.registerTraining({
-      createdAt: new Date(2020, 0),
-      exercises: [
+      records: [
         {
           exercise: {
             id: "01GPSAEFGBEMS8YRPCJ45E2EJX",
@@ -85,33 +105,42 @@ const TrainingsView: FC<ViewProps> = (props) => {
               weight: 10,
               repetition: 20,
             },
+            {
+              weight: 10,
+              repetition: 20,
+            },
           ],
         },
         {
           exercise: {
             id: "01GPVPNA3JXP7D7191FXV83AWM",
-            name: "	ベンチプレス",
+            name: "ベンチプレス",
             targets: [
               {
-                id: "01GP10MPJ7SFD1K26CZ9KZMTA1",
+                id: "01GPVPMNJ18V7X7FDWN7MRJ7CQ",
                 name: "大胸筋",
               },
             ],
           },
           sets: [
             {
-              weight: 60,
-              repetition: 10,
+              weight: 70,
+              repetition: 6,
             },
             {
-              weight: 60,
-              repetition: 10,
+              weight: 70,
+              repetition: 6,
+            },
+            {
+              weight: 70,
+              repetition: 6,
             },
           ],
         },
       ],
     });
   };
+
   return (
     <Container>
       <Button onClick={onClickRegister}>トレーニングを登録</Button>
@@ -121,17 +150,74 @@ const TrainingsView: FC<ViewProps> = (props) => {
           getMonth(training.createdAt) + 1,
           getDate(training.createdAt),
         ];
+        const onClickUpdate: MouseEventHandler = (e) => {
+          e.preventDefault();
+
+          props.updateTraining({
+            trainingId: training.id,
+            records: [
+              {
+                exercise: {
+                  id: "01GPSAEFGBEMS8YRPCJ45E2EJX",
+                  name: "アームカール",
+                  targets: [
+                    {
+                      id: "01GPSAE03ZEAC9411KZ2HBRHH0",
+                      name: "上腕二頭筋",
+                    },
+                  ],
+                },
+                sets: [
+                  {
+                    weight: 10,
+                    repetition: 20,
+                  },
+                ],
+              },
+              {
+                exercise: {
+                  id: "01GPVPNA3JXP7D7191FXV83AWM",
+                  name: "ベンチプレス",
+                  targets: [
+                    {
+                      id: "01GPVPMNJ18V7X7FDWN7MRJ7CQ",
+                      name: "大胸筋",
+                    },
+                  ],
+                },
+                sets: [
+                  {
+                    weight: 70,
+                    repetition: 6,
+                  },
+                ],
+              },
+            ],
+          });
+        };
+        const onClickDelete: MouseEventHandler = (e) => {
+          e.preventDefault();
+
+          props.deleteTraining({
+            id: training.id,
+          });
+        };
+
         return (
           <Stack direction="column" key={training.id}>
-            <Text>
-              {year}年{month}月{date}日
-            </Text>
+            <Stack direction="row">
+              <Text>
+                {year}年{month}月{date}日
+              </Text>
+              <Button onClick={onClickUpdate}>更新</Button>
+              <Button onClick={onClickDelete}>削除</Button>
+            </Stack>
             <Stack direction="column">
-              {training.exercises.map((exercise) => (
-                <Stack key={exercise.exercise.id}>
-                  <Text>{exercise.exercise.name}</Text>
+              {training.records.map((record) => (
+                <Stack direction="column" key={record.exercise.id}>
+                  <Text>{record.exercise.name}</Text>
                   <Stack direction="column">
-                    {exercise.sets.map((set, index) => (
+                    {record.sets.map((set, index) => (
                       <Stack key={index} direction="row">
                         <Text>{set.weight}kg</Text>
                         <Text>{set.repetition} rep</Text>

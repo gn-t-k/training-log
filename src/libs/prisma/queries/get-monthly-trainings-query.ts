@@ -1,13 +1,8 @@
-import {
-  Exercise,
-  Muscle,
-  Training,
-  TrainingExercise,
-  TrainingExerciseSet,
-} from "@prisma/client";
 import { endOfMonth, startOfMonth } from "date-fns";
 
 import { Month, Year } from "@/utils/date";
+
+import { Training } from "@/features/training/training";
 
 import prisma from "../client";
 
@@ -15,16 +10,7 @@ export type GetMonthlyTrainingsQuery = (props: {
   year: Year;
   month: Month;
   traineeId: string;
-}) => Promise<
-  (Training & {
-    exercises: (TrainingExercise & {
-      exercise: Exercise & {
-        targets: Muscle[];
-      };
-      sets: TrainingExerciseSet[];
-    })[];
-  })[]
->;
+}) => Promise<Training[]>;
 export const getMonthlyTrainingsQuery: GetMonthlyTrainingsQuery = async (
   props
 ) => {
@@ -40,7 +26,7 @@ export const getMonthlyTrainingsQuery: GetMonthlyTrainingsQuery = async (
       },
     },
     include: {
-      exercises: {
+      records: {
         include: {
           exercise: {
             include: {

@@ -1,3 +1,5 @@
+import { ulid } from "ulid";
+
 import { RegisterTrainingCommand } from "@/libs/prisma/commands/register-training-command";
 
 import { Exercise } from "@/features/exercise/exercise";
@@ -8,8 +10,7 @@ export type Deps = {
 };
 export type Props = {
   traineeId: string;
-  todaysDate: Date;
-  exercises: {
+  records: {
     exercise: Exercise;
     sets: {
       weight: number;
@@ -21,10 +22,18 @@ export const registerTrainingResolver: RegisterTrainingResolver =
   (deps) => async (props) => {
     await deps.registerTrainingCommand({
       traineeId: props.traineeId,
-      todaysDate: props.todaysDate,
-      exercises: props.exercises.map((exercise) => ({
-        exerciseId: exercise.exercise.id,
-        sets: exercise.sets,
-      })),
+      training: {
+        id: ulid(),
+        createdAt: new Date(),
+        records: props.records.map((record) => ({
+          id: ulid(),
+          exercise: record.exercise,
+          sets: record.sets.map((set) => ({
+            id: ulid(),
+            weight: set.weight,
+            repetition: set.repetition,
+          })),
+        })),
+      },
     });
   };
