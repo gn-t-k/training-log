@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently -n NEXT,TS,PATH -c magenta,cyan,green \"next dev\" \"yarn ts --watch\" \"yarn pathpida --watch\"",
     "ts": "tsc --noEmit --incremental --preserveWatchOutput --pretty",
-    "build": "yarn pathpida && next build",
+    "build": "prisma generate && yarn pathpida && next build",
     "start": "next start",
     "lint": "next lint",
     "pathpida": "pathpida --output ./src/libs/pathpida",
