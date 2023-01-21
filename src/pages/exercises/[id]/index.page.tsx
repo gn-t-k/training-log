@@ -69,8 +69,8 @@ const ExerciseContainer: FC<ContainerProps> = (props) => {
     },
   });
 
-  const updateExercise: ViewProps["updateExercise"] = (exercise) => {
-    updateExerciseMutation.mutate(exercise);
+  const updateExercise: ViewProps["updateExercise"] = (props) => {
+    updateExerciseMutation.mutate(props);
   };
   const deleteExercise: ViewProps["deleteExercise"] = (id) => {
     deleteExerciseMutation.mutate({ id });
@@ -113,7 +113,7 @@ const ExerciseContainer: FC<ContainerProps> = (props) => {
 type ViewProps = {
   exercise: Exercise;
   targets: Muscle[];
-  updateExercise: (exercise: Exercise) => void;
+  updateExercise: (props: { before: Exercise; after: Exercise }) => void;
   deleteExercise: (id: string) => void;
   updateExerciseStatus: MutationState;
   deleteExerciseStatus: MutationState;
@@ -176,9 +176,12 @@ export const ExerciseView: FC<ViewProps> = (props) => {
       return target ? [target] : [];
     });
     props.updateExercise({
-      id: props.exercise.id,
-      name: formValue.name,
-      targets,
+      before: props.exercise,
+      after: {
+        id: props.exercise.id,
+        name: formValue.name,
+        targets,
+      },
     });
   };
   const onClickDelete: MouseEventHandler = (e) => {

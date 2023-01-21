@@ -19,22 +19,27 @@ import { initializedProcedure, router } from "../trpc";
 export const muscleRouter = router({
   register: initializedProcedure
     .input(muscleSchema.omit({ id: true }))
-    .output(muscleSchema)
     .mutation(async ({ input, ctx }) => {
-      const registered = await registerMuscleResolver({
+      await registerMuscleResolver({
         registerMuscleCommand,
       })({
-        traineeId: ctx.trainee.id,
         name: input.name,
+        trainee: {
+          id: ctx.trainee.id,
+          name: ctx.trainee.name,
+          image: ctx.trainee.image,
+        },
       });
-
-      return registered;
     }),
   getAll: initializedProcedure
     .output(z.array(muscleSchema))
     .query(async ({ ctx }) => {
       const muscles = await getAllMusclesResolver({ getAllMusclesQuery })({
-        traineeId: ctx.trainee.id,
+        trainee: {
+          id: ctx.trainee.id,
+          name: ctx.trainee.name,
+          image: ctx.trainee.image,
+        },
       });
 
       return muscles;
@@ -61,18 +66,19 @@ export const muscleRouter = router({
         name: z.string(),
       })
     )
-    .output(muscleSchema)
     .mutation(async ({ input, ctx }) => {
-      const updated = await updateMuscleNameResolver({
+      await updateMuscleNameResolver({
         getMuscleByIdQuery,
         updateMuscleNameCommand,
       })({
         id: input.id,
         name: input.name,
-        traineeId: ctx.trainee.id,
+        trainee: {
+          id: ctx.trainee.id,
+          name: ctx.trainee.name,
+          image: ctx.trainee.image,
+        },
       });
-
-      return updated;
     }),
   delete: initializedProcedure
     .input(
@@ -80,16 +86,13 @@ export const muscleRouter = router({
         id: z.string(),
       })
     )
-    .output(muscleSchema)
     .mutation(async ({ input, ctx }) => {
-      const deleted = await deleteMuscleResolver({
+      await deleteMuscleResolver({
         getMuscleByIdQuery,
         deleteMuscleCommand,
       })({
         id: input.id,
         traineeId: ctx.trainee.id,
       });
-
-      return deleted;
     }),
 });

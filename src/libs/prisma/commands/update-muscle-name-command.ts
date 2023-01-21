@@ -1,23 +1,19 @@
-import { Muscle } from "@prisma/client";
+import { Muscle } from "@/features/muscle/muscle";
 
 import prisma from "../client";
 
 export type UpdateMuscleNameCommand = (props: {
-  id: string;
-  name: string;
-}) => Promise<Muscle>;
-export const updateMuscleNameCommand: UpdateMuscleNameCommand = async ({
-  id,
-  name,
-}) => {
-  const updated = await prisma.muscle.update({
+  muscle: Muscle;
+}) => Promise<void>;
+export const updateMuscleNameCommand: UpdateMuscleNameCommand = async (
+  props
+) => {
+  await prisma.muscle.update({
     where: {
-      id,
+      id: props.muscle.id,
     },
     data: {
-      name,
+      name: props.muscle.name,
     },
   });
-
-  return updated;
 };

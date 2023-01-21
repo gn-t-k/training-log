@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { endOfMonth, startOfMonth } from "date-fns";
 
 import { GetMonthlyTrainingsQuery } from "@/libs/prisma/queries/get-monthly-trainings-query";
 
@@ -30,9 +31,11 @@ export const getMonthlyTrainingsResolver: GetMonthlyTrainingsResolver =
 
     const year = maybeYear.data;
     const month = maybeMonth.data;
+    const date = new Date(year, month);
+    const [start, end] = [startOfMonth(date), endOfMonth(date)];
     const trainingsData = await deps.getMonthlyTrainingsQuery({
-      year,
-      month,
+      start,
+      end,
       traineeId: props.traineeId,
     });
 
