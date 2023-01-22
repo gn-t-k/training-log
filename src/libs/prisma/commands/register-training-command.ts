@@ -29,6 +29,7 @@ export const registerTrainingCommand: RegisterTrainingCommand = async (
         id: record.id,
         trainingId: props.training.id,
         exerciseId: record.exercise.id,
+        memo: record.memo,
       })),
     });
 

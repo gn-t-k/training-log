@@ -25,6 +25,7 @@ const registerTrainingInputSchema = z.object({
           repetition: z.number(),
         })
       ),
+      memo: z.string(),
     })
   ),
 });
@@ -41,6 +42,7 @@ const updateTrainingInputSchema = z.object({
           repetition: z.number(),
         })
       ),
+      memo: z.string(),
     })
   ),
 });

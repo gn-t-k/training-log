@@ -47,6 +47,7 @@ export const updateTrainingCommand: UpdateTrainingCommand = async (props) => {
         id: record.id,
         trainingId: props.training.after.id,
         exerciseId: record.exercise.id,
+        memo: record.memo,
       })),
     });
 

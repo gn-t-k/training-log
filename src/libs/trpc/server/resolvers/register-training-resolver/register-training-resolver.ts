@@ -16,6 +16,7 @@ export type Props = {
       weight: number;
       repetition: number;
     }[];
+    memo: string;
   }[];
   trainee: Trainee;
 };
@@ -33,6 +34,7 @@ export const registerTrainingResolver: RegisterTrainingResolver =
             weight: set.weight,
             repetition: set.repetition,
           })),
+          memo: record.memo,
         })),
       },
       trainee: props.trainee,

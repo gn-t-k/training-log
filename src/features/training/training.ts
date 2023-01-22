@@ -11,6 +11,7 @@ const recordSchema = z.object({
   id: z.string(),
   exercise: exerciseSchema,
   sets: z.array(setSchema),
+  memo: z.string(),
 });
 export const trainingSchema = z.object({
   id: z.string(),
