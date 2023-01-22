@@ -17,8 +17,10 @@ import { FC, MouseEventHandler, useCallback } from "react";
 import { SubmitHandler, useFieldArray, UseFormReturn } from "react-hook-form";
 
 import { pagesPath } from "@/libs/pathpida/$path";
+import { trpc } from "@/libs/trpc/client/trpc";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
+import { Exercise } from "@/features/exercise/exercise";
 import {
   TrainingField,
   useTrainingFrom,
@@ -42,10 +44,27 @@ type Props = {
   goToTrainingsPage: () => void;
 };
 const RegisterTraining: FC<Props> = (props) => {
-  return <RegisterTrainingView goToTrainingsPage={props.goToTrainingsPage} />;
+  const exercisesQuery = trpc.exercise.getAll.useQuery();
+
+  switch (exercisesQuery.status) {
+    case "loading":
+      // TODO
+      return <p>種目データを取得中</p>;
+    case "success":
+      return (
+        <RegisterTrainingView
+          goToTrainingsPage={props.goToTrainingsPage}
+          exercises={exercisesQuery.data}
+        />
+      );
+    case "error":
+      // TODO
+      return <p>種目データの取得に失敗しました</p>;
+  }
 };
 
 type ViewProps = {
+  exercises: Exercise[];
   goToTrainingsPage: () => void;
 };
 const RegisterTrainingView: FC<ViewProps> = (props) => {
@@ -113,9 +132,13 @@ const RegisterTrainingView: FC<ViewProps> = (props) => {
                   <FormControl>
                     <FormLabel>種目を選択</FormLabel>
                     <Select {...register(`records.${index}.exerciseId`)}>
-                      <option value="a">あ</option>
-                      <option value="i">い</option>
-                      <option value="u">う</option>
+                      {props.exercises.map((exercise) => {
+                        return (
+                          <option key={exercise.id} value={exercise.id}>
+                            {exercise.name}
+                          </option>
+                        );
+                      })}
                     </Select>
                   </FormControl>
                   <Stack direction="column">
