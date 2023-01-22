@@ -1,53 +1,44 @@
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { FC, useEffect } from "react";
+import { FC, useCallback, useEffect } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
+import { MutationState } from "@/utils/mutation-state";
+
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { useSessionContext } from "@/features/auth/session-context/session-context";
 
-const OnboardingContainer: NextPage = () => {
+const OnboardingPage: NextPage = () => {
+  const router = useRouter();
+  const goToTopPage = useCallback<Props["goToTopPage"]>(() => {
+    router.push(pagesPath.$url());
+  }, [router]);
+
   return (
     <RequireLogin>
-      <Onboarding />
+      <Onboarding goToTopPage={goToTopPage} />
     </RequireLogin>
   );
 };
-export default OnboardingContainer;
+export default OnboardingPage;
 
-const Onboarding: FC = () => {
+type Props = {
+  goToTopPage: () => void;
+};
+const Onboarding: FC<Props> = (props) => {
   const { authUser } = useSessionContext();
   const router = useRouter();
   const traineeQuery = trpc.trainee.getBySession.useQuery();
   const registerTraineeMutation = trpc.trainee.register.useMutation();
 
-  useEffect(() => {
-    let ignore = false;
-
-    if (
-      traineeQuery.status === "success" &&
-      traineeQuery.data === null &&
-      registerTraineeMutation.status === "idle" &&
-      ignore === false
-    ) {
-      registerTraineeMutation.mutate({
-        name: authUser.name,
-        image: authUser.image,
-      });
-    }
-
-    return () => {
-      ignore = true;
-    };
-  }, [
-    authUser.image,
-    authUser.name,
-    registerTraineeMutation,
-    traineeQuery.data,
-    traineeQuery.status,
-  ]);
+  const registerTrainee = useCallback<ViewProps["registerTrainee"]>(() => {
+    registerTraineeMutation.mutate({
+      name: authUser.name,
+      image: authUser.image,
+    });
+  }, [authUser.image, authUser.name, registerTraineeMutation]);
 
   if (traineeQuery.isLoading) {
     // TODO
@@ -61,18 +52,51 @@ const Onboarding: FC = () => {
     return <p>トップページにリダイレクト中</p>;
   }
 
-  switch (registerTraineeMutation.status) {
+  return (
+    <OnboardingView
+      registerTrainee={registerTrainee}
+      registerTraineeStatus={registerTraineeMutation.status}
+      goToTopPage={props.goToTopPage}
+    />
+  );
+};
+
+type ViewProps = {
+  registerTrainee: () => void;
+  registerTraineeStatus: MutationState;
+  goToTopPage: () => void;
+};
+const OnboardingView: FC<ViewProps> = ({
+  registerTrainee,
+  registerTraineeStatus,
+  goToTopPage,
+}) => {
+  useEffect(() => {
+    let ignore = false;
+
+    if (!ignore && registerTraineeStatus === "idle") {
+      registerTrainee();
+    }
+
+    return () => {
+      ignore = true;
+    };
+  }, [registerTrainee, registerTraineeStatus]);
+
+  switch (registerTraineeStatus) {
     case "idle":
+      // TODO
+      return <p>待機中</p>;
     case "loading":
       // TODO
       return <p>トレーニー情報を登録中</p>;
     case "success": {
-      router.push(pagesPath.$url());
+      goToTopPage();
       // TODO
       return <p>トップページにリダイレクト中</p>;
     }
     case "error":
       // TODO
-      return <p>エラー</p>;
+      return <p>トレーニーの登録に失敗しました</p>;
   }
 };

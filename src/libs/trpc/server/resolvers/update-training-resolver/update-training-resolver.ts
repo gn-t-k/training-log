@@ -20,6 +20,7 @@ export type Props = {
       weight: number;
       repetition: number;
     }[];
+    memo: string;
   }[];
 };
 export const updateTrainingResolver: UpdateTrainingResolver =
@@ -50,6 +51,7 @@ export const updateTrainingResolver: UpdateTrainingResolver =
               weight: set.weight,
               repetition: set.repetition,
             })),
+            memo: record.memo,
           })),
         },
       },

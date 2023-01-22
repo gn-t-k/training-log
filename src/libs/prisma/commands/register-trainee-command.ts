@@ -1,14 +1,15 @@
 import { Prisma } from "@prisma/client";
-import { ulid } from "ulid";
 
 import prisma from "../client";
 
 export type RegisterTraineeCommand = (props: {
+  id: string;
   authUserId: string;
   name: string;
   image: string;
 }) => Promise<void>;
 export const registerTraineeCommand: RegisterTraineeCommand = async ({
+  id,
   authUserId,
   name,
   image,
@@ -24,7 +25,7 @@ export const registerTraineeCommand: RegisterTraineeCommand = async ({
       if (trainee === null) {
         await tx.trainee.create({
           data: {
-            id: ulid(),
+            id,
             name,
             image,
             authUserId,

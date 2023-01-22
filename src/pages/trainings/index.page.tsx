@@ -87,11 +87,11 @@ const TrainingsView: FC<ViewProps> = (props) => {
       records: [
         {
           exercise: {
-            id: "01GPSAEFGBEMS8YRPCJ45E2EJX",
+            id: "01GQC48CRVSFWKR76PXFTR45K9",
             name: "アームカール",
             targets: [
               {
-                id: "01GPSAE03ZEAC9411KZ2HBRHH0",
+                id: "01GQC47GY1MCWM2CB11S9MR7BP",
                 name: "上腕二頭筋",
               },
             ],
@@ -110,14 +110,15 @@ const TrainingsView: FC<ViewProps> = (props) => {
               repetition: 20,
             },
           ],
+          memo: "",
         },
         {
           exercise: {
-            id: "01GPVPNA3JXP7D7191FXV83AWM",
+            id: "01GQC47XZRC3KGR9PKWD83VD3F",
             name: "ベンチプレス",
             targets: [
               {
-                id: "01GPVPMNJ18V7X7FDWN7MRJ7CQ",
+                id: "01GQC479NHD83PYN5A7J4M86SE",
                 name: "大胸筋",
               },
             ],
@@ -136,6 +137,7 @@ const TrainingsView: FC<ViewProps> = (props) => {
               repetition: 6,
             },
           ],
+          memo: "うまくできなかった",
         },
       ],
     });
@@ -158,11 +160,11 @@ const TrainingsView: FC<ViewProps> = (props) => {
             records: [
               {
                 exercise: {
-                  id: "01GPSAEFGBEMS8YRPCJ45E2EJX",
+                  id: "01GQC48CRVSFWKR76PXFTR45K9",
                   name: "アームカール",
                   targets: [
                     {
-                      id: "01GPSAE03ZEAC9411KZ2HBRHH0",
+                      id: "01GQC47GY1MCWM2CB11S9MR7BP",
                       name: "上腕二頭筋",
                     },
                   ],
@@ -173,14 +175,15 @@ const TrainingsView: FC<ViewProps> = (props) => {
                     repetition: 20,
                   },
                 ],
+                memo: "",
               },
               {
                 exercise: {
-                  id: "01GPVPNA3JXP7D7191FXV83AWM",
+                  id: "01GQC47XZRC3KGR9PKWD83VD3F",
                   name: "ベンチプレス",
                   targets: [
                     {
-                      id: "01GPVPMNJ18V7X7FDWN7MRJ7CQ",
+                      id: "01GQC479NHD83PYN5A7J4M86SE",
                       name: "大胸筋",
                     },
                   ],
@@ -191,6 +194,7 @@ const TrainingsView: FC<ViewProps> = (props) => {
                     repetition: 6,
                   },
                 ],
+                memo: "よくできた",
               },
             ],
           });
@@ -217,6 +221,7 @@ const TrainingsView: FC<ViewProps> = (props) => {
                 <Stack direction="column" key={record.exercise.id}>
                   <Text>{record.exercise.name}</Text>
                   <Stack direction="column">
+                    <Text>{record.memo}</Text>
                     {record.sets.map((set, index) => (
                       <Stack key={index} direction="row">
                         <Text>{set.weight}kg</Text>
