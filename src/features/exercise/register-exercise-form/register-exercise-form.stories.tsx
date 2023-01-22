@@ -1,6 +1,9 @@
 import { action } from "@storybook/addon-actions";
 import { ComponentMeta, ComponentStoryObj } from "@storybook/react";
-import { ComponentProps, FC } from "react";
+import { ComponentProps, FC, useState } from "react";
+
+import { MutationState } from "@/utils/mutation-state";
+import { sleep } from "@/utils/sleep";
 
 import { RegisterExerciseFormView } from "./register-exercise-form";
 
@@ -14,8 +17,15 @@ const componentMeta: Meta = {
 export default componentMeta;
 
 const Wrapper: FC<Partial<Props>> = (props) => {
+  const [registerExerciseStatus, setRegisterExerciseStatus] =
+    useState<MutationState>("idle");
   const registerExercise: Props["registerExercise"] = (props) => {
-    action("register exercise")(props);
+    (async (): Promise<void> => {
+      setRegisterExerciseStatus("loading");
+      await sleep(1000);
+      action("register exercise")(props);
+      setRegisterExerciseStatus("success");
+    })();
   };
   const args: Props = {
     targets: props.targets ?? [
@@ -28,7 +38,10 @@ const Wrapper: FC<Partial<Props>> = (props) => {
         name: "上腕三頭筋",
       },
     ],
+    registeredExercises: props.registeredExercises ?? [],
     registerExercise: props.registerExercise ?? registerExercise,
+    registerExerciseStatus:
+      props.registerExerciseStatus ?? registerExerciseStatus,
   };
 
   return <RegisterExerciseFormView {...args} />;

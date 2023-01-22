@@ -18,21 +18,40 @@ import { FC, MouseEventHandler } from "react";
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
+import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { Exercise } from "@/features/exercise/exercise";
 
-const Exercises: NextPage = () => {
-  const exercisesQuery = trpc.exercise.getAll.useQuery();
+const ExercisesPage: NextPage = () => {
   const router = useRouter();
-
-  const goToRegisterPage: ViewProps["goToRegisterPage"] = () => {
+  const goToRegisterPage: Props["goToRegisterPage"] = () => {
     router.push(pagesPath.exercises.register.$url());
   };
-  const goToEditPageHOF: ViewProps["goToEditPageHOF"] = (id) => () => {
+  const goToEditPageHOF: Props["goToEditPageHOF"] = (id) => () => {
     router.push(pagesPath.exercises._id(id).$url());
   };
-  const goToTopPage: ViewProps["goToTopPage"] = () => {
+  const goToTopPage: Props["goToTopPage"] = () => {
     router.push(pagesPath.$url());
   };
+
+  return (
+    <RequireLogin>
+      <Exercises
+        goToRegisterPage={goToRegisterPage}
+        goToEditPageHOF={goToEditPageHOF}
+        goToTopPage={goToTopPage}
+      />
+    </RequireLogin>
+  );
+};
+export default ExercisesPage;
+
+type Props = {
+  goToRegisterPage: () => void;
+  goToEditPageHOF: (id: string) => () => void;
+  goToTopPage: () => void;
+};
+const Exercises: FC<Props> = (props) => {
+  const exercisesQuery = trpc.exercise.getAll.useQuery();
 
   switch (exercisesQuery.status) {
     case "loading":
@@ -42,9 +61,9 @@ const Exercises: NextPage = () => {
       return (
         <ExercisesView
           exercises={exercisesQuery.data}
-          goToRegisterPage={goToRegisterPage}
-          goToEditPageHOF={goToEditPageHOF}
-          goToTopPage={goToTopPage}
+          goToRegisterPage={props.goToRegisterPage}
+          goToEditPageHOF={props.goToEditPageHOF}
+          goToTopPage={props.goToTopPage}
           isFetching={exercisesQuery.isFetching}
         />
       );
@@ -53,7 +72,6 @@ const Exercises: NextPage = () => {
       return <p>種目データの取得に失敗しました</p>;
   }
 };
-export default Exercises;
 
 type ViewProps = {
   exercises: Exercise[];

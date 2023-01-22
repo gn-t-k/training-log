@@ -1,8 +1,7 @@
 import { action } from "@storybook/addon-actions";
 import { ComponentMeta, ComponentStoryObj } from "@storybook/react";
-import { ComponentProps, MouseEventHandler } from "react";
+import { ComponentProps } from "react";
 
-import { Muscle } from "../muscle";
 import { MuscleListView } from "./muscle-list";
 
 type Meta = ComponentMeta<typeof MuscleListView>;
@@ -16,11 +15,9 @@ export default componentMeta;
 
 const Template: Story = {
   render: (props: Partial<Props>) => {
-    const dummyOnClickHOF =
-      (muscle: Muscle): MouseEventHandler =>
-      (event) => {
-        action("onClick")({ muscle, event });
-      };
+    const dummyGoToMusclePage: Props["goToMusclePage"] = (id) => {
+      action("go to muscle page")(id);
+    };
     const args: Props = {
       muscles: props.muscles ?? [
         {
@@ -32,7 +29,7 @@ const Template: Story = {
           name: "上腕三頭筋",
         },
       ],
-      onClickEditHOF: props.onClickEditHOF ?? dummyOnClickHOF,
+      goToMusclePage: props.goToMusclePage ?? dummyGoToMusclePage,
       isFetching: props.isFetching ?? false,
     };
 

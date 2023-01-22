@@ -15,6 +15,12 @@ export const pagesPath = {
     $url: (url?: { hash?: string }) => ({ pathname: '/login' as const, hash: url?.hash })
   },
   "muscles": {
+    _id: (id: string | number) => ({
+      $url: (url?: { hash?: string }) => ({ pathname: '/muscles/[id]' as const, query: { id }, hash: url?.hash })
+    }),
+    "register": {
+      $url: (url?: { hash?: string }) => ({ pathname: '/muscles/register' as const, hash: url?.hash })
+    },
     $url: (url?: { hash?: string }) => ({ pathname: '/muscles' as const, hash: url?.hash })
   },
   "onboarding": {

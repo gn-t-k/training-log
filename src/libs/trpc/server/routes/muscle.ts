@@ -11,6 +11,7 @@ import { muscleSchema } from "@/features/muscle/muscle";
 
 import { deleteMuscleResolver } from "../resolvers/delete-muscle-resolver/delete-muscle-resolver";
 import { getAllMusclesResolver } from "../resolvers/get-all-muscles-resolver/get-all-muscles-resolver";
+import { getMuscleByIdResolver } from "../resolvers/get-muscle-by-id-resolver/get-muscle-by-id-resolver";
 import { getMuscleByNameResolver } from "../resolvers/get-muscle-by-name-resolver/get-muscle-by-name-resolver";
 import { registerMuscleResolver } from "../resolvers/register-muscle-resolver/register-muscle-resolver";
 import { updateMuscleNameResolver } from "../resolvers/update-muscle-name-resolver/update-muscle-name-resolver";
@@ -43,6 +44,25 @@ export const muscleRouter = router({
       });
 
       return muscles;
+    }),
+  getById: initializedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .output(muscleSchema)
+    .query(async ({ input, ctx }) => {
+      const muscle = await getMuscleByIdResolver({ getMuscleByIdQuery })({
+        id: input.id,
+        trainee: {
+          id: ctx.trainee.id,
+          name: ctx.trainee.name,
+          image: ctx.trainee.image,
+        },
+      });
+
+      return muscle;
     }),
   getByName: initializedProcedure
     .input(

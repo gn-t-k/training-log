@@ -1,82 +1,49 @@
 import { AddIcon, ChevronLeftIcon } from "@chakra-ui/icons";
-import {
-  Button,
-  Container,
-  Heading,
-  Spacer,
-  Stack,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Button, Container, Heading, Spacer, Stack } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { ComponentProps, FC, MouseEventHandler, useState } from "react";
+import { FC, MouseEventHandler } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
-import { EditMuscleModal } from "@/features/muscle/edit-muscle-modal/edit-muscle-modal";
-import { Muscle } from "@/features/muscle/muscle";
 import { MuscleList } from "@/features/muscle/muscle-list/muscle-list";
-import { RegisterMuscleModal } from "@/features/muscle/register-muscle-modal/register-muscle-modal";
 
-const Muscles: NextPage = () => {
+const MusclesPage: NextPage = () => {
   const router = useRouter();
   const goToTopPage: Props["goToTopPage"] = () => {
     router.push(pagesPath.$url());
   };
+  const goToMusclePage: Props["goToMusclePage"] = (id) => {
+    router.push(pagesPath.muscles._id(id).$url());
+  };
+  const goToRegisterPage: Props["goToRegisterPage"] = () => {
+    router.push(pagesPath.muscles.register.$url());
+  };
 
   return (
     <RequireLogin>
-      <MusclesView goToTopPage={goToTopPage} />
+      <Muscles
+        goToTopPage={goToTopPage}
+        goToMusclePage={goToMusclePage}
+        goToRegisterPage={goToRegisterPage}
+      />
     </RequireLogin>
   );
 };
-export default Muscles;
+export default MusclesPage;
 
 type Props = {
   goToTopPage: () => void;
+  goToMusclePage: (id: string) => void;
+  goToRegisterPage: () => void;
 };
-const MusclesView: FC<Props> = (props) => {
-  const [selectedMuscle, setSelectedMuscle] = useState<Muscle | null>(null);
-  const {
-    isOpen: isRegisterModalOpen,
-    onOpen: onRegisterModalOpen,
-    onClose: onRegisterModalClose,
-  } = useDisclosure();
-  const {
-    isOpen: isEditModalOpen,
-    onOpen: onEditModalOpen,
-    onClose: _onEditModalClose,
-  } = useDisclosure();
-  const onEditModalClose = (): void => {
-    _onEditModalClose();
-    setSelectedMuscle(null);
-  };
-
+const Muscles: FC<Props> = (props) => {
   const onClickAdd: MouseEventHandler = (e) => {
     e.preventDefault();
 
-    onRegisterModalOpen();
+    props.goToRegisterPage();
   };
-  const onClickEditHOF =
-    (muscle: Muscle): MouseEventHandler =>
-    async (e) => {
-      e.preventDefault();
-
-      setSelectedMuscle(muscle);
-      onEditModalOpen();
-    };
-  const editMuscleModalArgs: ComponentProps<typeof EditMuscleModal> =
-    isEditModalOpen && selectedMuscle !== null
-      ? {
-          onClose: onEditModalClose,
-          isOpen: isEditModalOpen,
-          muscle: selectedMuscle,
-        }
-      : {
-          onClose: onEditModalClose,
-          isOpen: false,
-        };
   const goToTopPage: MouseEventHandler = (e) => {
     e.preventDefault();
 
@@ -86,10 +53,6 @@ const MusclesView: FC<Props> = (props) => {
   return (
     <Container>
       <Stack direction="column">
-        <RegisterMuscleModal
-          {...{ isOpen: isRegisterModalOpen, onClose: onRegisterModalClose }}
-        />
-        <EditMuscleModal {...editMuscleModalArgs} />
         <Stack direction="row">
           <Button onClick={goToTopPage}>
             <ChevronLeftIcon />
@@ -101,7 +64,7 @@ const MusclesView: FC<Props> = (props) => {
             <AddIcon />
           </Button>
         </Stack>
-        <MuscleList {...{ onClickEditHOF }} />
+        <MuscleList goToMusclePage={props.goToMusclePage} />
       </Stack>
     </Container>
   );
