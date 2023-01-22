@@ -2,7 +2,7 @@ import { AddIcon, ChevronLeftIcon } from "@chakra-ui/icons";
 import { Button, Container, Heading, Spacer, Stack } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { FC, MouseEventHandler } from "react";
+import { FC, MouseEventHandler, useCallback } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
@@ -39,22 +39,39 @@ type Props = {
   goToRegisterPage: () => void;
 };
 const Muscles: FC<Props> = (props) => {
-  const onClickAdd: MouseEventHandler = (e) => {
-    e.preventDefault();
+  return (
+    <MusclesView
+      goToTopPage={props.goToTopPage}
+      goToRegisterPage={props.goToRegisterPage}
+      MuscleList={<MuscleList goToMusclePage={props.goToMusclePage} />}
+    />
+  );
+};
 
-    props.goToRegisterPage();
-  };
-  const goToTopPage: MouseEventHandler = (e) => {
-    e.preventDefault();
-
-    props.goToTopPage();
-  };
+type ViewProps = {
+  goToTopPage: () => void;
+  goToRegisterPage: () => void;
+  MuscleList: JSX.Element;
+};
+const MusclesView: FC<ViewProps> = (props) => {
+  const onClickBack = useCallback<MouseEventHandler>(
+    (_) => {
+      props.goToTopPage();
+    },
+    [props]
+  );
+  const onClickAdd = useCallback<MouseEventHandler>(
+    (_) => {
+      props.goToRegisterPage();
+    },
+    [props]
+  );
 
   return (
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button onClick={goToTopPage}>
+          <Button onClick={onClickBack}>
             <ChevronLeftIcon />
           </Button>
           <Spacer />
@@ -64,7 +81,7 @@ const Muscles: FC<Props> = (props) => {
             <AddIcon />
           </Button>
         </Stack>
-        <MuscleList goToMusclePage={props.goToMusclePage} />
+        {props.MuscleList}
       </Stack>
     </Container>
   );

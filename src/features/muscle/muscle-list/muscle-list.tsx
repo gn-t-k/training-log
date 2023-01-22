@@ -1,4 +1,4 @@
-import { EditIcon } from "@chakra-ui/icons";
+import { ChevronRightIcon } from "@chakra-ui/icons";
 import {
   Button,
   Divider,
@@ -63,7 +63,7 @@ export const MuscleListView: FC<ViewProps> = (props) => {
                   <Text>{muscle.name}</Text>
                   <Spacer />
                   <Button {...{ onClick }}>
-                    <EditIcon />
+                    <ChevronRightIcon />
                   </Button>
                 </Stack>
                 <Divider />
