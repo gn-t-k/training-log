@@ -198,6 +198,7 @@ const SetForm: FC<SetFormProps> = (props) => {
                 {...props.register(
                   `records.${props.recordIndex}.sets.${setIndex}.weight`
                 )}
+                type="number"
               />
             </FormControl>
             <FormControl
@@ -211,6 +212,7 @@ const SetForm: FC<SetFormProps> = (props) => {
                 {...props.register(
                   `records.${props.recordIndex}.sets.${setIndex}.repetition`
                 )}
+                type="number"
               />
             </FormControl>
           </Stack>
