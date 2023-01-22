@@ -1,14 +1,35 @@
-import { ChevronLeftIcon } from "@chakra-ui/icons";
+import {
+  ChevronLeftIcon,
+  CloseIcon,
+  EditIcon,
+  HamburgerIcon,
+  InfoOutlineIcon,
+  SmallCloseIcon,
+} from "@chakra-ui/icons";
 import {
   Button,
+  Card,
+  CardBody,
+  CardHeader,
   Container,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Grid,
+  GridItem,
   Heading,
   Input,
+  InputGroup,
+  InputRightElement,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
   Select,
+  Spacer,
   Stack,
+  Text,
 } from "@chakra-ui/react";
 import { getDate, getMonth, getYear } from "date-fns";
 import { NextPage } from "next";
@@ -74,10 +95,6 @@ const RegisterTrainingView: FC<ViewProps> = (props) => {
     register,
     control,
   } = useTrainingFrom();
-  const { fields, append } = useFieldArray({
-    control,
-    name: "records",
-  });
   const onClickBack = useCallback<MouseEventHandler>(
     (_) => {
       props.goToTrainingsPage();
@@ -92,6 +109,51 @@ const RegisterTrainingView: FC<ViewProps> = (props) => {
     })();
     console.log({ date });
   }, []);
+
+  return (
+    <Container>
+      <Stack direction="column">
+        <Stack direction="row">
+          <Button onClick={onClickBack}>
+            <ChevronLeftIcon />
+          </Button>
+          <Heading>トレーニングを記録する</Heading>
+        </Stack>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Stack direction="column">
+            <FormControl isInvalid={!!errors.date}>
+              <FormLabel htmlFor="date">日付</FormLabel>
+              <Input id="date" {...register("date")} type="date" />
+              {!!errors.date && (
+                <FormErrorMessage>{errors.date.message}</FormErrorMessage>
+              )}
+            </FormControl>
+            <RecordForm
+              control={control}
+              errors={errors}
+              register={register}
+              exercises={props.exercises}
+            />
+            <Button type="submit">保存</Button>
+          </Stack>
+        </form>
+      </Stack>
+    </Container>
+  );
+};
+
+type RecordFormProps = {
+  control: UseFormReturn<TrainingField>["control"];
+  errors: UseFormReturn<TrainingField>["formState"]["errors"];
+  register: UseFormReturn<TrainingField>["register"];
+  exercises: Exercise[];
+};
+const RecordForm: FC<RecordFormProps> = (props) => {
+  const { fields, append, remove } = useFieldArray({
+    control: props.control,
+    name: "records",
+  });
+
   const onClickAddExercise = useCallback<MouseEventHandler>(
     (_) => {
       append({
@@ -107,31 +169,32 @@ const RegisterTrainingView: FC<ViewProps> = (props) => {
     },
     [append]
   );
+  const onClickDeleteExercise = useCallback<
+    (recordIndex: number) => MouseEventHandler
+  >(
+    (recordIndex) => (_) => {
+      remove(recordIndex);
+    },
+    [remove]
+  );
 
   return (
-    <Container>
+    <Stack direction="column">
       <Stack direction="column">
-        <Stack direction="row">
-          <Button onClick={onClickBack}>
-            <ChevronLeftIcon />
-          </Button>
-          <Heading>トレーニングを記録する</Heading>
-        </Stack>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <FormControl isInvalid={!!errors.date}>
-            <FormLabel htmlFor="date">日付</FormLabel>
-            <Input id="date" {...register("date")} type="date" />
-            {!!errors.date && (
-              <FormErrorMessage>{errors.date.message}</FormErrorMessage>
-            )}
-          </FormControl>
-          <Stack direction="column">
-            {fields.map((field, index) => {
-              return (
-                <Stack direction="column" key={field.id}>
-                  <FormControl>
+        {fields.map((field, recordIndex) => {
+          return (
+            <Card key={field.id}>
+              <CardHeader>
+                <Stack direction="row">
+                  <FormControl
+                    isInvalid={
+                      !!props.errors.records?.[recordIndex]?.exerciseId
+                    }
+                  >
                     <FormLabel>種目を選択</FormLabel>
-                    <Select {...register(`records.${index}.exerciseId`)}>
+                    <Select
+                      {...props.register(`records.${recordIndex}.exerciseId`)}
+                    >
                       {props.exercises.map((exercise) => {
                         return (
                           <option key={exercise.id} value={exercise.id}>
@@ -140,24 +203,62 @@ const RegisterTrainingView: FC<ViewProps> = (props) => {
                         );
                       })}
                     </Select>
+                    {!!props.errors.records?.[recordIndex]?.exerciseId && (
+                      <FormErrorMessage>
+                        {
+                          props.errors.records?.[recordIndex]?.exerciseId
+                            ?.message
+                        }
+                      </FormErrorMessage>
+                    )}
                   </FormControl>
-                  <Stack direction="column">
-                    <SetForm
-                      control={control}
-                      errors={errors}
-                      register={register}
-                      recordIndex={index}
-                    />
-                  </Stack>
+                  <Spacer />
+                  <Popover>
+                    <PopoverTrigger>
+                      <Button>
+                        <HamburgerIcon />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      <PopoverArrow />
+                      <PopoverBody>
+                        <Stack direction="column">
+                          <Stack direction="row" justifyContent="center">
+                            <InfoOutlineIcon />
+                            <Text>種目の詳細</Text>
+                          </Stack>
+                          <Stack direction="row" justifyContent="center">
+                            <EditIcon />
+                            <Text>メモを追加</Text>
+                          </Stack>
+                          <Stack
+                            direction="row"
+                            justifyContent="center"
+                            onClick={onClickDeleteExercise(recordIndex)}
+                          >
+                            <CloseIcon />
+                            <Text>種目を削除</Text>
+                          </Stack>
+                        </Stack>
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
                 </Stack>
-              );
-            })}
-          </Stack>
-          <Button onClick={onClickAddExercise}>種目から追加</Button>
-          <Button type="submit">保存</Button>
-        </form>
+              </CardHeader>
+              <CardBody>
+                <SetForm
+                  control={props.control}
+                  errors={props.errors}
+                  register={props.register}
+                  recordIndex={recordIndex}
+                />
+              </CardBody>
+            </Card>
+          );
+        })}
       </Stack>
-    </Container>
+      <Button onClick={onClickAddExercise}>種目から追加</Button>
+    </Stack>
   );
 };
 
@@ -168,7 +269,7 @@ type SetFormProps = {
   recordIndex: number;
 };
 const SetForm: FC<SetFormProps> = (props) => {
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control: props.control,
     name: `records.${props.recordIndex}.sets`,
   });
@@ -181,41 +282,88 @@ const SetForm: FC<SetFormProps> = (props) => {
     },
     [append]
   );
+  const onClickDeleteSet = useCallback<(setIndex: number) => MouseEventHandler>(
+    (setIndex) => (_) => {
+      remove(setIndex);
+    },
+    [remove]
+  );
 
   return (
     <Stack direction="column">
       {fields.map((field, setIndex) => {
         return (
-          <Stack key={setIndex} direction="column">
-            <FormControl
-              isInvalid={
-                !!props.errors.records?.[props.recordIndex]?.sets?.[setIndex]
-                  ?.weight
-              }
-            >
-              <FormLabel>重さ</FormLabel>
-              <Input
-                {...props.register(
-                  `records.${props.recordIndex}.sets.${setIndex}.weight`
+          <Grid key={field.id} templateColumns="2fr 3fr 3fr 1fr" gap={2}>
+            <GridItem>
+              <Stack direction="column">
+                <Text>セット</Text>
+                <Text>{setIndex + 1}</Text>
+              </Stack>
+            </GridItem>
+            <GridItem>
+              <FormControl
+                isInvalid={
+                  !!props.errors.records?.[props.recordIndex]?.sets?.[setIndex]
+                    ?.weight
+                }
+              >
+                <FormLabel>重さ</FormLabel>
+                <InputGroup>
+                  <Input
+                    {...props.register(
+                      `records.${props.recordIndex}.sets.${setIndex}.weight`
+                    )}
+                    type="number"
+                  />
+                  <InputRightElement>kg</InputRightElement>
+                </InputGroup>
+                {!!props.errors.records?.[props.recordIndex]?.sets?.[setIndex]
+                  ?.weight && (
+                  <FormErrorMessage>
+                    {
+                      props.errors.records?.[props.recordIndex]?.sets?.[
+                        setIndex
+                      ]?.weight?.message
+                    }
+                  </FormErrorMessage>
                 )}
-                type="number"
-              />
-            </FormControl>
-            <FormControl
-              isInvalid={
-                !!props.errors.records?.[props.recordIndex]?.sets?.[setIndex]
-                  ?.repetition
-              }
-            >
-              <FormLabel>回数</FormLabel>
-              <Input
-                {...props.register(
-                  `records.${props.recordIndex}.sets.${setIndex}.repetition`
+              </FormControl>
+            </GridItem>
+            <GridItem>
+              <FormControl
+                isInvalid={
+                  !!props.errors.records?.[props.recordIndex]?.sets?.[setIndex]
+                    ?.repetition
+                }
+              >
+                <FormLabel>回数</FormLabel>
+                <InputGroup>
+                  <Input
+                    {...props.register(
+                      `records.${props.recordIndex}.sets.${setIndex}.repetition`
+                    )}
+                    type="number"
+                  />
+                  <InputRightElement>回</InputRightElement>
+                </InputGroup>
+                {!!props.errors.records?.[props.recordIndex]?.sets?.[setIndex]
+                  ?.repetition && (
+                  <FormErrorMessage>
+                    {
+                      props.errors.records?.[props.recordIndex]?.sets?.[
+                        setIndex
+                      ]?.repetition?.message
+                    }
+                  </FormErrorMessage>
                 )}
-                type="number"
-              />
-            </FormControl>
-          </Stack>
+              </FormControl>
+            </GridItem>
+            <GridItem>
+              <Button onClick={onClickDeleteSet(setIndex)}>
+                <SmallCloseIcon />
+              </Button>
+            </GridItem>
+          </Grid>
         );
       })}
       <Button onClick={onClickAddSet}>セットを追加</Button>

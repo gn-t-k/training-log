@@ -36,18 +36,7 @@ export const useTrainingFrom: UseTrainingForm = (defaultValues) => {
     resolver: zodResolver(trainingFieldSchema),
     defaultValues: defaultValues ?? {
       date: format(new Date(), "yyyy-MM-dd"),
-      records: [
-        {
-          exerciseId: "",
-          memo: "",
-          sets: [
-            {
-              weight: "",
-              repetition: "",
-            },
-          ],
-        },
-      ],
+      records: [],
     },
   });
 };
