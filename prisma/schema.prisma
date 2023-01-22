@@ -117,7 +117,7 @@ model Record {
   id         String @id
   trainingId String
   exerciseId String
-  memo       String @default("")
+  memo       String
 
   sets Set[]
 
