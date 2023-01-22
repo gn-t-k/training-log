@@ -1,18 +1,21 @@
+import { ulid } from "ulid";
+
 import { RegisterMuscleCommand } from "@/libs/prisma/commands/register-muscle-command";
 
-import { Muscle } from "@/features/muscle/muscle";
+import { Trainee } from "@/features/trainee/trainee";
 
-type RegisterMuscleResolver = (deps: Deps) => (props: Props) => Promise<Muscle>;
+type RegisterMuscleResolver = (deps: Deps) => (props: Props) => Promise<void>;
 export type Deps = {
   registerMuscleCommand: RegisterMuscleCommand;
 };
-export type Props = { traineeId: string; name: string };
+export type Props = { trainee: Trainee; name: string };
 export const registerMuscleResolver: RegisterMuscleResolver =
   (deps) => async (props) => {
-    const registered = await deps.registerMuscleCommand({
-      traineeId: props.traineeId,
-      name: props.name,
+    await deps.registerMuscleCommand({
+      muscle: {
+        id: ulid(),
+        name: props.name,
+      },
+      trainee: props.trainee,
     });
-
-    return registered;
   };

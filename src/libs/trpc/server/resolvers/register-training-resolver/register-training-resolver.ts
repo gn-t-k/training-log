@@ -3,13 +3,13 @@ import { ulid } from "ulid";
 import { RegisterTrainingCommand } from "@/libs/prisma/commands/register-training-command";
 
 import { Exercise } from "@/features/exercise/exercise";
+import { Trainee } from "@/features/trainee/trainee";
 
 type RegisterTrainingResolver = (deps: Deps) => (props: Props) => Promise<void>;
 export type Deps = {
   registerTrainingCommand: RegisterTrainingCommand;
 };
 export type Props = {
-  traineeId: string;
   records: {
     exercise: Exercise;
     sets: {
@@ -17,11 +17,11 @@ export type Props = {
       repetition: number;
     }[];
   }[];
+  trainee: Trainee;
 };
 export const registerTrainingResolver: RegisterTrainingResolver =
   (deps) => async (props) => {
     await deps.registerTrainingCommand({
-      traineeId: props.traineeId,
       training: {
         id: ulid(),
         createdAt: new Date(),
@@ -35,5 +35,6 @@ export const registerTrainingResolver: RegisterTrainingResolver =
           })),
         })),
       },
+      trainee: props.trainee,
     });
   };

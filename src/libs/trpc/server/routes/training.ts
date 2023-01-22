@@ -53,8 +53,12 @@ export const trainingRouter = router({
       await registerTrainingResolver({
         registerTrainingCommand,
       })({
-        traineeId: ctx.trainee.id,
         records: input.records,
+        trainee: {
+          id: ctx.trainee.id,
+          name: ctx.trainee.name,
+          image: ctx.trainee.image,
+        },
       });
     }),
   getMonthlyTrainings: initializedProcedure

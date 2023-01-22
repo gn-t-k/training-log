@@ -1,10 +1,10 @@
-import { Exercise, Muscle } from "@prisma/client";
+import { Exercise } from "@/features/exercise/exercise";
 
 import prisma from "../client";
 
 export type GetExercisesByTraineeIdQuery = (props: {
   traineeId: string;
-}) => Promise<(Exercise & { targets: Muscle[] })[]>;
+}) => Promise<Exercise[]>;
 export const getExercisesByTraineeIdQuery: GetExercisesByTraineeIdQuery =
   async (props) => {
     const exercisesData = await prisma.exercise.findMany({

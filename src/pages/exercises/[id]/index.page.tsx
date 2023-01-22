@@ -23,6 +23,7 @@ import { trpc } from "@/libs/trpc/client/trpc";
 
 import { MutationState } from "@/utils/mutation-state";
 
+import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { Exercise } from "@/features/exercise/exercise";
 import {
   ExerciseField,
@@ -42,16 +43,24 @@ const ExercisePage: NextPage = () => {
     return <p>リダイレクト中</p>;
   }
 
-  return <ExerciseContainer {...{ id }} />;
+  const goToExercisesPage: Props["goToExercisesPage"] = () => {
+    router.push(pagesPath.exercises.$url());
+  };
+
+  return (
+    <RequireLogin>
+      <Exercise id={id} goToExercisesPage={goToExercisesPage} />
+    </RequireLogin>
+  );
 };
 export default ExercisePage;
 
-type ContainerProps = {
+type Props = {
   id: string;
+  goToExercisesPage: () => void;
 };
-const ExerciseContainer: FC<ContainerProps> = (props) => {
+const Exercise: FC<Props> = (props) => {
   const util = trpc.useContext();
-  const router = useRouter();
   const exerciseQuery = trpc.exercise.getById.useQuery({
     id: props.id,
   });
@@ -59,24 +68,21 @@ const ExerciseContainer: FC<ContainerProps> = (props) => {
   const updateExerciseMutation = trpc.exercise.update.useMutation({
     onSuccess: () => {
       util.exercise.invalidate();
-      router.push(pagesPath.exercises.$url());
+      props.goToExercisesPage();
     },
   });
   const deleteExerciseMutation = trpc.exercise.delete.useMutation({
     onSuccess: () => {
       util.exercise.invalidate();
-      router.push(pagesPath.exercises.$url());
+      props.goToExercisesPage();
     },
   });
 
-  const updateExercise: ViewProps["updateExercise"] = (exercise) => {
-    updateExerciseMutation.mutate(exercise);
+  const updateExercise: ViewProps["updateExercise"] = (props) => {
+    updateExerciseMutation.mutate(props);
   };
   const deleteExercise: ViewProps["deleteExercise"] = (id) => {
     deleteExerciseMutation.mutate({ id });
-  };
-  const goToExercisesPage: ViewProps["goToExercisesPage"] = () => {
-    router.push(pagesPath.exercises.$url());
   };
 
   switch (exerciseQuery.status) {
@@ -105,7 +111,7 @@ const ExerciseContainer: FC<ContainerProps> = (props) => {
       deleteExercise={deleteExercise}
       updateExerciseStatus={updateExerciseMutation.status}
       deleteExerciseStatus={deleteExerciseMutation.status}
-      goToExercisesPage={goToExercisesPage}
+      goToExercisesPage={props.goToExercisesPage}
     />
   );
 };
@@ -113,7 +119,7 @@ const ExerciseContainer: FC<ContainerProps> = (props) => {
 type ViewProps = {
   exercise: Exercise;
   targets: Muscle[];
-  updateExercise: (exercise: Exercise) => void;
+  updateExercise: (props: { before: Exercise; after: Exercise }) => void;
   deleteExercise: (id: string) => void;
   updateExerciseStatus: MutationState;
   deleteExerciseStatus: MutationState;
@@ -176,9 +182,12 @@ export const ExerciseView: FC<ViewProps> = (props) => {
       return target ? [target] : [];
     });
     props.updateExercise({
-      id: props.exercise.id,
-      name: formValue.name,
-      targets,
+      before: props.exercise,
+      after: {
+        id: props.exercise.id,
+        name: formValue.name,
+        targets,
+      },
     });
   };
   const onClickDelete: MouseEventHandler = (e) => {
@@ -197,49 +206,53 @@ export const ExerciseView: FC<ViewProps> = (props) => {
 
   return (
     <Container>
-      <Button onClick={goToExercisesPage}>
-        <ChevronLeftIcon />
-      </Button>
-      <Heading>種目を編集</Heading>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack direction="column">
-          <FormControl isInvalid={!!errors.name} isDisabled={isLoading}>
-            <FormLabel>種目の名前</FormLabel>
-            <Input {...register("name")} />
-            {!!errors.name && (
-              <FormErrorMessage>{errors.name.message}</FormErrorMessage>
-            )}
-          </FormControl>
-          <FormControl isInvalid={!!errors.muscleIds} isDisabled={isLoading}>
-            <FormLabel>この種目で鍛えられる部位</FormLabel>
-            <Controller
-              control={control}
-              name="muscleIds"
-              render={({ field }): ReactElement => (
-                // FIXME: forwardRef使えエラーが出る
-                <CheckboxGroup {...field}>
-                  <Stack direction="column">
-                    {props.targets.map((target) => (
-                      <Checkbox key={target.id} value={target.id}>
-                        {target.name}
-                      </Checkbox>
-                    ))}
-                  </Stack>
-                </CheckboxGroup>
-              )}
-            />
-            {!!errors.muscleIds && (
-              <FormErrorMessage>{errors.muscleIds.message}</FormErrorMessage>
-            )}
-          </FormControl>
-          <Button type="submit" isDisabled={isLoading}>
-            {isLoading ? <Spinner /> : "変更を保存"}
+      <Stack direction="column">
+        <Stack direction="row">
+          <Button onClick={goToExercisesPage}>
+            <ChevronLeftIcon />
           </Button>
-          <Button onClick={onClickDelete} isDisabled={isLoading}>
-            {isLoading ? <Spinner /> : "種目を削除"}
-          </Button>
+          <Heading>種目を編集</Heading>
         </Stack>
-      </form>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Stack direction="column">
+            <FormControl isInvalid={!!errors.name} isDisabled={isLoading}>
+              <FormLabel>種目の名前</FormLabel>
+              <Input {...register("name")} />
+              {!!errors.name && (
+                <FormErrorMessage>{errors.name.message}</FormErrorMessage>
+              )}
+            </FormControl>
+            <FormControl isInvalid={!!errors.muscleIds} isDisabled={isLoading}>
+              <FormLabel>この種目で鍛えられる部位</FormLabel>
+              <Controller
+                control={control}
+                name="muscleIds"
+                render={({ field }): ReactElement => (
+                  // FIXME: forwardRef使えエラーが出る
+                  <CheckboxGroup {...field}>
+                    <Stack direction="column">
+                      {props.targets.map((target) => (
+                        <Checkbox key={target.id} value={target.id}>
+                          {target.name}
+                        </Checkbox>
+                      ))}
+                    </Stack>
+                  </CheckboxGroup>
+                )}
+              />
+              {!!errors.muscleIds && (
+                <FormErrorMessage>{errors.muscleIds.message}</FormErrorMessage>
+              )}
+            </FormControl>
+            <Button type="submit" isDisabled={isLoading}>
+              {isLoading ? <Spinner /> : "変更を保存"}
+            </Button>
+            <Button onClick={onClickDelete} isDisabled={isLoading}>
+              {isLoading ? <Spinner /> : "種目を削除"}
+            </Button>
+          </Stack>
+        </form>
+      </Stack>
     </Container>
   );
 };

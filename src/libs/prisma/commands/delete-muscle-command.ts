@@ -1,14 +1,12 @@
-import { Muscle } from "@prisma/client";
+import { Muscle } from "@/features/muscle/muscle";
 
 import prisma from "../client";
 
-export type DeleteMuscleCommand = (props: { id: string }) => Promise<Muscle>;
-export const deleteMuscleCommand: DeleteMuscleCommand = async ({ id }) => {
-  const deleted = await prisma.muscle.delete({
+export type DeleteMuscleCommand = (props: { muscle: Muscle }) => Promise<void>;
+export const deleteMuscleCommand: DeleteMuscleCommand = async (props) => {
+  await prisma.muscle.delete({
     where: {
-      id,
+      id: props.muscle.id,
     },
   });
-
-  return deleted;
 };

@@ -1,29 +1,23 @@
-import { Exercise, Muscle } from "@prisma/client";
-import { ulid } from "ulid";
+import { Exercise } from "@/features/exercise/exercise";
+import { Trainee } from "@/features/trainee/trainee";
 
 import prisma from "../client";
 
 export type RegisterExerciseCommand = (props: {
-  name: string;
-  musclesIds: string[];
-  traineeId: string;
-}) => Promise<Exercise & { targets: Muscle[] }>;
+  exercise: Exercise;
+  trainee: Trainee;
+}) => Promise<void>;
 export const registerExerciseCommand: RegisterExerciseCommand = async (
   props
 ) => {
-  const registered = await prisma.exercise.create({
+  await prisma.exercise.create({
     data: {
-      id: ulid(),
-      name: props.name,
+      id: props.exercise.id,
+      name: props.exercise.name,
       targets: {
-        connect: props.musclesIds.map((id) => ({ id })),
+        connect: props.exercise.targets.map((target) => ({ id: target.id })),
       },
-      traineeId: props.traineeId,
-    },
-    include: {
-      targets: true,
+      traineeId: props.trainee.id,
     },
   });
-
-  return registered;
 };

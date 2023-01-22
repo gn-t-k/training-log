@@ -1,23 +1,22 @@
-import { Muscle } from "@prisma/client";
-import { ulid } from "ulid";
+import { Muscle } from "@/features/muscle/muscle";
+import { Trainee } from "@/features/trainee/trainee";
 
 import prisma from "../client";
 
 export type RegisterMuscleCommand = (props: {
-  traineeId: string;
-  name: string;
-}) => Promise<Muscle>;
-export const registerMuscleCommand: RegisterMuscleCommand = async ({
-  traineeId,
-  name,
-}) => {
-  const registered = await prisma.muscle.create({
+  muscle: Muscle;
+  trainee: Trainee;
+}) => Promise<void>;
+export const registerMuscleCommand: RegisterMuscleCommand = async (props) => {
+  await prisma.muscle.create({
     data: {
-      id: ulid(),
-      name,
-      traineeId,
+      id: props.muscle.id,
+      name: props.muscle.name,
+      trainee: {
+        connect: {
+          id: props.trainee.id,
+        },
+      },
     },
   });
-
-  return registered;
 };

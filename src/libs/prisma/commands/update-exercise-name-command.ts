@@ -1,25 +1,20 @@
-import { Exercise, Muscle } from "@prisma/client";
+import { Exercise } from "@/features/exercise/exercise";
 
 import prisma from "../client";
 
 export type UpdateExerciseNameCommand = (props: {
-  id: string;
-  name: string;
-}) => Promise<Exercise & { targets: Muscle[] }>;
+  before: Exercise;
+  after: Exercise;
+}) => Promise<void>;
 export const updateExerciseNameCommand: UpdateExerciseNameCommand = async (
   props
 ) => {
-  const updated = await prisma.exercise.update({
+  await prisma.exercise.update({
     where: {
-      id: props.id,
+      id: props.before.id,
     },
     data: {
-      name: props.name,
-    },
-    include: {
-      targets: true,
+      name: props.after.name,
     },
   });
-
-  return updated;
 };

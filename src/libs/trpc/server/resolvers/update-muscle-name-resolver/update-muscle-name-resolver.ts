@@ -3,11 +3,9 @@ import { TRPCError } from "@trpc/server";
 import { UpdateMuscleNameCommand } from "@/libs/prisma/commands/update-muscle-name-command";
 import { GetMuscleByIdQuery } from "@/libs/prisma/queries/get-muscle-by-id-query";
 
-import { Muscle } from "@/features/muscle/muscle";
+import { Trainee } from "@/features/trainee/trainee";
 
-type UpdateMuscleNameResolver = (
-  deps: Deps
-) => (props: Props) => Promise<Muscle>;
+type UpdateMuscleNameResolver = (deps: Deps) => (props: Props) => Promise<void>;
 export type Deps = {
   getMuscleByIdQuery: GetMuscleByIdQuery;
   updateMuscleNameCommand: UpdateMuscleNameCommand;
@@ -15,25 +13,24 @@ export type Deps = {
 export type Props = {
   id: string;
   name: string;
-  traineeId: string;
+  trainee: Trainee;
 };
 export const updateMuscleNameResolver: UpdateMuscleNameResolver =
   (deps) => async (props) => {
-    const muscle = await deps.getMuscleByIdQuery({ id: props.id });
+    const muscleData = await deps.getMuscleByIdQuery({ id: props.id });
 
-    const otherTraineesMuscle =
-      muscle !== null && muscle.traineeId !== props.traineeId;
-
-    if (muscle === null || otherTraineesMuscle) {
+    const isOwnMuscle =
+      muscleData !== null && muscleData.traineeId === props.trainee.id;
+    if (!isOwnMuscle) {
       throw new TRPCError({
         code: "NOT_FOUND",
       });
     }
 
-    const updated = await deps.updateMuscleNameCommand({
-      id: props.id,
-      name: props.name,
+    await deps.updateMuscleNameCommand({
+      muscle: {
+        id: props.id,
+        name: props.name,
+      },
     });
-
-    return updated;
   };

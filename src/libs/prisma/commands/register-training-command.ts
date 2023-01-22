@@ -1,9 +1,10 @@
+import { Trainee } from "@/features/trainee/trainee";
 import { Training } from "@/features/training/training";
 
 import prisma from "../client";
 
 export type RegisterTrainingCommand = (props: {
-  traineeId: string;
+  trainee: Trainee;
   training: Training;
 }) => Promise<void>;
 export const registerTrainingCommand: RegisterTrainingCommand = async (
@@ -17,7 +18,7 @@ export const registerTrainingCommand: RegisterTrainingCommand = async (
         updatedAt: props.training.createdAt,
         trainee: {
           connect: {
-            id: props.traineeId,
+            id: props.trainee.id,
           },
         },
       },
