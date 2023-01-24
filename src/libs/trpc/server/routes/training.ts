@@ -28,6 +28,7 @@ const registerTrainingInputSchema = z.object({
       memo: z.string(),
     })
   ),
+  createdAt: z.date(),
 });
 export type RegisterTrainingInput = z.infer<typeof registerTrainingInputSchema>;
 
@@ -56,6 +57,7 @@ export const trainingRouter = router({
         registerTrainingCommand,
       })({
         records: input.records,
+        createdAt: input.createdAt,
         trainee: {
           id: ctx.trainee.id,
           name: ctx.trainee.name,

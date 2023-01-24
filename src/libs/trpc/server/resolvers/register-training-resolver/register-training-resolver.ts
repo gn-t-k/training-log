@@ -18,6 +18,7 @@ export type Props = {
     }[];
     memo: string;
   }[];
+  createdAt: Date;
   trainee: Trainee;
 };
 export const registerTrainingResolver: RegisterTrainingResolver =
@@ -25,7 +26,7 @@ export const registerTrainingResolver: RegisterTrainingResolver =
     await deps.registerTrainingCommand({
       training: {
         id: ulid(),
-        createdAt: new Date(),
+        createdAt: props.createdAt,
         records: props.records.map((record) => ({
           id: ulid(),
           exercise: record.exercise,

@@ -39,6 +39,7 @@ import { SubmitHandler, useFieldArray, UseFormReturn } from "react-hook-form";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
+import { RegisterTrainingInput } from "@/libs/trpc/server/routes/training";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { Exercise } from "@/features/exercise/exercise";
@@ -65,7 +66,18 @@ type Props = {
   goToTrainingsPage: () => void;
 };
 const RegisterTraining: FC<Props> = (props) => {
+  const util = trpc.useContext();
   const exercisesQuery = trpc.exercise.getAll.useQuery();
+  const registerTrainingMutation = trpc.training.register.useMutation({
+    onSuccess: () => {
+      util.training.invalidate();
+      props.goToTrainingsPage();
+    },
+  });
+
+  const registerTraining: ViewProps["registerTraining"] = (props) => {
+    registerTrainingMutation.mutate(props);
+  };
 
   switch (exercisesQuery.status) {
     case "loading":
@@ -76,6 +88,7 @@ const RegisterTraining: FC<Props> = (props) => {
         <RegisterTrainingView
           goToTrainingsPage={props.goToTrainingsPage}
           exercises={exercisesQuery.data}
+          registerTraining={registerTraining}
         />
       );
     case "error":
@@ -87,6 +100,7 @@ const RegisterTraining: FC<Props> = (props) => {
 type ViewProps = {
   exercises: Exercise[];
   goToTrainingsPage: () => void;
+  registerTraining: (props: RegisterTrainingInput) => void;
 };
 const RegisterTrainingView: FC<ViewProps> = (props) => {
   const {
@@ -101,14 +115,43 @@ const RegisterTrainingView: FC<ViewProps> = (props) => {
     },
     [props]
   );
-  const onSubmit = useCallback<SubmitHandler<TrainingField>>((fieldValues) => {
-    const date = ((): Date => {
-      const d = new Date(fieldValues.date);
-      const [year, month, date] = [getYear(d), getMonth(d), getDate(d)];
-      return new Date(year, month, date);
-    })();
-    console.log({ date });
-  }, []);
+  const onSubmit = useCallback<SubmitHandler<TrainingField>>(
+    (fieldValues) => {
+      const createdAt = ((): Date => {
+        const d = new Date(fieldValues.date);
+        const [year, month, date] = [getYear(d), getMonth(d), getDate(d)];
+        return new Date(year, month, date);
+      })();
+      const records = fieldValues.records.flatMap((record) => {
+        const exercise = props.exercises.find(
+          (exercise) => exercise.id === record.exerciseId
+        );
+
+        if (exercise === undefined) {
+          return [];
+        }
+
+        const sets = record.sets.map((set) => ({
+          weight: parseInt(set.weight),
+          repetition: parseInt(set.repetition),
+        }));
+
+        return [
+          {
+            exercise,
+            sets,
+            memo: record.memo,
+          },
+        ];
+      });
+
+      props.registerTraining({
+        createdAt,
+        records,
+      });
+    },
+    [props]
+  );
 
   return (
     <Container>
@@ -120,7 +163,7 @@ const RegisterTrainingView: FC<ViewProps> = (props) => {
           <Heading>トレーニングを記録する</Heading>
         </Stack>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack direction="column">
+          <Stack direction="column" gap={8}>
             <FormControl isInvalid={!!errors.date}>
               <FormLabel htmlFor="date">日付</FormLabel>
               <Input id="date" {...register("date")} type="date" />
@@ -258,6 +301,11 @@ const RecordForm: FC<RecordFormProps> = (props) => {
         })}
       </Stack>
       <Button onClick={onClickAddExercise}>種目から追加</Button>
+      <FormControl isInvalid={!!props.errors.records}>
+        {!!props.errors.records && (
+          <FormErrorMessage>{props.errors.records.message}</FormErrorMessage>
+        )}
+      </FormControl>
     </Stack>
   );
 };
@@ -367,6 +415,15 @@ const SetForm: FC<SetFormProps> = (props) => {
         );
       })}
       <Button onClick={onClickAddSet}>セットを追加</Button>
+      {!!props.errors.records?.[props.recordIndex]?.sets && (
+        <FormControl
+          isInvalid={!!props.errors.records[props.recordIndex]?.sets}
+        >
+          <FormErrorMessage>
+            {props.errors.records[props.recordIndex]?.sets?.message}
+          </FormErrorMessage>
+        </FormControl>
+      )}
     </Stack>
   );
 };
