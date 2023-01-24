@@ -1,7 +1,7 @@
 import { Button, Container, Stack, Text } from "@chakra-ui/react";
 import { getDate, getMonth, getYear } from "date-fns";
 import { NextPage } from "next";
-import Link from "next/link";
+import NextLink from "next/link";
 import { FC, MouseEventHandler } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
@@ -84,9 +84,9 @@ type ViewProps = {
 const TrainingsView: FC<ViewProps> = (props) => {
   return (
     <Container>
-      <Link href={pagesPath.trainings.register.$url()} passHref>
-        <Button as="a">トレーニングを登録</Button>
-      </Link>
+      <Button as={NextLink} href={pagesPath.trainings.register.$url()}>
+        トレーニングを登録
+      </Button>
       {props.trainings.map((training) => {
         const [year, month, date] = [
           getYear(training.createdAt),
