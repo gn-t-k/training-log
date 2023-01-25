@@ -28,17 +28,20 @@ import {
   Text,
   Textarea,
 } from "@chakra-ui/react";
-import { FC, MouseEventHandler, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import {
-  SubmitHandler,
-  useFieldArray,
-  UseFieldArrayRemove,
-  UseFormReturn,
+  useFieldArray
 } from "react-hook-form";
 
-import { Exercise } from "@/features/exercise/exercise";
+import { useTrainingFrom } from "../use-training-form";
 
-import { TrainingField, useTrainingFrom } from "../use-training-form";
+import type { TrainingField} from "../use-training-form";
+import type { Exercise } from "@/features/exercise/exercise";
+import type { FC, MouseEventHandler} from "react";
+import type {
+  SubmitHandler,
+  UseFieldArrayRemove,
+  UseFormReturn} from "react-hook-form";
 
 type Props = {
   defaultValues?: TrainingField;

@@ -1,6 +1,8 @@
-import { Muscle } from "@prisma/client";
+import { getAllMusclesResolver } from "./get-all-muscles-resolver";
 
-import { Deps, getAllMusclesResolver, Props } from "./get-all-muscles-resolver";
+import type { Deps, Props } from "./get-all-muscles-resolver";
+import type { Muscle } from "@prisma/client";
+
 
 describe("getAllMusclesResolver", () => {
   test("すべての部位が取得できる", async () => {

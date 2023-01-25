@@ -1,8 +1,8 @@
 import { TRPCError } from "@trpc/server";
 
-import { GetExerciseByIdQuery } from "@/libs/prisma/queries/get-exercise-by-id-query";
+import type { GetExerciseByIdQuery } from "@/libs/prisma/queries/get-exercise-by-id-query";
 
-import { Exercise } from "@/features/exercise/exercise";
+import type { Exercise } from "@/features/exercise/exercise";
 
 type GetExerciseByIdResolver = (
   deps: Deps

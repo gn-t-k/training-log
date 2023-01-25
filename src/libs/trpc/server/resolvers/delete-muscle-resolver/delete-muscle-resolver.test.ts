@@ -1,7 +1,9 @@
-import { Muscle } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 
-import { Deps, Props, deleteMuscleResolver } from "./delete-muscle-resolver";
+import { deleteMuscleResolver } from "./delete-muscle-resolver";
+
+import type { Deps, Props} from "./delete-muscle-resolver";
+import type { Muscle } from "@prisma/client";
 
 describe("deleteMuscleResolver", () => {
   const musclesData: Muscle[] = [

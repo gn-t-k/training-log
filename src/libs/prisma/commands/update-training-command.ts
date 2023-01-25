@@ -1,6 +1,7 @@
-import { Training } from "@/features/training/training";
-
 import prisma from "../client";
+
+import type { Training } from "@/features/training/training";
+
 
 export type UpdateTrainingCommand = (props: {
   updatedAt: Date;

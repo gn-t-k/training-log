@@ -1,6 +1,6 @@
-import { GetTraineeByAuthUserIdQuery } from "@/libs/prisma/queries/get-trainee-by-auth-user-id-query";
+import type { GetTraineeByAuthUserIdQuery } from "@/libs/prisma/queries/get-trainee-by-auth-user-id-query";
 
-import { Trainee } from "@/features/trainee/trainee";
+import type { Trainee } from "@/features/trainee/trainee";
 
 type GetTraineeBySessionResolver = (
   deps: Deps

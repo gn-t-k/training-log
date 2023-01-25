@@ -10,20 +10,24 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
-import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { FC, MouseEventHandler, useCallback, useEffect } from "react";
-import { SubmitHandler } from "react-hook-form";
+import { useCallback, useEffect } from "react";
+
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
-import { MutationState } from "@/utils/mutation-state";
+import type { MutationState } from "@/utils/mutation-state";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { Muscle } from "@/features/muscle/muscle";
 import { useGetMuscleId } from "@/features/muscle/use-get-muscle-id";
-import { MuscleField, useMuscleForm } from "@/features/muscle/use-muscle-form";
+import { useMuscleForm } from "@/features/muscle/use-muscle-form";
+
+import type { MuscleField} from "@/features/muscle/use-muscle-form";
+import type { NextPage } from "next";
+import type { FC, MouseEventHandler} from "react";
+import type { SubmitHandler } from "react-hook-form";
 
 const MusclePage: NextPage = () => {
   const id = useGetMuscleId();

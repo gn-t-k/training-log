@@ -1,11 +1,13 @@
-import { Muscle } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 
 import {
-  Deps,
-  Props,
   getMuscleByNameResolver,
 } from "./get-muscle-by-name-resolver";
+
+import type {
+  Deps,
+  Props} from "./get-muscle-by-name-resolver";
+import type { Muscle } from "@prisma/client";
 
 describe("getMuscleByNameResolver", () => {
   const musclesData: Muscle[] = [

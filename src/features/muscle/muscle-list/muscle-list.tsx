@@ -9,11 +9,12 @@ import {
   Text,
   UnorderedList,
 } from "@chakra-ui/react";
-import { FC, MouseEventHandler } from "react";
+
 
 import { trpc } from "@/libs/trpc/client/trpc";
 
-import { Muscle } from "../muscle";
+import type { Muscle } from "../muscle";
+import type { FC, MouseEventHandler } from "react";
 
 type Props = {
   goToMusclePage: (id: string) => void;

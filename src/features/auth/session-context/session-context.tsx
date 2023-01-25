@@ -1,8 +1,10 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { createContext, FC, ReactNode, useContext } from "react";
+import { createContext, useContext } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
+
+import type { FC, ReactNode} from "react";
 
 type Session = {
   authUser: AuthUser;

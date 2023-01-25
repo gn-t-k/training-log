@@ -1,12 +1,14 @@
 import { Button, useDisclosure } from "@chakra-ui/react";
 import { action } from "@storybook/addon-actions";
-import { ComponentMeta, ComponentStoryObj } from "@storybook/react";
-import { ComponentProps, FC, useState } from "react";
+import { useState } from "react";
 
-import { MutationState } from "@/utils/mutation-state";
+import type { MutationState } from "@/utils/mutation-state";
 import { sleep } from "@/utils/sleep";
 
 import { RegisterMuscleModalView } from "./register-muscle-modal";
+
+import type { ComponentMeta, ComponentStoryObj } from "@storybook/react";
+import type { ComponentProps, FC} from "react";
 
 type Meta = ComponentMeta<typeof RegisterMuscleModalView>;
 type Props = ComponentProps<typeof RegisterMuscleModalView>;

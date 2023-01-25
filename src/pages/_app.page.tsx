@@ -1,11 +1,11 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { SessionProvider } from "next-auth/react";
-import { FC } from "react";
 import { RecoilRoot } from "recoil";
 
 import { trpc } from "@/libs/trpc/client/trpc";
 
 import type { AppProps } from "next/app";
+import type { FC } from "react";
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
   return (

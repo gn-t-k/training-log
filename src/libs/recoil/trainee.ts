@@ -1,10 +1,11 @@
 import { useSession } from "next-auth/react";
-import { useCallback, FC, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 
 import { trpc } from "@/libs/trpc/client/trpc";
 
-import { Trainee } from "@/features/trainee/trainee";
+import type { Trainee } from "@/features/trainee/trainee";
+import type { FC} from "react";
 
 type TraineeState = {
   trainee: Trainee | null;

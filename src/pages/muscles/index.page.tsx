@@ -1,13 +1,15 @@
 import { AddIcon, ChevronLeftIcon } from "@chakra-ui/icons";
 import { Button, Container, Heading, Spacer, Stack } from "@chakra-ui/react";
-import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { FC, MouseEventHandler, useCallback } from "react";
+import { useCallback } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { MuscleList } from "@/features/muscle/muscle-list/muscle-list";
+
+import type { NextPage } from "next";
+import type { FC, MouseEventHandler} from "react";
 
 const MusclesPage: NextPage = () => {
   const router = useRouter();

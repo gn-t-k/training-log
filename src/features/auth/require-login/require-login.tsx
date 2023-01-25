@@ -1,8 +1,9 @@
-import { FC, ReactNode } from "react";
+import { SessionContextProvider } from "../session-context/session-context";
+
+import type { FC, ReactNode } from "react";
 
 // import { TraineeStateManager } from "@/libs/recoil/trainee";
 
-import { SessionContextProvider } from "../session-context/session-context";
 
 type Props = {
   children: ReactNode;

@@ -1,9 +1,11 @@
-import { NextPage } from "next";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { MouseEventHandler, useEffect } from "react";
+import { useEffect } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
+
+import type { NextPage } from "next";
+import type { MouseEventHandler} from "react";
 
 const Login: NextPage = () => {
   const router = useRouter();

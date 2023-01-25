@@ -1,11 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { ulid } from "ulid";
 
-import { RegisterExerciseCommand } from "@/libs/prisma/commands/register-exercise-command";
-import { GetMusclesByIdsQuery } from "@/libs/prisma/queries/get-muscles-by-ids-query";
-import { GetTraineeByIdQuery } from "@/libs/prisma/queries/get-trainee-by-id-query";
+import type { RegisterExerciseCommand } from "@/libs/prisma/commands/register-exercise-command";
+import type { GetMusclesByIdsQuery } from "@/libs/prisma/queries/get-muscles-by-ids-query";
+import type { GetTraineeByIdQuery } from "@/libs/prisma/queries/get-trainee-by-id-query";
 
-import { Trainee } from "@/features/trainee/trainee";
+import type { Trainee } from "@/features/trainee/trainee";
 
 type RegisterExerciseResolver = (deps: Deps) => (props: Props) => Promise<void>;
 export type Deps = {

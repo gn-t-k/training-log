@@ -1,6 +1,7 @@
-import { Exercise } from "@/features/exercise/exercise";
-
 import prisma from "../client";
+
+import type { Exercise } from "@/features/exercise/exercise";
+
 
 export type UpdateExerciseNameCommand = (props: {
   before: Exercise;

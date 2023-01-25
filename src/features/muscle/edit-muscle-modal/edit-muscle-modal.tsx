@@ -15,15 +15,19 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
-import { FC, MouseEventHandler, useEffect, useMemo } from "react";
-import { SubmitHandler } from "react-hook-form";
+import { useEffect, useMemo } from "react";
+
 
 import { trpc } from "@/libs/trpc/client/trpc";
 
-import { MutationState } from "@/utils/mutation-state";
+import type { MutationState } from "@/utils/mutation-state";
 
-import { Muscle } from "../muscle";
-import { MuscleField, useMuscleForm } from "../use-muscle-form";
+import { useMuscleForm } from "../use-muscle-form";
+
+import type { Muscle } from "../muscle";
+import type { MuscleField} from "../use-muscle-form";
+import type { FC, MouseEventHandler} from "react";
+import type { SubmitHandler } from "react-hook-form";
 
 type Props = {
   onClose: () => void;
