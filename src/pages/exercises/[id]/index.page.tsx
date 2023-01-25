@@ -24,13 +24,14 @@ import { trpc } from "@/libs/trpc/client/trpc";
 import { MutationState } from "@/utils/mutation-state";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
-import { Exercise } from "@/features/exercise/exercise";
 import {
   ExerciseField,
   useExerciseForm,
 } from "@/features/exercise/use-exercise-form";
 import { useGetExerciseId } from "@/features/exercise/use-get-exercise-id";
 import { Muscle } from "@/features/muscle/muscle";
+
+import type { Exercise } from "@/features/exercise/exercise";
 
 const ExercisePage: NextPage = () => {
   const id = useGetExerciseId();
