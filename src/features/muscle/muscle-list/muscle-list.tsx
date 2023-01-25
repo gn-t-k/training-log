@@ -1,4 +1,4 @@
-import { EditIcon } from "@chakra-ui/icons";
+import { ChevronRightIcon } from "@chakra-ui/icons";
 import {
   Button,
   Divider,
@@ -16,9 +16,9 @@ import { trpc } from "@/libs/trpc/client/trpc";
 import { Muscle } from "../muscle";
 
 type Props = {
-  onClickEditHOF: (muscle: Muscle) => MouseEventHandler;
+  goToMusclePage: (id: string) => void;
 };
-export const MuscleList: FC<Props> = ({ onClickEditHOF }) => {
+export const MuscleList: FC<Props> = (props) => {
   const musclesQuery = trpc.muscle.getAll.useQuery();
 
   switch (musclesQuery.status) {
@@ -31,7 +31,7 @@ export const MuscleList: FC<Props> = ({ onClickEditHOF }) => {
       return (
         <MuscleListView
           muscles={muscles}
-          onClickEditHOF={onClickEditHOF}
+          goToMusclePage={props.goToMusclePage}
           isFetching={musclesQuery.isFetching}
         />
       );
@@ -44,20 +44,18 @@ export const MuscleList: FC<Props> = ({ onClickEditHOF }) => {
 
 type ViewProps = {
   muscles: Muscle[];
-  onClickEditHOF: Props["onClickEditHOF"];
+  goToMusclePage: (id: string) => void;
   isFetching: boolean;
 };
-export const MuscleListView: FC<ViewProps> = ({
-  muscles,
-  onClickEditHOF,
-  isFetching,
-}) => {
+export const MuscleListView: FC<ViewProps> = (props) => {
   return (
     <Stack direction="column">
-      {isFetching && <Spinner />}
+      {props.isFetching && <Spinner />}
       <UnorderedList>
-        {muscles.map((muscle) => {
-          const onClick = onClickEditHOF(muscle);
+        {props.muscles.map((muscle) => {
+          const onClick: MouseEventHandler = (_) => {
+            props.goToMusclePage(muscle.id);
+          };
           return (
             <List key={muscle.id} mb={4}>
               <Stack direction="column">
@@ -65,7 +63,7 @@ export const MuscleListView: FC<ViewProps> = ({
                   <Text>{muscle.name}</Text>
                   <Spacer />
                   <Button {...{ onClick }}>
-                    <EditIcon />
+                    <ChevronRightIcon />
                   </Button>
                 </Stack>
                 <Divider />

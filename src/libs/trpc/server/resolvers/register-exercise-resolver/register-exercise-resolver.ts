@@ -1,21 +1,22 @@
 import { TRPCError } from "@trpc/server";
+import { ulid } from "ulid";
 
 import { RegisterExerciseCommand } from "@/libs/prisma/commands/register-exercise-command";
 import { GetMusclesByIdsQuery } from "@/libs/prisma/queries/get-muscles-by-ids-query";
+import { GetTraineeByIdQuery } from "@/libs/prisma/queries/get-trainee-by-id-query";
 
-import { Exercise } from "@/features/exercise/exercise";
+import { Trainee } from "@/features/trainee/trainee";
 
-type RegisterExerciseResolver = (
-  deps: Deps
-) => (props: Props) => Promise<Exercise>;
+type RegisterExerciseResolver = (deps: Deps) => (props: Props) => Promise<void>;
 export type Deps = {
   getMusclesByIdsQuery: GetMusclesByIdsQuery;
+  getTraineeByIdQuery: GetTraineeByIdQuery;
   registerExerciseCommand: RegisterExerciseCommand;
 };
 export type Props = {
   name: string;
   musclesIds: string[];
-  traineeId: string;
+  trainee: Trainee;
 };
 export const registerExerciseResolver: RegisterExerciseResolver =
   (deps) => async (props) => {
@@ -31,9 +32,12 @@ export const registerExerciseResolver: RegisterExerciseResolver =
     }
 
     const registered = await deps.registerExerciseCommand({
-      name: props.name,
-      musclesIds: props.musclesIds,
-      traineeId: props.traineeId,
+      exercise: {
+        id: ulid(),
+        name: props.name,
+        targets: musclesData,
+      },
+      trainee: props.trainee,
     });
 
     return registered;

@@ -3,11 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { DeleteExerciseCommand } from "@/libs/prisma/commands/delete-exercise-command";
 import { GetExerciseByIdQuery } from "@/libs/prisma/queries/get-exercise-by-id-query";
 
-import { Exercise } from "@/features/exercise/exercise";
-
-type DeleteExerciseResolver = (
-  deps: Deps
-) => (props: Props) => Promise<Exercise>;
+type DeleteExerciseResolver = (deps: Deps) => (props: Props) => Promise<void>;
 export type Deps = {
   getExerciseByIdQuery: GetExerciseByIdQuery;
   deleteExerciseCommand: DeleteExerciseCommand;
@@ -29,7 +25,9 @@ export const deleteExerciseResolver: DeleteExerciseResolver =
       });
     }
 
-    const deleted = await deps.deleteExerciseCommand({ id: props.id });
+    const deleted = await deps.deleteExerciseCommand({
+      exercise: exerciseData,
+    });
 
     return deleted;
   };

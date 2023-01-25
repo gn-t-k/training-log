@@ -1,15 +1,26 @@
 import { Button, Container, Stack } from "@chakra-ui/react";
+import { getMonth, getYear } from "date-fns";
 import { NextPage } from "next";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { MouseEventHandler } from "react";
+import { FC, MouseEventHandler, useCallback } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
+import { trpc } from "@/libs/trpc/client/trpc";
+
+import { RequireLogin } from "@/features/auth/require-login/require-login";
 
 const IndexPage: NextPage = () => {
-  const session = useSession();
-  const onClickLogout: MouseEventHandler = (e) => {
-    e.preventDefault();
+  return (
+    <RequireLogin>
+      <Index />
+    </RequireLogin>
+  );
+};
+export default IndexPage;
+
+const Index: FC = () => {
+  const logout: ViewProps["logout"] = () => {
     signOut({
       callbackUrl: `${window.location.origin}${
         pagesPath.login.$url().pathname
@@ -17,23 +28,36 @@ const IndexPage: NextPage = () => {
     });
   };
 
-  switch (session.status) {
-    case "loading":
-      // TODO
-      return <p>セッション情報を取得中</p>;
-    case "authenticated":
-      return (
-        <Container>
-          <Stack direction="column">
-            <Link href={pagesPath.muscles.$url()}>部位</Link>
-            <Link href={pagesPath.exercises.$url()}>種目</Link>
-            <Button onClick={onClickLogout}>ログアウト</Button>
-          </Stack>
-        </Container>
-      );
-    case "unauthenticated":
-      return <Link href={pagesPath.login.$url()}>ログインページ</Link>;
-  }
+  const today = new Date();
+  trpc.training.getMonthlyTrainings.useQuery({
+    year: getYear(today),
+    month: getMonth(today),
+  });
+  trpc.exercise.getAll.useQuery();
+  trpc.muscle.getAll.useQuery();
+
+  return <IndexView logout={logout} />;
 };
 
-export default IndexPage;
+type ViewProps = {
+  logout: () => void;
+};
+const IndexView: FC<ViewProps> = (props) => {
+  const onClickLogout = useCallback<MouseEventHandler>(
+    (_) => {
+      props.logout();
+    },
+    [props]
+  );
+
+  return (
+    <Container>
+      <Stack direction="column">
+        <Link href={pagesPath.trainings.$url()}>トレーニング</Link>
+        <Link href={pagesPath.muscles.$url()}>部位</Link>
+        <Link href={pagesPath.exercises.$url()}>種目</Link>
+        <Button onClick={onClickLogout}>ログアウト</Button>
+      </Stack>
+    </Container>
+  );
+};

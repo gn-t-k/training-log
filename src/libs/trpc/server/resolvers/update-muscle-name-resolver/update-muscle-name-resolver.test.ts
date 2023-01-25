@@ -39,7 +39,11 @@ describe("updateMuscleNameResolver", () => {
     const props: Props = {
       id: "4",
       name: "腕",
-      traineeId: "trainee1",
+      trainee: {
+        id: "trainee1",
+        name: "name1",
+        image: "image",
+      },
     };
 
     const updateMuscleNamePromise = updateMuscleNameResolver(deps)(props);
@@ -55,7 +59,11 @@ describe("updateMuscleNameResolver", () => {
     const props: Props = {
       id: "3",
       name: "背中",
-      traineeId: "trainee1",
+      trainee: {
+        id: "trainee1",
+        name: "name1",
+        image: "image",
+      },
     };
 
     const updateMuscleNamePromise = updateMuscleNameResolver(deps)(props);

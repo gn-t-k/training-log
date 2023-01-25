@@ -5,12 +5,16 @@ import { Deps, getAllMusclesResolver, Props } from "./get-all-muscles-resolver";
 describe("getAllMusclesResolver", () => {
   test("すべての部位が取得できる", async () => {
     const deps: Deps = {
-      getAllMusclesQuery: async ({ traineeId: _ }) => {
+      getAllMusclesQuery: async (_) => {
         return Promise.resolve(musclesData);
       },
     };
     const props: Props = {
-      traineeId: "id",
+      trainee: {
+        id: "id",
+        name: "name",
+        image: "image",
+      },
     };
     const musclesData: Muscle[] = [
       {

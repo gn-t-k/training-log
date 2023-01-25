@@ -1,4 +1,4 @@
-import { Trainee } from "@prisma/client";
+import { Trainee } from "@/features/trainee/trainee";
 
 import prisma from "../client";
 

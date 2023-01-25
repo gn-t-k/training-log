@@ -3,9 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { DeleteMuscleCommand } from "@/libs/prisma/commands/delete-muscle-command";
 import { GetMuscleByIdQuery } from "@/libs/prisma/queries/get-muscle-by-id-query";
 
-import { Muscle } from "@/features/muscle/muscle";
-
-type DeleteMuscleResolver = (deps: Deps) => (props: Props) => Promise<Muscle>;
+type DeleteMuscleResolver = (deps: Deps) => (props: Props) => Promise<void>;
 export type Deps = {
   getMuscleByIdQuery: GetMuscleByIdQuery;
   deleteMuscleCommand: DeleteMuscleCommand;
@@ -27,7 +25,5 @@ export const deleteMuscleResolver: DeleteMuscleResolver =
       });
     }
 
-    const deleted = await deps.deleteMuscleCommand({ id: props.id });
-
-    return deleted;
+    await deps.deleteMuscleCommand({ muscle: muscleData });
   };

@@ -11,6 +11,7 @@ import { muscleSchema } from "@/features/muscle/muscle";
 
 import { deleteMuscleResolver } from "../resolvers/delete-muscle-resolver/delete-muscle-resolver";
 import { getAllMusclesResolver } from "../resolvers/get-all-muscles-resolver/get-all-muscles-resolver";
+import { getMuscleByIdResolver } from "../resolvers/get-muscle-by-id-resolver/get-muscle-by-id-resolver";
 import { getMuscleByNameResolver } from "../resolvers/get-muscle-by-name-resolver/get-muscle-by-name-resolver";
 import { registerMuscleResolver } from "../resolvers/register-muscle-resolver/register-muscle-resolver";
 import { updateMuscleNameResolver } from "../resolvers/update-muscle-name-resolver/update-muscle-name-resolver";
@@ -19,25 +20,49 @@ import { initializedProcedure, router } from "../trpc";
 export const muscleRouter = router({
   register: initializedProcedure
     .input(muscleSchema.omit({ id: true }))
-    .output(muscleSchema)
     .mutation(async ({ input, ctx }) => {
-      const registered = await registerMuscleResolver({
+      await registerMuscleResolver({
         registerMuscleCommand,
       })({
-        traineeId: ctx.trainee.id,
         name: input.name,
+        trainee: {
+          id: ctx.trainee.id,
+          name: ctx.trainee.name,
+          image: ctx.trainee.image,
+        },
       });
-
-      return registered;
     }),
   getAll: initializedProcedure
     .output(z.array(muscleSchema))
     .query(async ({ ctx }) => {
       const muscles = await getAllMusclesResolver({ getAllMusclesQuery })({
-        traineeId: ctx.trainee.id,
+        trainee: {
+          id: ctx.trainee.id,
+          name: ctx.trainee.name,
+          image: ctx.trainee.image,
+        },
       });
 
       return muscles;
+    }),
+  getById: initializedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .output(muscleSchema)
+    .query(async ({ input, ctx }) => {
+      const muscle = await getMuscleByIdResolver({ getMuscleByIdQuery })({
+        id: input.id,
+        trainee: {
+          id: ctx.trainee.id,
+          name: ctx.trainee.name,
+          image: ctx.trainee.image,
+        },
+      });
+
+      return muscle;
     }),
   getByName: initializedProcedure
     .input(
@@ -61,18 +86,19 @@ export const muscleRouter = router({
         name: z.string(),
       })
     )
-    .output(muscleSchema)
     .mutation(async ({ input, ctx }) => {
-      const updated = await updateMuscleNameResolver({
+      await updateMuscleNameResolver({
         getMuscleByIdQuery,
         updateMuscleNameCommand,
       })({
         id: input.id,
         name: input.name,
-        traineeId: ctx.trainee.id,
+        trainee: {
+          id: ctx.trainee.id,
+          name: ctx.trainee.name,
+          image: ctx.trainee.image,
+        },
       });
-
-      return updated;
     }),
   delete: initializedProcedure
     .input(
@@ -80,16 +106,13 @@ export const muscleRouter = router({
         id: z.string(),
       })
     )
-    .output(muscleSchema)
     .mutation(async ({ input, ctx }) => {
-      const deleted = await deleteMuscleResolver({
+      await deleteMuscleResolver({
         getMuscleByIdQuery,
         deleteMuscleCommand,
       })({
         id: input.id,
         traineeId: ctx.trainee.id,
       });
-
-      return deleted;
     }),
 });
