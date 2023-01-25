@@ -11,6 +11,7 @@ import { trainingSchema } from "@/features/training/training";
 
 import { deleteTrainingResolver } from "../resolvers/delete-training-resolver/delete-training-resolver";
 import { getMonthlyTrainingsResolver } from "../resolvers/get-monthly-trainings-resolver/get-monthly-trainings-resolver";
+import { getTrainingByIdResolver } from "../resolvers/get-training-by-id-resolver/get-training-by-id-resolver";
 import { registerTrainingResolver } from "../resolvers/register-training-resolver/register-training-resolver";
 import { updateTrainingResolver } from "../resolvers/update-training-resolver/update-training-resolver";
 import { initializedProcedure, router } from "../trpc";
@@ -65,6 +66,27 @@ export const trainingRouter = router({
         },
       });
     }),
+  getById: initializedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .output(trainingSchema)
+    .query(async ({ input, ctx }) => {
+      const training = await getTrainingByIdResolver({
+        getTrainingByIdQuery,
+      })({
+        id: input.id,
+        trainee: {
+          id: ctx.trainee.id,
+          name: ctx.trainee.name,
+          image: ctx.trainee.image,
+        },
+      });
+
+      return training;
+    }),
   getMonthlyTrainings: initializedProcedure
     .input(z.object({ year: z.number(), month: z.number() }))
     .output(z.array(trainingSchema))
@@ -79,7 +101,7 @@ export const trainingRouter = router({
 
       return trainings;
     }),
-  updateTraining: initializedProcedure
+  update: initializedProcedure
     .input(updateTrainingInputSchema)
     .mutation(async ({ input, ctx }) => {
       await updateTrainingResolver({
