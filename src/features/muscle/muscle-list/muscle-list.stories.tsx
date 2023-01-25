@@ -1,8 +1,10 @@
 import { action } from "@storybook/addon-actions";
-import { ComponentMeta, ComponentStoryObj } from "@storybook/react";
-import { ComponentProps } from "react";
 
 import { MuscleListView } from "./muscle-list";
+
+import type { ComponentMeta, ComponentStoryObj } from "@storybook/react";
+import type { ComponentProps } from "react";
+
 
 type Meta = ComponentMeta<typeof MuscleListView>;
 type Props = ComponentProps<typeof MuscleListView>;

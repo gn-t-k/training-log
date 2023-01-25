@@ -1,12 +1,12 @@
 import { TRPCError } from "@trpc/server";
 
-import { UpdateExerciseNameCommand } from "@/libs/prisma/commands/update-exercise-name-command";
-import { UpdateExerciseTargetsCommand } from "@/libs/prisma/commands/update-exercise-targets-command";
-import { GetExerciseByIdQuery } from "@/libs/prisma/queries/get-exercise-by-id-query";
-import { GetMusclesByIdsQuery } from "@/libs/prisma/queries/get-muscles-by-ids-query";
+import type { UpdateExerciseNameCommand } from "@/libs/prisma/commands/update-exercise-name-command";
+import type { UpdateExerciseTargetsCommand } from "@/libs/prisma/commands/update-exercise-targets-command";
+import type { GetExerciseByIdQuery } from "@/libs/prisma/queries/get-exercise-by-id-query";
+import type { GetMusclesByIdsQuery } from "@/libs/prisma/queries/get-muscles-by-ids-query";
 
-import { Exercise } from "@/features/exercise/exercise";
-import { Trainee } from "@/features/trainee/trainee";
+import type { Exercise } from "@/features/exercise/exercise";
+import type { Trainee } from "@/features/trainee/trainee";
 
 type UpdateExerciseResolver = (deps: Deps) => (props: Props) => Promise<void>;
 export type Deps = {

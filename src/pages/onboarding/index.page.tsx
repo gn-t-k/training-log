@@ -1,14 +1,16 @@
-import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { FC, useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
-import { MutationState } from "@/utils/mutation-state";
+import type { MutationState } from "@/utils/mutation-state";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { useSessionContext } from "@/features/auth/session-context/session-context";
+
+import type { NextPage } from "next";
+import type { FC} from "react";
 
 const OnboardingPage: NextPage = () => {
   const router = useRouter();

@@ -1,6 +1,7 @@
-import { Muscle } from "@/features/muscle/muscle";
-
 import prisma from "../client";
+
+import type { Muscle } from "@/features/muscle/muscle";
+
 
 export type GetMusclesByIdsQuery = (props: {
   ids: string[];

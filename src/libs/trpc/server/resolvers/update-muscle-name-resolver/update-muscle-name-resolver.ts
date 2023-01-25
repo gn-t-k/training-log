@@ -1,9 +1,9 @@
 import { TRPCError } from "@trpc/server";
 
-import { UpdateMuscleNameCommand } from "@/libs/prisma/commands/update-muscle-name-command";
-import { GetMuscleByIdQuery } from "@/libs/prisma/queries/get-muscle-by-id-query";
+import type { UpdateMuscleNameCommand } from "@/libs/prisma/commands/update-muscle-name-command";
+import type { GetMuscleByIdQuery } from "@/libs/prisma/queries/get-muscle-by-id-query";
 
-import { Trainee } from "@/features/trainee/trainee";
+import type { Trainee } from "@/features/trainee/trainee";
 
 type UpdateMuscleNameResolver = (deps: Deps) => (props: Props) => Promise<void>;
 export type Deps = {

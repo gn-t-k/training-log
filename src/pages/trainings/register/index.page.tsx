@@ -1,18 +1,21 @@
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Button, Container, Heading, Stack } from "@chakra-ui/react";
-import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { FC, MouseEventHandler, useCallback } from "react";
-import { SubmitHandler } from "react-hook-form";
+import { useCallback } from "react";
+
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
-import { RegisterTrainingInput } from "@/libs/trpc/server/routes/training";
+import type { RegisterTrainingInput } from "@/libs/trpc/server/routes/training";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
-import { Exercise } from "@/features/exercise/exercise";
 import { TrainingForm } from "@/features/training/training-form/training-form";
-import { TrainingField } from "@/features/training/use-training-form";
+
+import type { Exercise } from "@/features/exercise/exercise";
+import type { TrainingField } from "@/features/training/use-training-form";
+import type { NextPage } from "next";
+import type { FC, MouseEventHandler} from "react";
+import type { SubmitHandler } from "react-hook-form";
 
 const RegisterTrainingPage: NextPage = () => {
   const router = useRouter();

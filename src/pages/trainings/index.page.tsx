@@ -8,15 +8,17 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { getDate, getMonth, getYear } from "date-fns";
-import { NextPage } from "next";
 import NextLink from "next/link";
-import { FC, MouseEventHandler } from "react";
+
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
-import { Training } from "@/features/training/training";
+
+import type { Training } from "@/features/training/training";
+import type { NextPage } from "next";
+import type { FC, MouseEventHandler } from "react";
 
 const TrainingsPage: NextPage = () => {
   return (

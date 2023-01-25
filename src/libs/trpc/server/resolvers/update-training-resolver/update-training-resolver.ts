@@ -1,10 +1,10 @@
 import { TRPCError } from "@trpc/server";
 import { ulid } from "ulid";
 
-import { UpdateTrainingCommand } from "@/libs/prisma/commands/update-training-command";
-import { GetTrainingByIdQuery } from "@/libs/prisma/queries/get-training-by-id-query";
+import type { UpdateTrainingCommand } from "@/libs/prisma/commands/update-training-command";
+import type { GetTrainingByIdQuery } from "@/libs/prisma/queries/get-training-by-id-query";
 
-import { Exercise } from "@/features/exercise/exercise";
+import type { Exercise } from "@/features/exercise/exercise";
 
 type UpdateTrainingResolver = (deps: Deps) => (props: Props) => Promise<void>;
 export type Deps = {

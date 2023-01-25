@@ -1,7 +1,8 @@
-import { Muscle } from "@/features/muscle/muscle";
-import { Trainee } from "@/features/trainee/trainee";
-
 import prisma from "../client";
+
+import type { Muscle } from "@/features/muscle/muscle";
+import type { Trainee } from "@/features/trainee/trainee";
+
 
 export type GetAllMusclesQuery = (props: {
   trainee: Trainee;

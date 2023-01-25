@@ -11,15 +11,17 @@ import {
   Text,
   UnorderedList,
 } from "@chakra-ui/react";
-import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { FC, MouseEventHandler } from "react";
+
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
-import { Exercise } from "@/features/exercise/exercise";
+
+import type { Exercise } from "@/features/exercise/exercise";
+import type { NextPage } from "next";
+import type { FC, MouseEventHandler } from "react";
 
 const ExercisesPage: NextPage = () => {
   const router = useRouter();

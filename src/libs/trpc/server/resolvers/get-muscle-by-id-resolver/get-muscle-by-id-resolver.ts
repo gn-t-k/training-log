@@ -1,9 +1,9 @@
 import { TRPCError } from "@trpc/server";
 
-import { GetMuscleByIdQuery } from "@/libs/prisma/queries/get-muscle-by-id-query";
+import type { GetMuscleByIdQuery } from "@/libs/prisma/queries/get-muscle-by-id-query";
 
-import { Muscle } from "@/features/muscle/muscle";
-import { Trainee } from "@/features/trainee/trainee";
+import type { Muscle } from "@/features/muscle/muscle";
+import type { Trainee } from "@/features/trainee/trainee";
 
 type GetMuscleByIdResolver = (deps: Deps) => (props: Props) => Promise<Muscle>;
 export type Deps = {

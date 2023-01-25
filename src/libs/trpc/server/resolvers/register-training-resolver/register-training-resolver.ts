@@ -1,9 +1,9 @@
 import { ulid } from "ulid";
 
-import { RegisterTrainingCommand } from "@/libs/prisma/commands/register-training-command";
+import type { RegisterTrainingCommand } from "@/libs/prisma/commands/register-training-command";
 
-import { Exercise } from "@/features/exercise/exercise";
-import { Trainee } from "@/features/trainee/trainee";
+import type { Exercise } from "@/features/exercise/exercise";
+import type { Trainee } from "@/features/trainee/trainee";
 
 type RegisterTrainingResolver = (deps: Deps) => (props: Props) => Promise<void>;
 export type Deps = {

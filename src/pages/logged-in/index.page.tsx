@@ -1,11 +1,13 @@
-import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { FC } from "react";
+
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
+
+import type { NextPage } from "next";
+import type { FC } from "react";
 
 const LoggedInContainer: NextPage = () => {
   return (

@@ -1,14 +1,16 @@
 import { Button, Container, Stack } from "@chakra-ui/react";
 import { getMonth, getYear } from "date-fns";
-import { NextPage } from "next";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { FC, MouseEventHandler, useCallback } from "react";
+import { useCallback } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
+
+import type { NextPage } from "next";
+import type { FC, MouseEventHandler} from "react";
 
 const IndexPage: NextPage = () => {
   return (

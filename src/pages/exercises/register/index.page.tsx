@@ -1,13 +1,15 @@
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Button, Container, Heading, Spacer, Stack } from "@chakra-ui/react";
-import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { FC, MouseEventHandler } from "react";
+
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { RegisterExerciseForm } from "@/features/exercise/register-exercise-form/register-exercise-form";
+
+import type { NextPage } from "next";
+import type { FC, MouseEventHandler } from "react";
 
 const RegisterExercisePage: NextPage = () => {
   const router = useRouter();

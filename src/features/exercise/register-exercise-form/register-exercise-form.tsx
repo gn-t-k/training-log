@@ -10,18 +10,20 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { FC, useEffect } from "react";
-import { SubmitHandler } from "react-hook-form";
+import { useEffect } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
-import { MutationState } from "@/utils/mutation-state";
+import type { MutationState } from "@/utils/mutation-state";
 
-import { Muscle } from "@/features/muscle/muscle";
+import { useExerciseForm } from "../use-exercise-form";
 
-import { Exercise } from "../exercise";
-import { ExerciseField, useExerciseForm } from "../use-exercise-form";
+import type { Exercise } from "../exercise";
+import type { ExerciseField } from "../use-exercise-form";
+import type { Muscle } from "@/features/muscle/muscle";
+import type { FC } from "react";
+import type { SubmitHandler } from "react-hook-form";
 
 export const RegisterExerciseForm: FC = () => {
   const util = trpc.useContext();

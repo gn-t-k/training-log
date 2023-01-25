@@ -13,25 +13,28 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
-import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { FC, MouseEventHandler, ReactElement, useEffect } from "react";
-import { SubmitHandler, Controller } from "react-hook-form";
+import { useEffect } from "react";
+import { Controller } from "react-hook-form";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
-import { MutationState } from "@/utils/mutation-state";
+import type { MutationState } from "@/utils/mutation-state";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
+import { Exercise } from "@/features/exercise/exercise";
 import {
-  ExerciseField,
   useExerciseForm,
 } from "@/features/exercise/use-exercise-form";
 import { useGetExerciseId } from "@/features/exercise/use-get-exercise-id";
-import { Muscle } from "@/features/muscle/muscle";
 
-import type { Exercise } from "@/features/exercise/exercise";
+import type {
+  ExerciseField} from "@/features/exercise/use-exercise-form";
+import type { Muscle } from "@/features/muscle/muscle";
+import type { NextPage } from "next";
+import type { FC, MouseEventHandler, ReactElement} from "react";
+import type { SubmitHandler} from "react-hook-form";
 
 const ExercisePage: NextPage = () => {
   const id = useGetExerciseId();

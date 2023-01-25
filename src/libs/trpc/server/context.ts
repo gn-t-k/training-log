@@ -1,11 +1,13 @@
-import { inferAsyncReturnType } from "@trpc/server";
-import { CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { Session } from "next-auth";
 import { getSession } from "next-auth/react";
 
 import prisma from "@/libs/prisma/client";
 
-import { Trainee } from "@/features/trainee/trainee";
+import type { Trainee } from "@/features/trainee/trainee";
+import type { inferAsyncReturnType } from "@trpc/server";
+import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
+import type { Session } from "next-auth";
+
+
 
 export const createContext = async (
   opts: CreateNextContextOptions

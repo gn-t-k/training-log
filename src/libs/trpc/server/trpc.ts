@@ -3,7 +3,7 @@ import superjson from "superjson";
 
 import prisma from "@/libs/prisma/client";
 
-import { Context } from "./context";
+import type { Context } from "./context";
 
 const t = initTRPC.context<Context>().create({
   transformer: superjson,
