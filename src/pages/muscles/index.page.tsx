@@ -1,7 +1,6 @@
 import { AddIcon, ChevronLeftIcon } from "@chakra-ui/icons";
 import { Button, Container, Heading, Spacer, Stack } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import { useCallback } from "react";
+import NextLink from "next/link";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
@@ -9,77 +8,36 @@ import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { MuscleList } from "@/features/muscle/muscle-list/muscle-list";
 
 import type { NextPage } from "next";
-import type { FC, MouseEventHandler} from "react";
+import type { FC } from "react";
 
 const MusclesPage: NextPage = () => {
-  const router = useRouter();
-  const goToTopPage: Props["goToTopPage"] = () => {
-    router.push(pagesPath.$url());
-  };
-  const goToMusclePage: Props["goToMusclePage"] = (id) => {
-    router.push(pagesPath.muscles._id(id).$url());
-  };
-  const goToRegisterPage: Props["goToRegisterPage"] = () => {
-    router.push(pagesPath.muscles.register.$url());
-  };
-
   return (
     <RequireLogin>
-      <Muscles
-        goToTopPage={goToTopPage}
-        goToMusclePage={goToMusclePage}
-        goToRegisterPage={goToRegisterPage}
-      />
+      <Muscles />
     </RequireLogin>
   );
 };
 export default MusclesPage;
 
-type Props = {
-  goToTopPage: () => void;
-  goToMusclePage: (id: string) => void;
-  goToRegisterPage: () => void;
-};
-const Muscles: FC<Props> = (props) => {
-  return (
-    <MusclesView
-      goToTopPage={props.goToTopPage}
-      goToRegisterPage={props.goToRegisterPage}
-      MuscleList={<MuscleList goToMusclePage={props.goToMusclePage} />}
-    />
-  );
+const Muscles: FC = () => {
+  return <MusclesView MuscleList={<MuscleList />} />;
 };
 
 type ViewProps = {
-  goToTopPage: () => void;
-  goToRegisterPage: () => void;
   MuscleList: JSX.Element;
 };
 const MusclesView: FC<ViewProps> = (props) => {
-  const onClickBack = useCallback<MouseEventHandler>(
-    (_) => {
-      props.goToTopPage();
-    },
-    [props]
-  );
-  const onClickAdd = useCallback<MouseEventHandler>(
-    (_) => {
-      props.goToRegisterPage();
-    },
-    [props]
-  );
-
   return (
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button onClick={onClickBack}>
+          <Button as={NextLink} href={pagesPath.$url()}>
             <ChevronLeftIcon />
           </Button>
           <Spacer />
           <Heading>部位</Heading>
           <Spacer />
-          <Button onClick={onClickAdd}>
+          <Button as={NextLink} href={pagesPath.muscles.register.$url()}>
             <AddIcon />
           </Button>
         </Stack>

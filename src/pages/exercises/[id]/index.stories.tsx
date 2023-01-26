@@ -7,7 +7,7 @@ import { sleep } from "@/utils/sleep";
 import { ExerciseView } from "./index.page";
 
 import type { ComponentMeta, ComponentStoryObj } from "@storybook/react";
-import type { ComponentProps, FC} from "react";
+import type { ComponentProps, FC } from "react";
 
 type Meta = ComponentMeta<typeof ExerciseView>;
 type Props = ComponentProps<typeof ExerciseView>;
@@ -39,9 +39,6 @@ const Wrapper: FC<Partial<Props>> = (props) => {
       action("delete exercise")(id);
       setDeleteMutationStatus("success");
     })();
-  };
-  const dummyGoToExercisesPage: Props["goToExercisesPage"] = () => {
-    action("go to exercises page")();
   };
   const args: Props = {
     exercise: props.exercise ?? {
@@ -76,7 +73,6 @@ const Wrapper: FC<Partial<Props>> = (props) => {
     deleteExercise: props.deleteExercise ?? dummyDeleteExercise,
     updateExerciseStatus: props.updateExerciseStatus ?? updateMutationStatus,
     deleteExerciseStatus: props.deleteExerciseStatus ?? deleteMutationStatus,
-    goToExercisesPage: props.goToExercisesPage ?? dummyGoToExercisesPage,
   };
 
   return <ExerciseView {...args} />;

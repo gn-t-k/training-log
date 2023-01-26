@@ -1,30 +1,18 @@
+import { Button, Text } from "@chakra-ui/react";
 import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useCallback } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
+import { Redirect } from "@/ui/redirect/redirect";
+
 import type { NextPage } from "next";
-import type { MouseEventHandler} from "react";
+import type { MouseEventHandler, FC } from "react";
 
 const Login: NextPage = () => {
-  const router = useRouter();
   const session = useSession();
 
-  useEffect(() => {
-    let ignore = false;
-
-    if (!ignore && session.status === "authenticated") {
-      router.push(pagesPath.logged_in.$url());
-    }
-
-    return () => {
-      ignore = true;
-    };
-  }, [router, session.status]);
-
-  const onClick: MouseEventHandler = async (e) => {
-    e.preventDefault();
+  const login: ViewProps["login"] = async () => {
     await signIn("google", {
       callbackUrl: `${window.location.origin}${
         pagesPath.logged_in.$url().pathname
@@ -32,10 +20,29 @@ const Login: NextPage = () => {
     });
   };
 
-  return (
-    <div>
-      <button {...{ onClick }}>ログイン</button>
-    </div>
-  );
+  return <LoginView sessionStatus={session.status} login={login} />;
 };
 export default Login;
+
+type ViewProps = {
+  sessionStatus: "loading" | "authenticated" | "unauthenticated";
+  login: () => Promise<void>;
+};
+const LoginView: FC<ViewProps> = (props) => {
+  const onClickLogin = useCallback<MouseEventHandler>(
+    async (_) => {
+      await props.login();
+    },
+    [props]
+  );
+
+  switch (props.sessionStatus) {
+    case "loading":
+      // TODO
+      return <Text>セッション情報を確認中</Text>;
+    case "authenticated":
+      return <Redirect redirectTo={pagesPath.logged_in.$url()} />;
+    case "unauthenticated":
+      return <Button onClick={onClickLogin}>ログイン</Button>;
+  }
+};

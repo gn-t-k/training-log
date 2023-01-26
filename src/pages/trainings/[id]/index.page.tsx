@@ -5,10 +5,11 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 
-
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 import type { UpdateTrainingInput } from "@/libs/trpc/server/routes/training";
+
+import { Redirect } from "@/ui/redirect/redirect";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { Training } from "@/features/training/training";
@@ -18,7 +19,7 @@ import { useGetTrainingId } from "@/features/training/use-get-training-id";
 import type { Exercise } from "@/features/exercise/exercise";
 import type { TrainingField } from "@/features/training/use-training-form";
 import type { NextPage } from "next";
-import type { FC} from "react";
+import type { FC } from "react";
 import type { SubmitHandler } from "react-hook-form";
 
 const TrainingPage: NextPage = () => {
@@ -30,9 +31,7 @@ const TrainingPage: NextPage = () => {
   }, [router]);
 
   if (id === null) {
-    goToTrainingsPage();
-    // TODO
-    return <p>リダイレクト中</p>;
+    return <Redirect redirectTo={pagesPath.trainings.$url()} />;
   }
 
   return (

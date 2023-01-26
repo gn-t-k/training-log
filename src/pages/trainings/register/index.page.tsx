@@ -1,8 +1,8 @@
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Button, Container, Heading, Stack } from "@chakra-ui/react";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
-
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
@@ -14,7 +14,7 @@ import { TrainingForm } from "@/features/training/training-form/training-form";
 import type { Exercise } from "@/features/exercise/exercise";
 import type { TrainingField } from "@/features/training/use-training-form";
 import type { NextPage } from "next";
-import type { FC, MouseEventHandler} from "react";
+import type { FC } from "react";
 import type { SubmitHandler } from "react-hook-form";
 
 const RegisterTrainingPage: NextPage = () => {
@@ -58,7 +58,6 @@ const RegisterTraining: FC<Props> = (props) => {
     case "success":
       return (
         <RegisterTrainingView
-          goToTrainingsPage={props.goToTrainingsPage}
           exercises={exercisesQuery.data}
           registerTraining={registerTraining}
           isProcessing={registerTrainingMutation.status === "loading"}
@@ -72,18 +71,10 @@ const RegisterTraining: FC<Props> = (props) => {
 
 type ViewProps = {
   exercises: Exercise[];
-  goToTrainingsPage: () => void;
   registerTraining: (props: RegisterTrainingInput) => void;
   isProcessing: boolean;
 };
 const RegisterTrainingView: FC<ViewProps> = (props) => {
-  const onClickBack = useCallback<MouseEventHandler>(
-    (_) => {
-      props.goToTrainingsPage();
-    },
-    [props]
-  );
-
   const onSubmit = useCallback<SubmitHandler<TrainingField>>(
     (fieldValues) => {
       const createdAt = new Date();
@@ -122,7 +113,7 @@ const RegisterTrainingView: FC<ViewProps> = (props) => {
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button onClick={onClickBack}>
+          <Button as={NextLink} href={pagesPath.trainings.$url()}>
             <ChevronLeftIcon />
           </Button>
           <Heading>トレーニングを記録する</Heading>
