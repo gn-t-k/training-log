@@ -1,7 +1,6 @@
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Button, Container, Heading, Spacer, Stack } from "@chakra-ui/react";
-import { useRouter } from "next/router";
-
+import NextLink from "next/link";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
@@ -9,50 +8,32 @@ import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { RegisterExerciseForm } from "@/features/exercise/register-exercise-form/register-exercise-form";
 
 import type { NextPage } from "next";
-import type { FC, MouseEventHandler } from "react";
+import type { FC } from "react";
 
 const RegisterExercisePage: NextPage = () => {
-  const router = useRouter();
-  const goToExercisesPage: Props["goToExercisesPage"] = () => {
-    router.push(pagesPath.exercises.$url());
-  };
-
   return (
     <RequireLogin>
-      <RegisterExercise goToExercisesPage={goToExercisesPage} />
+      <RegisterExercise />
     </RequireLogin>
   );
 };
 export default RegisterExercisePage;
 
-type Props = {
-  goToExercisesPage: () => void;
-};
-const RegisterExercise: FC<Props> = (props) => {
+const RegisterExercise: FC = () => {
   return (
-    <RegisterExerciseView
-      goToExercisesPage={props.goToExercisesPage}
-      RegisterExerciseForm={<RegisterExerciseForm />}
-    />
+    <RegisterExerciseView RegisterExerciseForm={<RegisterExerciseForm />} />
   );
 };
 
 type ViewProps = {
-  goToExercisesPage: () => void;
   RegisterExerciseForm: JSX.Element;
 };
 const RegisterExerciseView: FC<ViewProps> = (props) => {
-  const onClickBack: MouseEventHandler = (e) => {
-    e.preventDefault();
-
-    props.goToExercisesPage();
-  };
-
   return (
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button onClick={onClickBack}>
+          <Button as={NextLink} href={pagesPath.exercises.$url()}>
             <ChevronLeftIcon />
           </Button>
           <Spacer />

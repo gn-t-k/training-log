@@ -10,9 +10,9 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect } from "react";
-
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
@@ -23,9 +23,9 @@ import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { useMuscleForm } from "@/features/muscle/use-muscle-form";
 
 import type { Muscle } from "@/features/muscle/muscle";
-import type { MuscleField} from "@/features/muscle/use-muscle-form";
+import type { MuscleField } from "@/features/muscle/use-muscle-form";
 import type { NextPage } from "next";
-import type { FC, MouseEventHandler} from "react";
+import type { FC } from "react";
 import type { SubmitHandler } from "react-hook-form";
 
 const RegisterMusclePage: NextPage = () => {
@@ -64,7 +64,6 @@ const RegisterMuscle: FC<Props> = (props) => {
 
   return (
     <RegisterMuscleView
-      goToMusclesPage={props.goToMusclesPage}
       registerMuscle={registerMuscle}
       registerMuscleStatus={registerMuscleMutation.status}
       registeredMuscles={registeredMuscles}
@@ -73,7 +72,6 @@ const RegisterMuscle: FC<Props> = (props) => {
 };
 
 type ViewProps = {
-  goToMusclesPage: () => void;
   registerMuscle: (muscle: { name: string }) => void;
   registerMuscleStatus: MutationState;
   registeredMuscles: Muscle[];
@@ -110,12 +108,6 @@ const RegisterMuscleView: FC<ViewProps> = (props) => {
     }
   }, [getValues, props.registerMuscleStatus, setValue, toast]);
 
-  const onClickBack = useCallback<MouseEventHandler>(
-    (_) => {
-      props.goToMusclesPage();
-    },
-    [props]
-  );
   const onSubmit = useCallback<SubmitHandler<MuscleField>>(
     (fieldValues) => {
       const isSameNameMuscleExist = props.registeredMuscles.some(
@@ -141,7 +133,7 @@ const RegisterMuscleView: FC<ViewProps> = (props) => {
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button onClick={onClickBack}>
+          <Button as={NextLink} href={pagesPath.muscles.$url()}>
             <ChevronLeftIcon />
           </Button>
           <Heading>部位を登録する</Heading>

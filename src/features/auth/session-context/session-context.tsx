@@ -1,10 +1,7 @@
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 import { createContext, useContext } from "react";
 
-import { pagesPath } from "@/libs/pathpida/$path";
-
-import type { FC, ReactNode} from "react";
+import type { FC, ReactNode } from "react";
 
 type Session = {
   authUser: AuthUser;
@@ -29,20 +26,20 @@ export const useSessionContext = (): Session => {
 
 type Props = {
   children: ReactNode;
+  Loading: JSX.Element;
+  Failure: JSX.Element;
+  Unauthenticated: JSX.Element;
 };
-export const SessionContextProvider: FC<Props> = ({ children }) => {
+export const SessionContextProvider: FC<Props> = (props) => {
   const session = useSession();
-  const router = useRouter();
 
   switch (session.status) {
     case "loading":
-      // TODO
-      return <p>セッション情報を取得中</p>;
+      return props.Loading;
     case "authenticated": {
       const user = session.data?.user;
       if (!user || !user.id || !user.name || !user.image) {
-        // TODO
-        return <p>セッション情報の取得に失敗しました</p>;
+        return props.Failure;
       }
 
       const sessionContext: Session = {
@@ -55,15 +52,12 @@ export const SessionContextProvider: FC<Props> = ({ children }) => {
 
       return (
         <SessionContext.Provider value={sessionContext}>
-          {children}
+          {props.children}
         </SessionContext.Provider>
       );
     }
     case "unauthenticated": {
-      router.push(pagesPath.login.$url());
-
-      // TODO
-      return <p>ログインページにリダイレクト中</p>;
+      return props.Unauthenticated;
     }
   }
 };
