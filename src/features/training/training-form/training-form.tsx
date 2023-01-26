@@ -29,19 +29,18 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { useCallback, useState } from "react";
-import {
-  useFieldArray
-} from "react-hook-form";
+import { useFieldArray } from "react-hook-form";
 
 import { useTrainingFrom } from "../use-training-form";
 
-import type { TrainingField} from "../use-training-form";
+import type { TrainingField } from "../use-training-form";
 import type { Exercise } from "@/features/exercise/exercise";
-import type { FC, MouseEventHandler} from "react";
+import type { FC, MouseEventHandler } from "react";
 import type {
   SubmitHandler,
   UseFieldArrayRemove,
-  UseFormReturn} from "react-hook-form";
+  UseFormReturn,
+} from "react-hook-form";
 
 type Props = {
   defaultValues?: TrainingField;
@@ -334,6 +333,7 @@ const SetForm: FC<SetFormProps> = (props) => {
                 `records.${props.recordIndex}.sets.${props.setIndex}.weight`
               )}
               type="number"
+              pattern="[0-9]*"
             />
             <InputRightElement>kg</InputRightElement>
           </InputGroup>
@@ -363,6 +363,7 @@ const SetForm: FC<SetFormProps> = (props) => {
                 `records.${props.recordIndex}.sets.${props.setIndex}.repetition`
               )}
               type="number"
+              pattern="[0-9]*"
             />
             <InputRightElement>回</InputRightElement>
           </InputGroup>
