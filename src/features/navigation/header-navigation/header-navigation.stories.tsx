@@ -20,7 +20,7 @@ const Wrapper: FC<Partial<Props>> = (props) => {
     return (
       <Container>
         <Stack direction="column">
-          <Text>テスト</Text>
+          <Text>先頭</Text>
           <Text>テスト</Text>
           <Text>テスト</Text>
           <Text>テスト</Text>

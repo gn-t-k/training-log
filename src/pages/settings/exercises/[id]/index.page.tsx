@@ -32,7 +32,6 @@ import { useGetExerciseId } from "@/features/exercise/use-get-exercise-id";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 import { Redirect } from "@/features/navigation/redirect/redirect";
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import type { Exercise } from "@/features/exercise/exercise";
 import type { ExerciseField } from "@/features/exercise/use-exercise-form";
 import type { Muscle } from "@/features/muscle/muscle";
@@ -56,7 +55,7 @@ const ExercisePage: NextPageWithLayout = () => {
       <Head>
         <title>種目を編集する | training-log</title>
       </Head>
-      <Exercise id={id} goToExercisesPage={goToExercisesPage} />
+      <ExerciseComponent id={id} goToExercisesPage={goToExercisesPage} />
     </RequireLogin>
   );
 };
@@ -69,7 +68,7 @@ type Props = {
   id: string;
   goToExercisesPage: () => void;
 };
-const Exercise: FC<Props> = (props) => {
+const ExerciseComponent: FC<Props> = (props) => {
   const util = trpc.useContext();
   const exerciseQuery = trpc.exercise.getById.useQuery({
     id: props.id,
