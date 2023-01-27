@@ -1,4 +1,5 @@
 import { getMonth, getYear } from "date-fns";
+import Head from "next/head";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
@@ -13,6 +14,9 @@ import type { FC, ReactElement } from "react";
 const IndexPage: NextPageWithLayout = () => {
   return (
     <RequireLogin>
+      <Head>
+        <title>training-log</title>
+      </Head>
       <Index />
     </RequireLogin>
   );

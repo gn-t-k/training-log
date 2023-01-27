@@ -1,5 +1,6 @@
 import { AddIcon, ChevronLeftIcon } from "@chakra-ui/icons";
 import { Button, Container, Heading, Spacer, Stack } from "@chakra-ui/react";
+import Head from "next/head";
 import NextLink from "next/link";
 
 import { pagesPath } from "@/libs/pathpida/$path";
@@ -14,6 +15,9 @@ import type { FC, ReactElement } from "react";
 const MusclesPage: NextPageWithLayout = () => {
   return (
     <RequireLogin>
+      <Head>
+        <title>部位 | training-log</title>
+      </Head>
       <Muscles />
     </RequireLogin>
   );

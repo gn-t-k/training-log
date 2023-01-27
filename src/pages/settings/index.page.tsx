@@ -11,6 +11,7 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { signOut } from "next-auth/react";
+import Head from "next/head";
 import NextLink from "next/link";
 import { useCallback } from "react";
 
@@ -32,6 +33,9 @@ import type { FC, MouseEventHandler, ReactElement } from "react";
 const SettingsPage: NextPageWithLayout = () => {
   return (
     <RequireLogin>
+      <Head>
+        <title>設定 | training-log</title>
+      </Head>
       <Settings />
     </RequireLogin>
   );

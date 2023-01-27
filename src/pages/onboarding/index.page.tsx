@@ -1,9 +1,9 @@
 import { Text } from "@chakra-ui/react";
+import Head from "next/head";
 import { useCallback, useEffect } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
-
 
 import type { MutationState } from "@/utils/mutation-state";
 
@@ -17,6 +17,9 @@ import type { FC } from "react";
 const OnboardingPage: NextPage = () => {
   return (
     <RequireLogin>
+      <Head>
+        <title>トレーニー情報を登録 | training-log</title>
+      </Head>
       <Onboarding />
     </RequireLogin>
   );
