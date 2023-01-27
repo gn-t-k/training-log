@@ -27,12 +27,13 @@ import type { NextPageWithLayout } from "@/pages/_app.page";
 import type { MutationState } from "@/utils/mutation-state";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
-import { Exercise } from "@/features/exercise/exercise";
 import { useExerciseForm } from "@/features/exercise/use-exercise-form";
 import { useGetExerciseId } from "@/features/exercise/use-get-exercise-id";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 import { Redirect } from "@/features/navigation/redirect/redirect";
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import type { Exercise } from "@/features/exercise/exercise";
 import type { ExerciseField } from "@/features/exercise/use-exercise-form";
 import type { Muscle } from "@/features/muscle/muscle";
 import type { FC, MouseEventHandler, ReactElement } from "react";
