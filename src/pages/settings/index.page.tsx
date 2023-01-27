@@ -10,7 +10,9 @@ import {
   Spacer,
   Stack,
 } from "@chakra-ui/react";
+import { signOut } from "next-auth/react";
 import NextLink from "next/link";
+import { useCallback } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
@@ -23,7 +25,7 @@ import type { NextPageWithLayout } from "../_app.page";
 import type { Exercise } from "@/features/exercise/exercise";
 import type { Muscle } from "@/features/muscle/muscle";
 import type { Trainee } from "@/features/trainee/trainee";
-import type { FC, ReactElement } from "react";
+import type { FC, MouseEventHandler, ReactElement } from "react";
 
 const SettingsPage: NextPageWithLayout = () => {
   return (
@@ -41,6 +43,14 @@ const Settings: FC = () => {
   const traineeQuery = trpc.trainee.getBySession.useQuery();
   const exercisesQuery = trpc.exercise.getAll.useQuery();
   const musclesQuery = trpc.muscle.getAll.useQuery();
+
+  const logout: ViewProps["logout"] = () => {
+    signOut({
+      callbackUrl: `${window.location.origin}${
+        pagesPath.login.$url().pathname
+      }`,
+    });
+  };
 
   switch (traineeQuery.status) {
     case "loading":
@@ -76,6 +86,7 @@ const Settings: FC = () => {
       trainee={traineeQuery.data}
       exercises={exercisesQuery.data}
       muscles={musclesQuery.data}
+      logout={logout}
     />
   );
 };
@@ -84,8 +95,16 @@ type ViewProps = {
   trainee: Trainee;
   muscles: Muscle[];
   exercises: Exercise[];
+  logout: () => void;
 };
 const SettingsView: FC<ViewProps> = (props) => {
+  const onClickLogout = useCallback<MouseEventHandler>(
+    (_) => {
+      props.logout();
+    },
+    [props]
+  );
+
   return (
     <Container>
       <Stack direction="column">
@@ -109,7 +128,7 @@ const SettingsView: FC<ViewProps> = (props) => {
             種目({props.exercises.length})
           </Heading>
           <Spacer />
-          <Button as={NextLink} href={pagesPath.exercises.$url()}>
+          <Button as={NextLink} href={pagesPath.settings.exercises.$url()}>
             <ChevronRightIcon />
           </Button>
         </Stack>
@@ -123,7 +142,7 @@ const SettingsView: FC<ViewProps> = (props) => {
             部位({props.muscles.length})
           </Heading>
           <Spacer />
-          <Button as={NextLink} href={pagesPath.muscles.$url()}>
+          <Button as={NextLink} href={pagesPath.settings.muscles.$url()}>
             <ChevronRightIcon />
           </Button>
         </Stack>
@@ -132,6 +151,7 @@ const SettingsView: FC<ViewProps> = (props) => {
             return <ListItem key={muscle.id}>{muscle.name}</ListItem>;
           })}
         </List>
+        <Button onClick={onClickLogout}>ログアウト</Button>
       </Stack>
     </Container>
   );

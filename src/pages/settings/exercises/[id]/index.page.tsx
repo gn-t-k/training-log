@@ -42,11 +42,11 @@ const ExercisePage: NextPageWithLayout = () => {
   const router = useRouter();
 
   if (id === null) {
-    return <Redirect redirectTo={pagesPath.exercises.$url()} />;
+    return <Redirect redirectTo={pagesPath.settings.exercises.$url()} />;
   }
 
   const goToExercisesPage: Props["goToExercisesPage"] = () => {
-    router.push(pagesPath.exercises.$url());
+    router.push(pagesPath.settings.exercises.$url());
   };
 
   return (
@@ -206,7 +206,7 @@ export const ExerciseView: FC<ViewProps> = (props) => {
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button as={NextLink} href={pagesPath.exercises.$url()}>
+          <Button as={NextLink} href={pagesPath.settings.exercises.$url()}>
             <ChevronLeftIcon />
           </Button>
           <Heading>種目を編集</Heading>

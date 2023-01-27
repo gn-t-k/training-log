@@ -33,7 +33,7 @@ import type { SubmitHandler } from "react-hook-form";
 const RegisterMusclePage: NextPageWithLayout = () => {
   const router = useRouter();
   const goToMusclesPage: Props["goToMusclesPage"] = () => {
-    router.push(pagesPath.muscles.$url());
+    router.push(pagesPath.settings.muscles.$url());
   };
 
   return (
@@ -138,7 +138,7 @@ const RegisterMuscleView: FC<ViewProps> = (props) => {
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button as={NextLink} href={pagesPath.muscles.$url()}>
+          <Button as={NextLink} href={pagesPath.settings.muscles.$url()}>
             <ChevronLeftIcon />
           </Button>
           <Heading>部位を登録する</Heading>

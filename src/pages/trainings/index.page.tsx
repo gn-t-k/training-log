@@ -1,4 +1,4 @@
-import { AddIcon, ChevronLeftIcon } from "@chakra-ui/icons";
+import { AddIcon } from "@chakra-ui/icons";
 import {
   Button,
   Container,
@@ -77,10 +77,6 @@ const TrainingsView: FC<ViewProps> = (props) => {
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button as={NextLink} href={pagesPath.$url()}>
-            <ChevronLeftIcon />
-          </Button>
-          <Spacer />
           <Heading>トレーニング</Heading>
           <Spacer />
           <Button as={NextLink} href={pagesPath.trainings.register.$url()}>

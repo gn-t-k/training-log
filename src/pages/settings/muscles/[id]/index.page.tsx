@@ -37,11 +37,11 @@ const MusclePage: NextPageWithLayout = () => {
   const router = useRouter();
 
   if (id === null) {
-    return <Redirect redirectTo={pagesPath.muscles.$url()} />;
+    return <Redirect redirectTo={pagesPath.settings.muscles.$url()} />;
   }
 
   const goToMusclesPage: Props["goToMusclesPage"] = () => {
-    router.push(pagesPath.muscles.$url());
+    router.push(pagesPath.settings.muscles.$url());
   };
 
   return (
@@ -196,7 +196,7 @@ const MuscleView: FC<ViewProps> = (props) => {
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button as={NextLink} href={pagesPath.muscles.$url()}>
+          <Button as={NextLink} href={pagesPath.settings.muscles.$url()}>
             <ChevronLeftIcon />
           </Button>
           <Heading>部位を編集</Heading>

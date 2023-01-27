@@ -38,7 +38,7 @@ const RegisterExerciseView: FC<ViewProps> = (props) => {
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button as={NextLink} href={pagesPath.exercises.$url()}>
+          <Button as={NextLink} href={pagesPath.settings.exercises.$url()}>
             <ChevronLeftIcon />
           </Button>
           <Spacer />

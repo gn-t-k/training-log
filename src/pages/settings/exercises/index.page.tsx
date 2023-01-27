@@ -19,7 +19,7 @@ import { trpc } from "@/libs/trpc/client/trpc";
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 
-import type { NextPageWithLayout } from "../_app.page";
+import type { NextPageWithLayout } from "../../_app.page";
 import type { Exercise } from "@/features/exercise/exercise";
 import type { FC, ReactElement } from "react";
 
@@ -63,13 +63,16 @@ const ExercisesView: FC<ViewProps> = (props) => {
   return (
     <Container>
       <Stack direction="row">
-        <Button as={NextLink} href={pagesPath.$url()}>
+        <Button as={NextLink} href={pagesPath.settings.$url()}>
           <ChevronLeftIcon />
         </Button>
         <Spacer />
         <Heading>種目</Heading>
         <Spacer />
-        <Button as={NextLink} href={pagesPath.exercises.register.$url()}>
+        <Button
+          as={NextLink}
+          href={pagesPath.settings.exercises.register.$url()}
+        >
           <AddIcon />
         </Button>
       </Stack>
@@ -90,7 +93,9 @@ const ExercisesView: FC<ViewProps> = (props) => {
                     <Spacer />
                     <Button
                       as={NextLink}
-                      href={pagesPath.exercises._id(exercise.id).$url()}
+                      href={pagesPath.settings.exercises
+                        ._id(exercise.id)
+                        .$url()}
                     >
                       <ChevronRightIcon />
                     </Button>
