@@ -1,9 +1,9 @@
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
+import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { Redirect } from "@/features/navigation/redirect/redirect";
 
-import { RequireLogin } from "@/features/auth/require-login/require-login";
 
 import type { NextPage } from "next";
 import type { FC } from "react";
