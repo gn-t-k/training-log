@@ -1,20 +1,25 @@
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Button, Container, Heading, Stack } from "@chakra-ui/react";
-import { NextPage } from "next";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { FC, MouseEventHandler, useCallback } from "react";
-import { SubmitHandler } from "react-hook-form";
+import { useCallback } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
-import { RegisterTrainingInput } from "@/libs/trpc/server/routes/training";
+import type { RegisterTrainingInput } from "@/libs/trpc/server/routes/training";
+
+import type { NextPageWithLayout } from "@/pages/_app.page";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
-import { Exercise } from "@/features/exercise/exercise";
+import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 import { TrainingForm } from "@/features/training/training-form/training-form";
-import { TrainingField } from "@/features/training/use-training-form";
 
-const RegisterTrainingPage: NextPage = () => {
+import type { Exercise } from "@/features/exercise/exercise";
+import type { TrainingField } from "@/features/training/use-training-form";
+import type { FC, ReactElement } from "react";
+import type { SubmitHandler } from "react-hook-form";
+
+const RegisterTrainingPage: NextPageWithLayout = () => {
   const router = useRouter();
   const goToTrainingsPage = useCallback<Props["goToTrainingsPage"]>(() => {
     router.push(pagesPath.trainings.$url());
@@ -25,6 +30,9 @@ const RegisterTrainingPage: NextPage = () => {
       <RegisterTraining goToTrainingsPage={goToTrainingsPage} />
     </RequireLogin>
   );
+};
+RegisterTrainingPage.getLayout = (page): ReactElement => {
+  return <FooterNavigation>{page}</FooterNavigation>;
 };
 export default RegisterTrainingPage;
 
@@ -55,7 +63,6 @@ const RegisterTraining: FC<Props> = (props) => {
     case "success":
       return (
         <RegisterTrainingView
-          goToTrainingsPage={props.goToTrainingsPage}
           exercises={exercisesQuery.data}
           registerTraining={registerTraining}
           isProcessing={registerTrainingMutation.status === "loading"}
@@ -69,18 +76,10 @@ const RegisterTraining: FC<Props> = (props) => {
 
 type ViewProps = {
   exercises: Exercise[];
-  goToTrainingsPage: () => void;
   registerTraining: (props: RegisterTrainingInput) => void;
   isProcessing: boolean;
 };
 const RegisterTrainingView: FC<ViewProps> = (props) => {
-  const onClickBack = useCallback<MouseEventHandler>(
-    (_) => {
-      props.goToTrainingsPage();
-    },
-    [props]
-  );
-
   const onSubmit = useCallback<SubmitHandler<TrainingField>>(
     (fieldValues) => {
       const createdAt = new Date();
@@ -119,7 +118,7 @@ const RegisterTrainingView: FC<ViewProps> = (props) => {
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button onClick={onClickBack}>
+          <Button as={NextLink} href={pagesPath.trainings.$url()}>
             <ChevronLeftIcon />
           </Button>
           <Heading>トレーニングを記録する</Heading>

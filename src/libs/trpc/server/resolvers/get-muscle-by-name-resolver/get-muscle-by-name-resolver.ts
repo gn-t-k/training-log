@@ -1,8 +1,8 @@
 import { TRPCError } from "@trpc/server";
 
-import { GetMuscleByNameQuery } from "@/libs/prisma/queries/get-muscle-by-name-query";
+import type { GetMuscleByNameQuery } from "@/libs/prisma/queries/get-muscle-by-name-query";
 
-import { Muscle } from "@/features/muscle/muscle";
+import type { Muscle } from "@/features/muscle/muscle";
 
 type GetMuscleByNameResolver = (
   deps: Deps

@@ -3,23 +3,27 @@ import { Button, Container, Heading, Stack } from "@chakra-ui/react";
 import { format } from "date-fns";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { FC, useCallback, useMemo } from "react";
-import { SubmitHandler } from "react-hook-form";
+import { useCallback, useMemo } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
-import { UpdateTrainingInput } from "@/libs/trpc/server/routes/training";
+import type { UpdateTrainingInput } from "@/libs/trpc/server/routes/training";
+
+import type { NextPageWithLayout } from "@/pages/_app.page";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
+import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
+import { Redirect } from "@/features/navigation/redirect/redirect";
+import { Training } from "@/features/training/training";
 import { TrainingForm } from "@/features/training/training-form/training-form";
 import { useGetTrainingId } from "@/features/training/use-get-training-id";
-import { TrainingField } from "@/features/training/use-training-form";
 
 import type { Exercise } from "@/features/exercise/exercise";
-import type { Training } from "@/features/training/training";
-import type { NextPage } from "next";
+import type { TrainingField } from "@/features/training/use-training-form";
+import type { FC, ReactElement } from "react";
+import type { SubmitHandler } from "react-hook-form";
 
-const TrainingPage: NextPage = () => {
+const TrainingPage: NextPageWithLayout = () => {
   const router = useRouter();
   const id = useGetTrainingId();
 
@@ -28,9 +32,7 @@ const TrainingPage: NextPage = () => {
   }, [router]);
 
   if (id === null) {
-    goToTrainingsPage();
-    // TODO
-    return <p>リダイレクト中</p>;
+    return <Redirect redirectTo={pagesPath.trainings.$url()} />;
   }
 
   return (
@@ -38,6 +40,9 @@ const TrainingPage: NextPage = () => {
       <Training id={id} goToTrainingsPage={goToTrainingsPage} />
     </RequireLogin>
   );
+};
+TrainingPage.getLayout = (page): ReactElement => {
+  return <FooterNavigation>{page}</FooterNavigation>;
 };
 export default TrainingPage;
 

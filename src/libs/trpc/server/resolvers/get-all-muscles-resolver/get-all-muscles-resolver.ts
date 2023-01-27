@@ -1,7 +1,7 @@
-import { GetAllMusclesQuery } from "@/libs/prisma/queries/get-all-muscles-query";
+import type { GetAllMusclesQuery } from "@/libs/prisma/queries/get-all-muscles-query";
 
-import { Muscle } from "@/features/muscle/muscle";
-import { Trainee } from "@/features/trainee/trainee";
+import type { Muscle } from "@/features/muscle/muscle";
+import type { Trainee } from "@/features/trainee/trainee";
 
 type GetAllMusclesResolver = (
   deps: Deps

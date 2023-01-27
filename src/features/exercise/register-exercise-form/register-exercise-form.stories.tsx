@@ -1,11 +1,13 @@
 import { action } from "@storybook/addon-actions";
-import { ComponentMeta, ComponentStoryObj } from "@storybook/react";
-import { ComponentProps, FC, useState } from "react";
+import { useState } from "react";
 
-import { MutationState } from "@/utils/mutation-state";
+import type { MutationState } from "@/utils/mutation-state";
 import { sleep } from "@/utils/sleep";
 
 import { RegisterExerciseFormView } from "./register-exercise-form";
+
+import type { ComponentMeta, ComponentStoryObj } from "@storybook/react";
+import type { ComponentProps, FC} from "react";
 
 type Meta = ComponentMeta<typeof RegisterExerciseFormView>;
 type Props = ComponentProps<typeof RegisterExerciseFormView>;

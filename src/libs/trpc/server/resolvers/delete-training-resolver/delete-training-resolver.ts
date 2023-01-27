@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 
-import { DeleteTrainingCommand } from "@/libs/prisma/commands/delete-training-command";
-import { GetTrainingByIdQuery } from "@/libs/prisma/queries/get-training-by-id-query";
+import type { DeleteTrainingCommand } from "@/libs/prisma/commands/delete-training-command";
+import type { GetTrainingByIdQuery } from "@/libs/prisma/queries/get-training-by-id-query";
 
 type DeleteTrainingResolver = (deps: Deps) => (props: Props) => Promise<void>;
 export type Deps = {

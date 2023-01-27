@@ -1,7 +1,8 @@
-import { Exercise } from "@/features/exercise/exercise";
-import { Trainee } from "@/features/trainee/trainee";
-
 import prisma from "../client";
+
+import type { Exercise } from "@/features/exercise/exercise";
+import type { Trainee } from "@/features/trainee/trainee";
+
 
 export type RegisterExerciseCommand = (props: {
   exercise: Exercise;

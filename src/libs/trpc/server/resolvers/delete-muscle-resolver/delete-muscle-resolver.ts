@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 
-import { DeleteMuscleCommand } from "@/libs/prisma/commands/delete-muscle-command";
-import { GetMuscleByIdQuery } from "@/libs/prisma/queries/get-muscle-by-id-query";
+import type { DeleteMuscleCommand } from "@/libs/prisma/commands/delete-muscle-command";
+import type { GetMuscleByIdQuery } from "@/libs/prisma/queries/get-muscle-by-id-query";
 
 type DeleteMuscleResolver = (deps: Deps) => (props: Props) => Promise<void>;
 export type Deps = {

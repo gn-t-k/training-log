@@ -1,10 +1,12 @@
 import { action } from "@storybook/addon-actions";
-import { ComponentMeta, ComponentStoryObj } from "@storybook/react";
-import { ComponentProps, FC, useState } from "react";
+import { useState } from "react";
 
 import { sleep } from "@/utils/sleep";
 
 import { TrainingFormView } from "./training-form";
+
+import type { ComponentMeta, ComponentStoryObj } from "@storybook/react";
+import type { ComponentProps, FC} from "react";
 
 type Meta = ComponentMeta<typeof TrainingFormView>;
 type Props = ComponentProps<typeof TrainingFormView>;

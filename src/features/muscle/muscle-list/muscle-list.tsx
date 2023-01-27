@@ -9,16 +9,15 @@ import {
   Text,
   UnorderedList,
 } from "@chakra-ui/react";
-import { FC, MouseEventHandler } from "react";
+import NextLink from "next/link";
 
+import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
-import { Muscle } from "../muscle";
+import type { Muscle } from "../muscle";
+import type { FC } from "react";
 
-type Props = {
-  goToMusclePage: (id: string) => void;
-};
-export const MuscleList: FC<Props> = (props) => {
+export const MuscleList: FC = () => {
   const musclesQuery = trpc.muscle.getAll.useQuery();
 
   switch (musclesQuery.status) {
@@ -31,7 +30,6 @@ export const MuscleList: FC<Props> = (props) => {
       return (
         <MuscleListView
           muscles={muscles}
-          goToMusclePage={props.goToMusclePage}
           isFetching={musclesQuery.isFetching}
         />
       );
@@ -44,7 +42,6 @@ export const MuscleList: FC<Props> = (props) => {
 
 type ViewProps = {
   muscles: Muscle[];
-  goToMusclePage: (id: string) => void;
   isFetching: boolean;
 };
 export const MuscleListView: FC<ViewProps> = (props) => {
@@ -53,16 +50,16 @@ export const MuscleListView: FC<ViewProps> = (props) => {
       {props.isFetching && <Spinner />}
       <UnorderedList>
         {props.muscles.map((muscle) => {
-          const onClick: MouseEventHandler = (_) => {
-            props.goToMusclePage(muscle.id);
-          };
           return (
             <List key={muscle.id} mb={4}>
               <Stack direction="column">
                 <Stack direction="row">
                   <Text>{muscle.name}</Text>
                   <Spacer />
-                  <Button {...{ onClick }}>
+                  <Button
+                    as={NextLink}
+                    href={pagesPath.settings.muscles._id(muscle.id).$url()}
+                  >
                     <ChevronRightIcon />
                   </Button>
                 </Stack>

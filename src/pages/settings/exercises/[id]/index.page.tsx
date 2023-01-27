@@ -13,39 +13,40 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
-import { NextPage } from "next";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { FC, MouseEventHandler, ReactElement, useEffect } from "react";
-import { SubmitHandler, Controller } from "react-hook-form";
+import { useEffect } from "react";
+import { Controller } from "react-hook-form";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
-import { MutationState } from "@/utils/mutation-state";
+import type { NextPageWithLayout } from "@/pages/_app.page";
+
+import type { MutationState } from "@/utils/mutation-state";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
-import {
-  ExerciseField,
-  useExerciseForm,
-} from "@/features/exercise/use-exercise-form";
+import { Exercise } from "@/features/exercise/exercise";
+import { useExerciseForm } from "@/features/exercise/use-exercise-form";
 import { useGetExerciseId } from "@/features/exercise/use-get-exercise-id";
-import { Muscle } from "@/features/muscle/muscle";
+import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
+import { Redirect } from "@/features/navigation/redirect/redirect";
 
-import type { Exercise } from "@/features/exercise/exercise";
+import type { ExerciseField } from "@/features/exercise/use-exercise-form";
+import type { Muscle } from "@/features/muscle/muscle";
+import type { FC, MouseEventHandler, ReactElement } from "react";
+import type { SubmitHandler } from "react-hook-form";
 
-const ExercisePage: NextPage = () => {
+const ExercisePage: NextPageWithLayout = () => {
   const id = useGetExerciseId();
   const router = useRouter();
 
   if (id === null) {
-    router.push(pagesPath.exercises.$url());
-
-    // TODO
-    return <p>リダイレクト中</p>;
+    return <Redirect redirectTo={pagesPath.settings.exercises.$url()} />;
   }
 
   const goToExercisesPage: Props["goToExercisesPage"] = () => {
-    router.push(pagesPath.exercises.$url());
+    router.push(pagesPath.settings.exercises.$url());
   };
 
   return (
@@ -53,6 +54,9 @@ const ExercisePage: NextPage = () => {
       <Exercise id={id} goToExercisesPage={goToExercisesPage} />
     </RequireLogin>
   );
+};
+ExercisePage.getLayout = (page): ReactElement => {
+  return <FooterNavigation>{page}</FooterNavigation>;
 };
 export default ExercisePage;
 
@@ -112,7 +116,6 @@ const Exercise: FC<Props> = (props) => {
       deleteExercise={deleteExercise}
       updateExerciseStatus={updateExerciseMutation.status}
       deleteExerciseStatus={deleteExerciseMutation.status}
-      goToExercisesPage={props.goToExercisesPage}
     />
   );
 };
@@ -124,7 +127,6 @@ type ViewProps = {
   deleteExercise: (id: string) => void;
   updateExerciseStatus: MutationState;
   deleteExerciseStatus: MutationState;
-  goToExercisesPage: () => void;
 };
 export const ExerciseView: FC<ViewProps> = (props) => {
   const {
@@ -199,17 +201,12 @@ export const ExerciseView: FC<ViewProps> = (props) => {
   const isLoading =
     props.updateExerciseStatus === "loading" ||
     props.deleteExerciseStatus === "loading";
-  const goToExercisesPage: MouseEventHandler = (e) => {
-    e.preventDefault();
-
-    props.goToExercisesPage();
-  };
 
   return (
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button onClick={goToExercisesPage}>
+          <Button as={NextLink} href={pagesPath.settings.exercises.$url()}>
             <ChevronLeftIcon />
           </Button>
           <Heading>種目を編集</Heading>

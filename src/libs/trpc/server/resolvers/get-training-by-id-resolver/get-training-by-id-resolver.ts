@@ -1,9 +1,9 @@
 import { TRPCError } from "@trpc/server";
 
-import { GetTrainingByIdQuery } from "@/libs/prisma/queries/get-training-by-id-query";
+import type { GetTrainingByIdQuery } from "@/libs/prisma/queries/get-training-by-id-query";
 
-import { Trainee } from "@/features/trainee/trainee";
-import { Training } from "@/features/training/training";
+import type { Trainee } from "@/features/trainee/trainee";
+import type { Training } from "@/features/training/training";
 
 type GetTrainingByIdResolver = (
   deps: Deps

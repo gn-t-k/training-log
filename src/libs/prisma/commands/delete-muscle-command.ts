@@ -1,6 +1,7 @@
-import { Muscle } from "@/features/muscle/muscle";
-
 import prisma from "../client";
+
+import type { Muscle } from "@/features/muscle/muscle";
+
 
 export type DeleteMuscleCommand = (props: { muscle: Muscle }) => Promise<void>;
 export const deleteMuscleCommand: DeleteMuscleCommand = async (props) => {

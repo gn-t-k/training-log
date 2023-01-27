@@ -1,18 +1,29 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import { SessionProvider } from "next-auth/react";
-import { FC } from "react";
 import { RecoilRoot } from "recoil";
 
 import { trpc } from "@/libs/trpc/client/trpc";
 
+import type { NextPage } from "next";
 import type { AppProps } from "next/app";
+import type { FC, ReactElement } from "react";
 
-const App: FC<AppProps> = ({ Component, pageProps }) => {
+export type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactElement;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+const App: FC<AppPropsWithLayout> = ({ Component, pageProps }) => {
+  const getLayout = Component.getLayout ?? ((page): ReactElement => page);
+
   return (
     <RecoilRoot>
       <SessionProvider>
         <ChakraProvider>
-          <Component {...pageProps} />
+          {getLayout(<Component {...pageProps} />)}
         </ChakraProvider>
       </SessionProvider>
     </RecoilRoot>

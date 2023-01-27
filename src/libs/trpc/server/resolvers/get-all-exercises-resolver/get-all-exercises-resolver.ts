@@ -1,6 +1,6 @@
-import { GetExercisesByTraineeIdQuery } from "@/libs/prisma/queries/get-exercises-by-trainee-id-query";
+import type { GetExercisesByTraineeIdQuery } from "@/libs/prisma/queries/get-exercises-by-trainee-id-query";
 
-import { Exercise } from "@/features/exercise/exercise";
+import type { Exercise } from "@/features/exercise/exercise";
 
 type GetAllExercisesResolver = (
   deps: Deps

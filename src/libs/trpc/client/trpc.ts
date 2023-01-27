@@ -2,7 +2,9 @@ import { httpBatchLink } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
 import superjson from "superjson";
 
-import { AppRouter } from "@/libs/trpc/server/routes/_app";
+import type { AppRouter } from "@/libs/trpc/server/routes/_app";
+
+import { getBaseUrl } from "@/utils/get-base-url";
 
 export const trpc = createTRPCNext<AppRouter>({
   config: ({ ctx: _ctx }) => {
@@ -17,11 +19,3 @@ export const trpc = createTRPCNext<AppRouter>({
   },
   ssr: false,
 });
-
-const getBaseUrl = (): string => {
-  if (typeof window !== "undefined") return "";
-
-  return process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : `http://localhost:${process.env.PORT}`;
-};

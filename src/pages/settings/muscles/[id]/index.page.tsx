@@ -10,34 +10,38 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
-import { NextPage } from "next";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { FC, MouseEventHandler, useCallback, useEffect } from "react";
-import { SubmitHandler } from "react-hook-form";
+import { useCallback, useEffect } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
-import { MutationState } from "@/utils/mutation-state";
+import type { NextPageWithLayout } from "@/pages/_app.page";
+
+import type { MutationState } from "@/utils/mutation-state";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { Muscle } from "@/features/muscle/muscle";
 import { useGetMuscleId } from "@/features/muscle/use-get-muscle-id";
-import { MuscleField, useMuscleForm } from "@/features/muscle/use-muscle-form";
+import { useMuscleForm } from "@/features/muscle/use-muscle-form";
+import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
+import { Redirect } from "@/features/navigation/redirect/redirect";
 
-const MusclePage: NextPage = () => {
+import type { MuscleField } from "@/features/muscle/use-muscle-form";
+import type { FC, MouseEventHandler, ReactElement } from "react";
+import type { SubmitHandler } from "react-hook-form";
+
+const MusclePage: NextPageWithLayout = () => {
   const id = useGetMuscleId();
   const router = useRouter();
 
   if (id === null) {
-    router.push(pagesPath.muscles.$url());
-
-    // TODO
-    return <p>リダイレクト中</p>;
+    return <Redirect redirectTo={pagesPath.settings.muscles.$url()} />;
   }
 
   const goToMusclesPage: Props["goToMusclesPage"] = () => {
-    router.push(pagesPath.muscles.$url());
+    router.push(pagesPath.settings.muscles.$url());
   };
 
   return (
@@ -45,6 +49,9 @@ const MusclePage: NextPage = () => {
       <Muscle id={id} goToMusclesPage={goToMusclesPage} />
     </RequireLogin>
   );
+};
+MusclePage.getLayout = (page): ReactElement => {
+  return <FooterNavigation>{page}</FooterNavigation>;
 };
 export default MusclePage;
 
@@ -98,7 +105,6 @@ const Muscle: FC<Props> = (props) => {
       deleteMuscle={deleteMuscle}
       updateMuscleStatus={updateMuscleNameMutation.status}
       deleteMuscleStatus={deleteMuscleMutation.status}
-      goToMusclesPage={props.goToMusclesPage}
     />
   );
 };
@@ -110,7 +116,6 @@ type ViewProps = {
   deleteMuscle: () => void;
   updateMuscleStatus: MutationState;
   deleteMuscleStatus: MutationState;
-  goToMusclesPage: () => void;
 };
 const MuscleView: FC<ViewProps> = (props) => {
   const {
@@ -162,12 +167,6 @@ const MuscleView: FC<ViewProps> = (props) => {
     }
   }, [props.deleteMuscleStatus, toast]);
 
-  const onClickBack = useCallback<MouseEventHandler>(
-    (_) => {
-      props.goToMusclesPage();
-    },
-    [props]
-  );
   const onSubmit = useCallback<SubmitHandler<MuscleField>>(
     (fieldValues) => {
       const isSameNameMuscleExist = props.registeredMuscles.some(
@@ -197,7 +196,7 @@ const MuscleView: FC<ViewProps> = (props) => {
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button onClick={onClickBack}>
+          <Button as={NextLink} href={pagesPath.settings.muscles.$url()}>
             <ChevronLeftIcon />
           </Button>
           <Heading>部位を編集</Heading>

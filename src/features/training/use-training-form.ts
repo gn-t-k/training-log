@@ -1,11 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { UseFormReturn } from "react-hook-form";
 import { string, z } from "zod";
 
 import { useForm } from "@/libs/react-hook-form/use-form";
 
 import { isValidDate } from "@/utils/date";
+
+import type { UseFormReturn } from "react-hook-form";
 
 const trainingFieldSchema = z.object({
   date: z.string().refine(isValidDate, "日付を入力してください"),

@@ -1,11 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { endOfMonth, startOfMonth } from "date-fns";
 
-import { GetMonthlyTrainingsQuery } from "@/libs/prisma/queries/get-monthly-trainings-query";
+import type { GetMonthlyTrainingsQuery } from "@/libs/prisma/queries/get-monthly-trainings-query";
 
 import { monthSchema, yearSchema } from "@/utils/date";
 
-import { Training } from "@/features/training/training";
+import type { Training } from "@/features/training/training";
 
 type GetMonthlyTrainingsResolver = (
   deps: Deps

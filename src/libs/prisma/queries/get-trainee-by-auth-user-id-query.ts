@@ -1,6 +1,7 @@
-import { Trainee } from "@/features/trainee/trainee";
-
 import prisma from "../client";
+
+import type { Trainee } from "@/features/trainee/trainee";
+
 
 export type GetTraineeByAuthUserIdQuery = (props: {
   authUserId: string;

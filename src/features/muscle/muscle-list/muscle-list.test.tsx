@@ -1,8 +1,9 @@
 import { composeStories } from "@storybook/testing-react";
 import { render, screen } from "@testing-library/react";
 
-import { Muscle } from "../muscle";
 import * as stories from "./muscle-list.stories";
+
+import type { Muscle } from "../muscle";
 
 describe("MuscleList", () => {
   const Stories = composeStories(stories);
