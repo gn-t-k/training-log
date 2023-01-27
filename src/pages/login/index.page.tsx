@@ -16,9 +16,9 @@ const Login: NextPage = () => {
 
   const login: ViewProps["login"] = async () => {
     await signIn("google", {
-      callbackUrl: `${window ? window.location.origin : getBaseUrl()}${
-        pagesPath.logged_in.$url().pathname
-      }`,
+      callbackUrl: `${
+        typeof window !== "undefined" ? window.location.origin : getBaseUrl()
+      }${pagesPath.logged_in.$url().pathname}`,
     });
   };
 

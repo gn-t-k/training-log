@@ -26,7 +26,7 @@ type ViewProps = {
 export const RedirectView: FC<ViewProps> = (props) => {
   return (
     <Link href={props.redirectTo}>{`${
-      window ? window.location.origin : getBaseUrl()
+      typeof window !== "undefined" ? window.location.origin : getBaseUrl()
     }${props.redirectTo.pathname} に移動しています...`}</Link>
   );
 };

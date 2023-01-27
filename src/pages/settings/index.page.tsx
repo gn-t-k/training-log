@@ -48,9 +48,9 @@ const Settings: FC = () => {
 
   const logout: ViewProps["logout"] = () => {
     signOut({
-      callbackUrl: `${window ? window.location.origin : getBaseUrl()}${
-        pagesPath.login.$url().pathname
-      }`,
+      callbackUrl: `${
+        typeof window !== "undefined" ? window.location.origin : getBaseUrl()
+      }${pagesPath.login.$url().pathname}`,
     });
   };
 
