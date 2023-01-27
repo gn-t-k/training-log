@@ -8,6 +8,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { getDate, getMonth, getYear } from "date-fns";
+import Head from "next/head";
 import NextLink from "next/link";
 
 import { pagesPath } from "@/libs/pathpida/$path";
@@ -23,6 +24,9 @@ import type { FC, MouseEventHandler, ReactElement } from "react";
 const TrainingsPage: NextPageWithLayout = () => {
   return (
     <RequireLogin>
+      <Head>
+        <title>トレーニング | training-log</title>
+      </Head>
       <Trainings />
     </RequireLogin>
   );

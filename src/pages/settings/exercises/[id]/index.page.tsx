@@ -13,6 +13,7 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
+import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -51,6 +52,9 @@ const ExercisePage: NextPageWithLayout = () => {
 
   return (
     <RequireLogin>
+      <Head>
+        <title>種目を編集する | training-log</title>
+      </Head>
       <Exercise id={id} goToExercisesPage={goToExercisesPage} />
     </RequireLogin>
   );

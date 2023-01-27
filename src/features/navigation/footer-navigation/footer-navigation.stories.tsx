@@ -17,6 +17,7 @@ export default componentMeta;
 const Wrapper: FC<Partial<Props>> = (props) => {
   const args: Props = {
     children: props.children ?? <Text>テスト</Text>,
+    current: props.current ?? "trainings",
   };
 
   return <FooterNavigationView {...args} />;
