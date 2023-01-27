@@ -4,18 +4,23 @@ import NextLink from "next/link";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
+import type { NextPageWithLayout } from "@/pages/_app.page";
+
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { RegisterExerciseForm } from "@/features/exercise/register-exercise-form/register-exercise-form";
+import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 
-import type { NextPage } from "next";
-import type { FC } from "react";
+import type { FC, ReactElement } from "react";
 
-const RegisterExercisePage: NextPage = () => {
+const RegisterExercisePage: NextPageWithLayout = () => {
   return (
     <RequireLogin>
       <RegisterExercise />
     </RequireLogin>
   );
+};
+RegisterExercisePage.getLayout = (page): ReactElement => {
+  return <FooterNavigation>{page}</FooterNavigation>;
 };
 export default RegisterExercisePage;
 

@@ -1,23 +1,27 @@
-import { Button, Container, Stack } from "@chakra-ui/react";
+import { Button, Container, Stack, Text } from "@chakra-ui/react";
 import { getMonth, getYear } from "date-fns";
 import { signOut } from "next-auth/react";
-import Link from "next/link";
+import NextLink from "next/link";
 import { useCallback } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
+import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 
-import type { NextPage } from "next";
-import type { FC, MouseEventHandler} from "react";
+import type { NextPageWithLayout } from "./_app.page";
+import type { FC, MouseEventHandler, ReactElement } from "react";
 
-const IndexPage: NextPage = () => {
+const IndexPage: NextPageWithLayout = () => {
   return (
     <RequireLogin>
       <Index />
     </RequireLogin>
   );
+};
+IndexPage.getLayout = (page): ReactElement => {
+  return <FooterNavigation>{page}</FooterNavigation>;
 };
 export default IndexPage;
 
@@ -55,9 +59,37 @@ const IndexView: FC<ViewProps> = (props) => {
   return (
     <Container>
       <Stack direction="column">
-        <Link href={pagesPath.trainings.$url()}>トレーニング</Link>
-        <Link href={pagesPath.muscles.$url()}>部位</Link>
-        <Link href={pagesPath.exercises.$url()}>種目</Link>
+        <NextLink href={pagesPath.trainings.$url()}>トレーニング</NextLink>
+        <NextLink href={pagesPath.muscles.$url()}>部位</NextLink>
+        <NextLink href={pagesPath.exercises.$url()}>種目</NextLink>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
+        <Text>テスト</Text>
         <Button onClick={onClickLogout}>ログアウト</Button>
       </Stack>
     </Container>

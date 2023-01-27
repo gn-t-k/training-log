@@ -9,20 +9,21 @@ import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 import type { UpdateTrainingInput } from "@/libs/trpc/server/routes/training";
 
-import { Redirect } from "@/ui/redirect/redirect";
+import type { NextPageWithLayout } from "@/pages/_app.page";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
+import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
+import { Redirect } from "@/features/navigation/redirect/redirect";
 import { Training } from "@/features/training/training";
 import { TrainingForm } from "@/features/training/training-form/training-form";
 import { useGetTrainingId } from "@/features/training/use-get-training-id";
 
 import type { Exercise } from "@/features/exercise/exercise";
 import type { TrainingField } from "@/features/training/use-training-form";
-import type { NextPage } from "next";
-import type { FC } from "react";
+import type { FC, ReactElement } from "react";
 import type { SubmitHandler } from "react-hook-form";
 
-const TrainingPage: NextPage = () => {
+const TrainingPage: NextPageWithLayout = () => {
   const router = useRouter();
   const id = useGetTrainingId();
 
@@ -39,6 +40,9 @@ const TrainingPage: NextPage = () => {
       <Training id={id} goToTrainingsPage={goToTrainingsPage} />
     </RequireLogin>
   );
+};
+TrainingPage.getLayout = (page): ReactElement => {
+  return <FooterNavigation>{page}</FooterNavigation>;
 };
 export default TrainingPage;
 

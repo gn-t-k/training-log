@@ -1,7 +1,7 @@
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
-import { Redirect } from "@/ui/redirect/redirect";
+import { Redirect } from "@/features/navigation/redirect/redirect";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 

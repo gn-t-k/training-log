@@ -4,7 +4,7 @@ import { useCallback } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
-import { Redirect } from "@/ui/redirect/redirect";
+import { Redirect } from "@/features/navigation/redirect/redirect";
 
 import type { NextPage } from "next";
 import type { MouseEventHandler, FC } from "react";

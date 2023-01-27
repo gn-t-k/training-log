@@ -21,7 +21,7 @@ import { Controller } from "react-hook-form";
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
-import { Redirect } from "@/ui/redirect/redirect";
+import type { NextPageWithLayout } from "@/pages/_app.page";
 
 import type { MutationState } from "@/utils/mutation-state";
 
@@ -29,14 +29,15 @@ import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { Exercise } from "@/features/exercise/exercise";
 import { useExerciseForm } from "@/features/exercise/use-exercise-form";
 import { useGetExerciseId } from "@/features/exercise/use-get-exercise-id";
+import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
+import { Redirect } from "@/features/navigation/redirect/redirect";
 
 import type { ExerciseField } from "@/features/exercise/use-exercise-form";
 import type { Muscle } from "@/features/muscle/muscle";
-import type { NextPage } from "next";
 import type { FC, MouseEventHandler, ReactElement } from "react";
 import type { SubmitHandler } from "react-hook-form";
 
-const ExercisePage: NextPage = () => {
+const ExercisePage: NextPageWithLayout = () => {
   const id = useGetExerciseId();
   const router = useRouter();
 
@@ -53,6 +54,9 @@ const ExercisePage: NextPage = () => {
       <Exercise id={id} goToExercisesPage={goToExercisesPage} />
     </RequireLogin>
   );
+};
+ExercisePage.getLayout = (page): ReactElement => {
+  return <FooterNavigation>{page}</FooterNavigation>;
 };
 export default ExercisePage;
 
