@@ -32,7 +32,7 @@ export const RegisterExerciseForm: FC = () => {
   const registerExerciseMutation = trpc.exercise.register.useMutation({
     onSuccess: () => {
       util.exercise.invalidate();
-      router.push(pagesPath.exercises.$url());
+      router.push(pagesPath.settings.exercises.$url());
     },
   });
   const router = useRouter();

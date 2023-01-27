@@ -17,21 +17,23 @@ import { useCallback, useEffect } from "react";
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
+import type { NextPageWithLayout } from "@/pages/_app.page";
+
 import type { MutationState } from "@/utils/mutation-state";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { useMuscleForm } from "@/features/muscle/use-muscle-form";
+import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 
 import type { Muscle } from "@/features/muscle/muscle";
 import type { MuscleField } from "@/features/muscle/use-muscle-form";
-import type { NextPage } from "next";
-import type { FC } from "react";
+import type { FC, ReactElement } from "react";
 import type { SubmitHandler } from "react-hook-form";
 
-const RegisterMusclePage: NextPage = () => {
+const RegisterMusclePage: NextPageWithLayout = () => {
   const router = useRouter();
   const goToMusclesPage: Props["goToMusclesPage"] = () => {
-    router.push(pagesPath.muscles.$url());
+    router.push(pagesPath.settings.muscles.$url());
   };
 
   return (
@@ -39,6 +41,9 @@ const RegisterMusclePage: NextPage = () => {
       <RegisterMuscle goToMusclesPage={goToMusclesPage} />
     </RequireLogin>
   );
+};
+RegisterMusclePage.getLayout = (page): ReactElement => {
+  return <FooterNavigation>{page}</FooterNavigation>;
 };
 export default RegisterMusclePage;
 
@@ -133,7 +138,7 @@ const RegisterMuscleView: FC<ViewProps> = (props) => {
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button as={NextLink} href={pagesPath.muscles.$url()}>
+          <Button as={NextLink} href={pagesPath.settings.muscles.$url()}>
             <ChevronLeftIcon />
           </Button>
           <Heading>部位を登録する</Heading>

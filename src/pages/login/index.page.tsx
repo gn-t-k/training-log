@@ -4,7 +4,9 @@ import { useCallback } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
-import { Redirect } from "@/ui/redirect/redirect";
+import { getBaseUrl } from "@/utils/get-base-url";
+
+import { Redirect } from "@/features/navigation/redirect/redirect";
 
 import type { NextPage } from "next";
 import type { MouseEventHandler, FC } from "react";
@@ -14,9 +16,9 @@ const Login: NextPage = () => {
 
   const login: ViewProps["login"] = async () => {
     await signIn("google", {
-      callbackUrl: `${window.location.origin}${
-        pagesPath.logged_in.$url().pathname
-      }`,
+      callbackUrl: `${
+        typeof window !== "undefined" ? window.location.origin : getBaseUrl()
+      }${pagesPath.logged_in.$url().pathname}`,
     });
   };
 

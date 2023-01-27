@@ -58,7 +58,7 @@ export const MuscleListView: FC<ViewProps> = (props) => {
                   <Spacer />
                   <Button
                     as={NextLink}
-                    href={pagesPath.muscles._id(muscle.id).$url()}
+                    href={pagesPath.settings.muscles._id(muscle.id).$url()}
                   >
                     <ChevronRightIcon />
                   </Button>

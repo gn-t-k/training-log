@@ -17,7 +17,7 @@ import { useCallback, useEffect } from "react";
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
-import { Redirect } from "@/ui/redirect/redirect";
+import type { NextPageWithLayout } from "@/pages/_app.page";
 
 import type { MutationState } from "@/utils/mutation-state";
 
@@ -25,22 +25,23 @@ import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { Muscle } from "@/features/muscle/muscle";
 import { useGetMuscleId } from "@/features/muscle/use-get-muscle-id";
 import { useMuscleForm } from "@/features/muscle/use-muscle-form";
+import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
+import { Redirect } from "@/features/navigation/redirect/redirect";
 
 import type { MuscleField } from "@/features/muscle/use-muscle-form";
-import type { NextPage } from "next";
-import type { FC, MouseEventHandler } from "react";
+import type { FC, MouseEventHandler, ReactElement } from "react";
 import type { SubmitHandler } from "react-hook-form";
 
-const MusclePage: NextPage = () => {
+const MusclePage: NextPageWithLayout = () => {
   const id = useGetMuscleId();
   const router = useRouter();
 
   if (id === null) {
-    return <Redirect redirectTo={pagesPath.muscles.$url()} />;
+    return <Redirect redirectTo={pagesPath.settings.muscles.$url()} />;
   }
 
   const goToMusclesPage: Props["goToMusclesPage"] = () => {
-    router.push(pagesPath.muscles.$url());
+    router.push(pagesPath.settings.muscles.$url());
   };
 
   return (
@@ -48,6 +49,9 @@ const MusclePage: NextPage = () => {
       <Muscle id={id} goToMusclesPage={goToMusclesPage} />
     </RequireLogin>
   );
+};
+MusclePage.getLayout = (page): ReactElement => {
+  return <FooterNavigation>{page}</FooterNavigation>;
 };
 export default MusclePage;
 
@@ -192,7 +196,7 @@ const MuscleView: FC<ViewProps> = (props) => {
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button as={NextLink} href={pagesPath.muscles.$url()}>
+          <Button as={NextLink} href={pagesPath.settings.muscles.$url()}>
             <ChevronLeftIcon />
           </Button>
           <Heading>部位を編集</Heading>

@@ -8,16 +8,18 @@ import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 import type { RegisterTrainingInput } from "@/libs/trpc/server/routes/training";
 
+import type { NextPageWithLayout } from "@/pages/_app.page";
+
 import { RequireLogin } from "@/features/auth/require-login/require-login";
+import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 import { TrainingForm } from "@/features/training/training-form/training-form";
 
 import type { Exercise } from "@/features/exercise/exercise";
 import type { TrainingField } from "@/features/training/use-training-form";
-import type { NextPage } from "next";
-import type { FC } from "react";
+import type { FC, ReactElement } from "react";
 import type { SubmitHandler } from "react-hook-form";
 
-const RegisterTrainingPage: NextPage = () => {
+const RegisterTrainingPage: NextPageWithLayout = () => {
   const router = useRouter();
   const goToTrainingsPage = useCallback<Props["goToTrainingsPage"]>(() => {
     router.push(pagesPath.trainings.$url());
@@ -28,6 +30,9 @@ const RegisterTrainingPage: NextPage = () => {
       <RegisterTraining goToTrainingsPage={goToTrainingsPage} />
     </RequireLogin>
   );
+};
+RegisterTrainingPage.getLayout = (page): ReactElement => {
+  return <FooterNavigation>{page}</FooterNavigation>;
 };
 export default RegisterTrainingPage;
 

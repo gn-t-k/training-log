@@ -2,7 +2,7 @@ import { Text } from "@chakra-ui/react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
-import { Redirect } from "@/ui/redirect/redirect";
+import { Redirect } from "@/features/navigation/redirect/redirect";
 
 import { SessionContextProvider } from "../session-context/session-context";
 

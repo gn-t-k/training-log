@@ -1,4 +1,4 @@
-import { AddIcon, ChevronLeftIcon } from "@chakra-ui/icons";
+import { AddIcon } from "@chakra-ui/icons";
 import {
   Button,
   Container,
@@ -10,22 +10,25 @@ import {
 import { getDate, getMonth, getYear } from "date-fns";
 import NextLink from "next/link";
 
-
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
+import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 
+import type { NextPageWithLayout } from "../_app.page";
 import type { Training } from "@/features/training/training";
-import type { NextPage } from "next";
-import type { FC, MouseEventHandler } from "react";
+import type { FC, MouseEventHandler, ReactElement } from "react";
 
-const TrainingsPage: NextPage = () => {
+const TrainingsPage: NextPageWithLayout = () => {
   return (
     <RequireLogin>
       <Trainings />
     </RequireLogin>
   );
+};
+TrainingsPage.getLayout = (page): ReactElement => {
+  return <FooterNavigation>{page}</FooterNavigation>;
 };
 export default TrainingsPage;
 
@@ -74,10 +77,6 @@ const TrainingsView: FC<ViewProps> = (props) => {
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button as={NextLink} href={pagesPath.$url()}>
-            <ChevronLeftIcon />
-          </Button>
-          <Spacer />
           <Heading>トレーニング</Heading>
           <Spacer />
           <Button as={NextLink} href={pagesPath.trainings.register.$url()}>

@@ -6,16 +6,20 @@ import { pagesPath } from "@/libs/pathpida/$path";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { MuscleList } from "@/features/muscle/muscle-list/muscle-list";
+import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 
-import type { NextPage } from "next";
-import type { FC } from "react";
+import type { NextPageWithLayout } from "../../_app.page";
+import type { FC, ReactElement } from "react";
 
-const MusclesPage: NextPage = () => {
+const MusclesPage: NextPageWithLayout = () => {
   return (
     <RequireLogin>
       <Muscles />
     </RequireLogin>
   );
+};
+MusclesPage.getLayout = (page): ReactElement => {
+  return <FooterNavigation>{page}</FooterNavigation>;
 };
 export default MusclesPage;
 
@@ -31,13 +35,16 @@ const MusclesView: FC<ViewProps> = (props) => {
     <Container>
       <Stack direction="column">
         <Stack direction="row">
-          <Button as={NextLink} href={pagesPath.$url()}>
+          <Button as={NextLink} href={pagesPath.settings.$url()}>
             <ChevronLeftIcon />
           </Button>
           <Spacer />
           <Heading>部位</Heading>
           <Spacer />
-          <Button as={NextLink} href={pagesPath.muscles.register.$url()}>
+          <Button
+            as={NextLink}
+            href={pagesPath.settings.muscles.register.$url()}
+          >
             <AddIcon />
           </Button>
         </Stack>
