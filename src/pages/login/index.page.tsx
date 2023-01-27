@@ -4,6 +4,8 @@ import { useCallback } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
+import { getBaseUrl } from "@/utils/get-base-url";
+
 import { Redirect } from "@/features/navigation/redirect/redirect";
 
 import type { NextPage } from "next";
@@ -14,7 +16,7 @@ const Login: NextPage = () => {
 
   const login: ViewProps["login"] = async () => {
     await signIn("google", {
-      callbackUrl: `${window.location.origin}${
+      callbackUrl: `${window ? window.location.origin : getBaseUrl()}${
         pagesPath.logged_in.$url().pathname
       }`,
     });

@@ -17,6 +17,8 @@ import { useCallback } from "react";
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
+import { getBaseUrl } from "@/utils/get-base-url";
+
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 import { Redirect } from "@/features/navigation/redirect/redirect";
@@ -46,7 +48,7 @@ const Settings: FC = () => {
 
   const logout: ViewProps["logout"] = () => {
     signOut({
-      callbackUrl: `${window.location.origin}${
+      callbackUrl: `${window ? window.location.origin : getBaseUrl()}${
         pagesPath.login.$url().pathname
       }`,
     });
