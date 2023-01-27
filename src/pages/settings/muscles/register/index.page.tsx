@@ -10,6 +10,7 @@ import {
   Stack,
   useToast,
 } from "@chakra-ui/react";
+import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect } from "react";
@@ -38,6 +39,9 @@ const RegisterMusclePage: NextPageWithLayout = () => {
 
   return (
     <RequireLogin>
+      <Head>
+        <title>部位を登録する | training-log</title>
+      </Head>
       <RegisterMuscle goToMusclesPage={goToMusclesPage} />
     </RequireLogin>
   );

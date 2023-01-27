@@ -1,5 +1,6 @@
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Button, Container, Heading, Spacer, Stack } from "@chakra-ui/react";
+import Head from "next/head";
 import NextLink from "next/link";
 
 import { pagesPath } from "@/libs/pathpida/$path";
@@ -15,6 +16,9 @@ import type { FC, ReactElement } from "react";
 const RegisterExercisePage: NextPageWithLayout = () => {
   return (
     <RequireLogin>
+      <Head>
+        <title>種目を登録する | training-log</title>
+      </Head>
       <RegisterExercise />
     </RequireLogin>
   );

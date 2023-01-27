@@ -1,5 +1,6 @@
 import { Button, Text } from "@chakra-ui/react";
 import { signIn, useSession } from "next-auth/react";
+import Head from "next/head";
 import { useCallback } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
@@ -11,7 +12,19 @@ import { Redirect } from "@/features/navigation/redirect/redirect";
 import type { NextPage } from "next";
 import type { MouseEventHandler, FC } from "react";
 
-const Login: NextPage = () => {
+const LoginPage: NextPage = () => {
+  return (
+    <>
+      <Head>
+        <title>ログイン | training-log</title>
+      </Head>
+      <Login />
+    </>
+  );
+};
+export default LoginPage;
+
+const Login: FC = () => {
   const session = useSession();
 
   const login: ViewProps["login"] = async () => {
@@ -24,7 +37,6 @@ const Login: NextPage = () => {
 
   return <LoginView sessionStatus={session.status} login={login} />;
 };
-export default Login;
 
 type ViewProps = {
   sessionStatus: "loading" | "authenticated" | "unauthenticated";

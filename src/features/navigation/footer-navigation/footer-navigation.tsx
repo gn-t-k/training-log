@@ -1,5 +1,6 @@
 import { Box, Button, Container, Grid, GridItem } from "@chakra-ui/react";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
@@ -9,11 +10,19 @@ type Props = {
   children: ReactNode;
 };
 export const FooterNavigation: FC<Props> = (props) => {
-  return <FooterNavigationView>{props.children}</FooterNavigationView>;
+  const path = useRouter().asPath.split("/");
+  const current = path[1] ?? "";
+
+  return (
+    <FooterNavigationView current={current}>
+      {props.children}
+    </FooterNavigationView>
+  );
 };
 
 type ViewProps = {
   children: ReactNode;
+  current: string;
 };
 export const FooterNavigationView: FC<ViewProps> = (props) => {
   return (
@@ -36,17 +45,31 @@ export const FooterNavigationView: FC<ViewProps> = (props) => {
             alignItems="center"
           >
             <GridItem>
-              <Button w="full" disabled>
+              <Button
+                w="full"
+                disabled
+                fontWeight={props.current === "templates" ? "bold" : "normal"}
+              >
                 テンプレート
               </Button>
             </GridItem>
             <GridItem>
-              <Button as={NextLink} href={pagesPath.trainings.$url()} w="full">
+              <Button
+                as={NextLink}
+                href={pagesPath.trainings.$url()}
+                w="full"
+                fontWeight={props.current === "trainings" ? "bold" : "normal"}
+              >
                 トレーニング
               </Button>
             </GridItem>
             <GridItem>
-              <Button as={NextLink} href={pagesPath.settings.$url()} w="full">
+              <Button
+                as={NextLink}
+                href={pagesPath.settings.$url()}
+                w="full"
+                fontWeight={props.current === "settings" ? "bold" : "normal"}
+              >
                 設定
               </Button>
             </GridItem>
