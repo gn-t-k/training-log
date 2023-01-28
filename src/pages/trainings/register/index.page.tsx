@@ -1,5 +1,5 @@
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { Button, Container, Heading, Stack } from "@chakra-ui/react";
+import { Button, Container } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -13,6 +13,7 @@ import type { NextPageWithLayout } from "@/pages/_app.page";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
+import { HeaderNavigation } from "@/features/navigation/header-navigation/header-navigation";
 import { TrainingForm } from "@/features/training/training-form/training-form";
 
 import type { Exercise } from "@/features/exercise/exercise";
@@ -36,7 +37,20 @@ const RegisterTrainingPage: NextPageWithLayout = () => {
   );
 };
 RegisterTrainingPage.getLayout = (page): ReactElement => {
-  return <FooterNavigation>{page}</FooterNavigation>;
+  return (
+    <FooterNavigation>
+      <HeaderNavigation
+        title="トレーニングを登録する"
+        leftItem={
+          <Button as={NextLink} href={pagesPath.trainings.$url()}>
+            <ChevronLeftIcon />
+          </Button>
+        }
+      >
+        {page}
+      </HeaderNavigation>
+    </FooterNavigation>
+  );
 };
 export default RegisterTrainingPage;
 
@@ -120,19 +134,11 @@ const RegisterTrainingView: FC<ViewProps> = (props) => {
 
   return (
     <Container>
-      <Stack direction="column">
-        <Stack direction="row">
-          <Button as={NextLink} href={pagesPath.trainings.$url()}>
-            <ChevronLeftIcon />
-          </Button>
-          <Heading>トレーニングを記録する</Heading>
-        </Stack>
-        <TrainingForm
-          onSubmit={onSubmit}
-          exercises={props.exercises}
-          isProcessing={props.isProcessing}
-        />
-      </Stack>
+      <TrainingForm
+        onSubmit={onSubmit}
+        exercises={props.exercises}
+        isProcessing={props.isProcessing}
+      />
     </Container>
   );
 };

@@ -3,7 +3,6 @@ import {
   Button,
   Container,
   Divider,
-  Heading,
   List,
   Spacer,
   Spinner,
@@ -19,6 +18,7 @@ import { trpc } from "@/libs/trpc/client/trpc";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
+import { HeaderNavigation } from "@/features/navigation/header-navigation/header-navigation";
 
 import type { NextPageWithLayout } from "../../_app.page";
 import type { Exercise } from "@/features/exercise/exercise";
@@ -35,7 +35,28 @@ const ExercisesPage: NextPageWithLayout = () => {
   );
 };
 ExercisesPage.getLayout = (page): ReactElement => {
-  return <FooterNavigation>{page}</FooterNavigation>;
+  return (
+    <FooterNavigation>
+      <HeaderNavigation
+        title="種目"
+        leftItem={
+          <Button as={NextLink} href={pagesPath.settings.$url()}>
+            <ChevronLeftIcon />
+          </Button>
+        }
+        rightItem={
+          <Button
+            as={NextLink}
+            href={pagesPath.settings.exercises.register.$url()}
+          >
+            <AddIcon />
+          </Button>
+        }
+      >
+        {page}
+      </HeaderNavigation>
+    </FooterNavigation>
+  );
 };
 export default ExercisesPage;
 
@@ -66,20 +87,6 @@ type ViewProps = {
 const ExercisesView: FC<ViewProps> = (props) => {
   return (
     <Container>
-      <Stack direction="row">
-        <Button as={NextLink} href={pagesPath.settings.$url()}>
-          <ChevronLeftIcon />
-        </Button>
-        <Spacer />
-        <Heading>種目</Heading>
-        <Spacer />
-        <Button
-          as={NextLink}
-          href={pagesPath.settings.exercises.register.$url()}
-        >
-          <AddIcon />
-        </Button>
-      </Stack>
       <Stack direction="column">
         {props.isFetching && <Spinner />}
         <UnorderedList>

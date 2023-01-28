@@ -5,7 +5,6 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Heading,
   Input,
   Stack,
   useToast,
@@ -25,6 +24,7 @@ import type { MutationState } from "@/utils/mutation-state";
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { useMuscleForm } from "@/features/muscle/use-muscle-form";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
+import { HeaderNavigation } from "@/features/navigation/header-navigation/header-navigation";
 
 import type { Muscle } from "@/features/muscle/muscle";
 import type { MuscleField } from "@/features/muscle/use-muscle-form";
@@ -47,7 +47,20 @@ const RegisterMusclePage: NextPageWithLayout = () => {
   );
 };
 RegisterMusclePage.getLayout = (page): ReactElement => {
-  return <FooterNavigation>{page}</FooterNavigation>;
+  return (
+    <FooterNavigation>
+      <HeaderNavigation
+        title="部位を登録する"
+        leftItem={
+          <Button as={NextLink} href={pagesPath.settings.muscles.$url()}>
+            <ChevronLeftIcon />
+          </Button>
+        }
+      >
+        {page}
+      </HeaderNavigation>
+    </FooterNavigation>
+  );
 };
 export default RegisterMusclePage;
 
@@ -140,32 +153,24 @@ const RegisterMuscleView: FC<ViewProps> = (props) => {
 
   return (
     <Container>
-      <Stack direction="column">
-        <Stack direction="row">
-          <Button as={NextLink} href={pagesPath.settings.muscles.$url()}>
-            <ChevronLeftIcon />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Stack direction="column">
+          <FormControl isInvalid={!!errors.name}>
+            <FormLabel htmlFor="name">部位の名前</FormLabel>
+            <Input id="name" {...register("name")} />
+            {!!errors.name && (
+              <FormErrorMessage>{errors.name.message}</FormErrorMessage>
+            )}
+          </FormControl>
+          <Button
+            type="submit"
+            isLoading={props.registerMuscleStatus === "loading"}
+            isDisabled={props.registerMuscleStatus === "loading"}
+          >
+            登録する
           </Button>
-          <Heading>部位を登録する</Heading>
         </Stack>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack direction="column">
-            <FormControl isInvalid={!!errors.name}>
-              <FormLabel htmlFor="name">部位の名前</FormLabel>
-              <Input id="name" {...register("name")} />
-              {!!errors.name && (
-                <FormErrorMessage>{errors.name.message}</FormErrorMessage>
-              )}
-            </FormControl>
-            <Button
-              type="submit"
-              isLoading={props.registerMuscleStatus === "loading"}
-              isDisabled={props.registerMuscleStatus === "loading"}
-            >
-              登録する
-            </Button>
-          </Stack>
-        </form>
-      </Stack>
+      </form>
     </Container>
   );
 };

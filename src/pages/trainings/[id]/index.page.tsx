@@ -1,5 +1,5 @@
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { Button, Container, Heading, Stack } from "@chakra-ui/react";
+import { Button, Container } from "@chakra-ui/react";
 import { format } from "date-fns";
 import Head from "next/head";
 import NextLink from "next/link";
@@ -14,6 +14,7 @@ import type { NextPageWithLayout } from "@/pages/_app.page";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
+import { HeaderNavigation } from "@/features/navigation/header-navigation/header-navigation";
 import { Redirect } from "@/features/navigation/redirect/redirect";
 import { Training } from "@/features/training/training";
 import { TrainingForm } from "@/features/training/training-form/training-form";
@@ -46,7 +47,20 @@ const TrainingPage: NextPageWithLayout = () => {
   );
 };
 TrainingPage.getLayout = (page): ReactElement => {
-  return <FooterNavigation>{page}</FooterNavigation>;
+  return (
+    <FooterNavigation>
+      <HeaderNavigation
+        title="トレーニング記録を編集する"
+        leftItem={
+          <Button as={NextLink} href={pagesPath.trainings.$url()}>
+            <ChevronLeftIcon />
+          </Button>
+        }
+      >
+        {page}
+      </HeaderNavigation>
+    </FooterNavigation>
+  );
 };
 export default TrainingPage;
 
@@ -150,20 +164,12 @@ const TrainingView: FC<ViewProps> = (props) => {
 
   return (
     <Container>
-      <Stack direction="column">
-        <Stack direction="row">
-          <Button as={NextLink} href={pagesPath.trainings.$url()}>
-            <ChevronLeftIcon />
-          </Button>
-          <Heading>トレーニング記録を編集する</Heading>
-        </Stack>
-        <TrainingForm
-          defaultValues={trainingField}
-          exercises={props.exercises}
-          onSubmit={onSubmit}
-          isProcessing={props.isProcessing}
-        />
-      </Stack>
+      <TrainingForm
+        defaultValues={trainingField}
+        exercises={props.exercises}
+        onSubmit={onSubmit}
+        isProcessing={props.isProcessing}
+      />
     </Container>
   );
 };
