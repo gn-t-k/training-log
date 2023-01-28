@@ -22,6 +22,7 @@ import { getBaseUrl } from "@/utils/get-base-url";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
+import { HeaderNavigation } from "@/features/navigation/header-navigation/header-navigation";
 import { Redirect } from "@/features/navigation/redirect/redirect";
 
 import type { NextPageWithLayout } from "../_app.page";
@@ -41,7 +42,11 @@ const SettingsPage: NextPageWithLayout = () => {
   );
 };
 SettingsPage.getLayout = (page): ReactElement => {
-  return <FooterNavigation>{page}</FooterNavigation>;
+  return (
+    <FooterNavigation>
+      <HeaderNavigation title="設定">{page}</HeaderNavigation>
+    </FooterNavigation>
+  );
 };
 export default SettingsPage;
 
@@ -114,9 +119,6 @@ const SettingsView: FC<ViewProps> = (props) => {
   return (
     <Container>
       <Stack direction="column">
-        <Heading as="h1" size="xl">
-          設定
-        </Heading>
         <Flex justifyContent="center">
           <Stack direction="column">
             <Image

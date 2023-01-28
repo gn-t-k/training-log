@@ -1,12 +1,4 @@
-import {
-  Box,
-  Container,
-  Grid,
-  GridItem,
-  Heading,
-  Spacer,
-  Stack,
-} from "@chakra-ui/react";
+import { Box, Container, Heading, Spacer, Stack } from "@chakra-ui/react";
 
 import type { FC, ReactNode } from "react";
 
@@ -48,28 +40,13 @@ export const HeaderNavigationView: FC<ViewProps> = (props) => {
         alignContent="center"
       >
         <Container height="full">
-          <Grid
-            templateColumns="1fr 1fr 1fr"
-            as="nav"
-            height="full"
-            alignItems="center"
-          >
-            <GridItem>
-              <Stack direction="row">
-                {props.leftItem}
-                <Spacer />
-              </Stack>
-            </GridItem>
-            <GridItem>
-              <Heading>{props.title}</Heading>
-            </GridItem>
-            <GridItem>
-              <Stack direction="row">
-                <Spacer />
-                {props.rightItem}
-              </Stack>
-            </GridItem>
-          </Grid>
+          <Stack direction="row">
+            {props.leftItem}
+            <Spacer />
+            <Heading>{props.title}</Heading>
+            <Spacer />
+            {props.rightItem}
+          </Stack>
         </Container>
       </Box>
       {props.children}

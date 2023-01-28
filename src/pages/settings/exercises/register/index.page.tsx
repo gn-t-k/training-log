@@ -1,5 +1,5 @@
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { Button, Container, Heading, Spacer, Stack } from "@chakra-ui/react";
+import { Button, Container } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
 
@@ -10,6 +10,7 @@ import type { NextPageWithLayout } from "@/pages/_app.page";
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { RegisterExerciseForm } from "@/features/exercise/register-exercise-form/register-exercise-form";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
+import { HeaderNavigation } from "@/features/navigation/header-navigation/header-navigation";
 
 import type { FC, ReactElement } from "react";
 
@@ -24,7 +25,20 @@ const RegisterExercisePage: NextPageWithLayout = () => {
   );
 };
 RegisterExercisePage.getLayout = (page): ReactElement => {
-  return <FooterNavigation>{page}</FooterNavigation>;
+  return (
+    <FooterNavigation>
+      <HeaderNavigation
+        title="種目を登録する"
+        leftItem={
+          <Button as={NextLink} href={pagesPath.settings.exercises.$url()}>
+            <ChevronLeftIcon />
+          </Button>
+        }
+      >
+        {page}
+      </HeaderNavigation>
+    </FooterNavigation>
+  );
 };
 export default RegisterExercisePage;
 
@@ -38,18 +52,5 @@ type ViewProps = {
   RegisterExerciseForm: JSX.Element;
 };
 const RegisterExerciseView: FC<ViewProps> = (props) => {
-  return (
-    <Container>
-      <Stack direction="column">
-        <Stack direction="row">
-          <Button as={NextLink} href={pagesPath.settings.exercises.$url()}>
-            <ChevronLeftIcon />
-          </Button>
-          <Spacer />
-        </Stack>
-        <Heading>種目を登録</Heading>
-        {props.RegisterExerciseForm}
-      </Stack>
-    </Container>
-  );
+  return <Container>{props.RegisterExerciseForm}</Container>;
 };
