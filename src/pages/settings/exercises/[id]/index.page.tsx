@@ -51,12 +51,14 @@ const ExercisePage: NextPageWithLayout = () => {
   };
 
   return (
-    <RequireLogin>
+    <>
       <Head>
         <title>種目を編集する | training-log</title>
       </Head>
-      <ExerciseComponent id={id} goToExercisesPage={goToExercisesPage} />
-    </RequireLogin>
+      <RequireLogin>
+        <ExerciseComponent id={id} goToExercisesPage={goToExercisesPage} />
+      </RequireLogin>
+    </>
   );
 };
 ExercisePage.getLayout = (page): ReactElement => {

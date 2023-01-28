@@ -17,12 +17,14 @@ import type { FC, MouseEventHandler, ReactElement } from "react";
 
 const TrainingsPage: NextPageWithLayout = () => {
   return (
-    <RequireLogin>
+    <>
       <Head>
         <title>トレーニング | training-log</title>
       </Head>
-      <Trainings />
-    </RequireLogin>
+      <RequireLogin>
+        <Trainings />
+      </RequireLogin>
+    </>
   );
 };
 TrainingsPage.getLayout = (page): ReactElement => {

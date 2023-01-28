@@ -26,12 +26,14 @@ import type { FC, ReactElement } from "react";
 
 const ExercisesPage: NextPageWithLayout = () => {
   return (
-    <RequireLogin>
+    <>
       <Head>
         <title>種目 | training-log</title>
       </Head>
-      <Exercises />
-    </RequireLogin>
+      <RequireLogin>
+        <Exercises />
+      </RequireLogin>
+    </>
   );
 };
 ExercisesPage.getLayout = (page): ReactElement => {

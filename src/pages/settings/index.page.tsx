@@ -33,12 +33,14 @@ import type { FC, MouseEventHandler, ReactElement } from "react";
 
 const SettingsPage: NextPageWithLayout = () => {
   return (
-    <RequireLogin>
+    <>
       <Head>
         <title>設定 | training-log</title>
       </Head>
-      <Settings />
-    </RequireLogin>
+      <RequireLogin>
+        <Settings />
+      </RequireLogin>
+    </>
   );
 };
 SettingsPage.getLayout = (page): ReactElement => {
