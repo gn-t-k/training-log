@@ -38,12 +38,14 @@ const TrainingPage: NextPageWithLayout = () => {
   }
 
   return (
-    <RequireLogin>
+    <>
       <Head>
         <title>トレーニング記録を編集する | training-log</title>
       </Head>
-      <Training id={id} goToTrainingsPage={goToTrainingsPage} />
-    </RequireLogin>
+      <RequireLogin>
+        <Training id={id} goToTrainingsPage={goToTrainingsPage} />
+      </RequireLogin>
+    </>
   );
 };
 TrainingPage.getLayout = (page): ReactElement => {

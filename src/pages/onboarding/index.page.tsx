@@ -16,12 +16,14 @@ import type { FC } from "react";
 
 const OnboardingPage: NextPage = () => {
   return (
-    <RequireLogin>
+    <>
       <Head>
         <title>トレーニー情報を登録 | training-log</title>
       </Head>
-      <Onboarding />
-    </RequireLogin>
+      <RequireLogin>
+        <Onboarding />
+      </RequireLogin>
+    </>
   );
 };
 export default OnboardingPage;

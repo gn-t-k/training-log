@@ -15,12 +15,14 @@ import type { FC, ReactElement } from "react";
 
 const MusclesPage: NextPageWithLayout = () => {
   return (
-    <RequireLogin>
+    <>
       <Head>
         <title>部位 | training-log</title>
       </Head>
-      <Muscles />
-    </RequireLogin>
+      <RequireLogin>
+        <Muscles />
+      </RequireLogin>
+    </>
   );
 };
 MusclesPage.getLayout = (page): ReactElement => {

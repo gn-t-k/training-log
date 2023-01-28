@@ -46,12 +46,14 @@ const MusclePage: NextPageWithLayout = () => {
   };
 
   return (
-    <RequireLogin>
+    <>
       <Head>
         <title>部位を編集する | training-log</title>
       </Head>
-      <Muscle id={id} goToMusclesPage={goToMusclesPage} />
-    </RequireLogin>
+      <RequireLogin>
+        <Muscle id={id} goToMusclesPage={goToMusclesPage} />
+      </RequireLogin>
+    </>
   );
 };
 MusclePage.getLayout = (page): ReactElement => {

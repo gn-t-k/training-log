@@ -28,12 +28,14 @@ const RegisterTrainingPage: NextPageWithLayout = () => {
   }, [router]);
 
   return (
-    <RequireLogin>
+    <>
       <Head>
         <title>トレーニングを登録する | training-log</title>
       </Head>
-      <RegisterTraining goToTrainingsPage={goToTrainingsPage} />
-    </RequireLogin>
+      <RequireLogin>
+        <RegisterTraining goToTrainingsPage={goToTrainingsPage} />
+      </RequireLogin>
+    </>
   );
 };
 RegisterTrainingPage.getLayout = (page): ReactElement => {

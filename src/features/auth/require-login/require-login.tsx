@@ -1,4 +1,4 @@
-import { Text } from "@chakra-ui/react";
+import { Container, Text } from "@chakra-ui/react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
@@ -16,8 +16,16 @@ type Props = {
 export const RequireLogin: FC<Props> = ({ children }) => {
   return (
     <SessionContextProvider
-      Loading={<Loading />}
-      Failure={<Failure />}
+      Loading={
+        <Container>
+          <Loading />
+        </Container>
+      }
+      Failure={
+        <Container>
+          <Failure />
+        </Container>
+      }
       Unauthenticated={<Redirect redirectTo={pagesPath.login.$url()} />}
     >
       {/* <TraineeStateManager /> */}

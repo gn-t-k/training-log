@@ -16,12 +16,14 @@ import type { FC, ReactElement } from "react";
 
 const RegisterExercisePage: NextPageWithLayout = () => {
   return (
-    <RequireLogin>
+    <>
       <Head>
         <title>種目を登録する | training-log</title>
       </Head>
-      <RegisterExercise />
-    </RequireLogin>
+      <RequireLogin>
+        <RegisterExercise />
+      </RequireLogin>
+    </>
   );
 };
 RegisterExercisePage.getLayout = (page): ReactElement => {
