@@ -7,7 +7,6 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Heading,
   Input,
   Spinner,
   Stack,
@@ -27,12 +26,13 @@ import type { NextPageWithLayout } from "@/pages/_app.page";
 import type { MutationState } from "@/utils/mutation-state";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
-import { Exercise } from "@/features/exercise/exercise";
 import { useExerciseForm } from "@/features/exercise/use-exercise-form";
 import { useGetExerciseId } from "@/features/exercise/use-get-exercise-id";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
+import { HeaderNavigation } from "@/features/navigation/header-navigation/header-navigation";
 import { Redirect } from "@/features/navigation/redirect/redirect";
 
+import type { Exercise } from "@/features/exercise/exercise";
 import type { ExerciseField } from "@/features/exercise/use-exercise-form";
 import type { Muscle } from "@/features/muscle/muscle";
 import type { FC, MouseEventHandler, ReactElement } from "react";
@@ -55,12 +55,25 @@ const ExercisePage: NextPageWithLayout = () => {
       <Head>
         <title>種目を編集する | training-log</title>
       </Head>
-      <Exercise id={id} goToExercisesPage={goToExercisesPage} />
+      <ExerciseComponent id={id} goToExercisesPage={goToExercisesPage} />
     </RequireLogin>
   );
 };
 ExercisePage.getLayout = (page): ReactElement => {
-  return <FooterNavigation>{page}</FooterNavigation>;
+  return (
+    <FooterNavigation>
+      <HeaderNavigation
+        title="種目を編集する"
+        leftItem={
+          <Button as={NextLink} href={pagesPath.settings.exercises.$url()}>
+            <ChevronLeftIcon />
+          </Button>
+        }
+      >
+        {page}
+      </HeaderNavigation>
+    </FooterNavigation>
+  );
 };
 export default ExercisePage;
 
@@ -68,7 +81,7 @@ type Props = {
   id: string;
   goToExercisesPage: () => void;
 };
-const Exercise: FC<Props> = (props) => {
+const ExerciseComponent: FC<Props> = (props) => {
   const util = trpc.useContext();
   const exerciseQuery = trpc.exercise.getById.useQuery({
     id: props.id,
@@ -208,53 +221,45 @@ export const ExerciseView: FC<ViewProps> = (props) => {
 
   return (
     <Container>
-      <Stack direction="column">
-        <Stack direction="row">
-          <Button as={NextLink} href={pagesPath.settings.exercises.$url()}>
-            <ChevronLeftIcon />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Stack direction="column">
+          <FormControl isInvalid={!!errors.name} isDisabled={isLoading}>
+            <FormLabel>種目の名前</FormLabel>
+            <Input {...register("name")} />
+            {!!errors.name && (
+              <FormErrorMessage>{errors.name.message}</FormErrorMessage>
+            )}
+          </FormControl>
+          <FormControl isInvalid={!!errors.muscleIds} isDisabled={isLoading}>
+            <FormLabel>この種目で鍛えられる部位</FormLabel>
+            <Controller
+              control={control}
+              name="muscleIds"
+              render={({ field }): ReactElement => (
+                // FIXME: forwardRef使えエラーが出る
+                <CheckboxGroup {...field}>
+                  <Stack direction="column">
+                    {props.targets.map((target) => (
+                      <Checkbox key={target.id} value={target.id}>
+                        {target.name}
+                      </Checkbox>
+                    ))}
+                  </Stack>
+                </CheckboxGroup>
+              )}
+            />
+            {!!errors.muscleIds && (
+              <FormErrorMessage>{errors.muscleIds.message}</FormErrorMessage>
+            )}
+          </FormControl>
+          <Button type="submit" isDisabled={isLoading}>
+            {isLoading ? <Spinner /> : "変更を保存"}
           </Button>
-          <Heading>種目を編集</Heading>
+          <Button onClick={onClickDelete} isDisabled={isLoading}>
+            {isLoading ? <Spinner /> : "種目を削除"}
+          </Button>
         </Stack>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack direction="column">
-            <FormControl isInvalid={!!errors.name} isDisabled={isLoading}>
-              <FormLabel>種目の名前</FormLabel>
-              <Input {...register("name")} />
-              {!!errors.name && (
-                <FormErrorMessage>{errors.name.message}</FormErrorMessage>
-              )}
-            </FormControl>
-            <FormControl isInvalid={!!errors.muscleIds} isDisabled={isLoading}>
-              <FormLabel>この種目で鍛えられる部位</FormLabel>
-              <Controller
-                control={control}
-                name="muscleIds"
-                render={({ field }): ReactElement => (
-                  // FIXME: forwardRef使えエラーが出る
-                  <CheckboxGroup {...field}>
-                    <Stack direction="column">
-                      {props.targets.map((target) => (
-                        <Checkbox key={target.id} value={target.id}>
-                          {target.name}
-                        </Checkbox>
-                      ))}
-                    </Stack>
-                  </CheckboxGroup>
-                )}
-              />
-              {!!errors.muscleIds && (
-                <FormErrorMessage>{errors.muscleIds.message}</FormErrorMessage>
-              )}
-            </FormControl>
-            <Button type="submit" isDisabled={isLoading}>
-              {isLoading ? <Spinner /> : "変更を保存"}
-            </Button>
-            <Button onClick={onClickDelete} isDisabled={isLoading}>
-              {isLoading ? <Spinner /> : "種目を削除"}
-            </Button>
-          </Stack>
-        </form>
-      </Stack>
+      </form>
     </Container>
   );
 };

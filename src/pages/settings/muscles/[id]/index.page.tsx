@@ -5,7 +5,6 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Heading,
   Input,
   Stack,
   useToast,
@@ -27,6 +26,7 @@ import { Muscle } from "@/features/muscle/muscle";
 import { useGetMuscleId } from "@/features/muscle/use-get-muscle-id";
 import { useMuscleForm } from "@/features/muscle/use-muscle-form";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
+import { HeaderNavigation } from "@/features/navigation/header-navigation/header-navigation";
 import { Redirect } from "@/features/navigation/redirect/redirect";
 
 import type { MuscleField } from "@/features/muscle/use-muscle-form";
@@ -55,7 +55,20 @@ const MusclePage: NextPageWithLayout = () => {
   );
 };
 MusclePage.getLayout = (page): ReactElement => {
-  return <FooterNavigation>{page}</FooterNavigation>;
+  return (
+    <FooterNavigation>
+      <HeaderNavigation
+        title="部位を編集する"
+        leftItem={
+          <Button as={NextLink} href={pagesPath.settings.muscles.$url()}>
+            <ChevronLeftIcon />
+          </Button>
+        }
+      >
+        {page}
+      </HeaderNavigation>
+    </FooterNavigation>
+  );
 };
 export default MusclePage;
 
@@ -198,46 +211,38 @@ const MuscleView: FC<ViewProps> = (props) => {
 
   return (
     <Container>
-      <Stack direction="column">
-        <Stack direction="row">
-          <Button as={NextLink} href={pagesPath.settings.muscles.$url()}>
-            <ChevronLeftIcon />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Stack direction="column">
+          <FormControl isInvalid={!!errors.name}>
+            <FormLabel htmlFor="name">部位の名前</FormLabel>
+            <Input {...register("name")} id="name" />
+            {!!errors.name && (
+              <FormErrorMessage>{errors.name.message}</FormErrorMessage>
+            )}
+          </FormControl>
+          <Button
+            type="submit"
+            isLoading={props.updateMuscleStatus === "loading"}
+            isDisabled={
+              props.updateMuscleStatus === "loading" ||
+              props.deleteMuscleStatus === "loading" ||
+              !isValid
+            }
+          >
+            変更を保存
           </Button>
-          <Heading>部位を編集</Heading>
+          <Button
+            onClick={onClickDelete}
+            isLoading={props.deleteMuscleStatus === "loading"}
+            isDisabled={
+              props.updateMuscleStatus === "loading" ||
+              props.deleteMuscleStatus === "loading"
+            }
+          >
+            種目を削除
+          </Button>
         </Stack>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack direction="column">
-            <FormControl isInvalid={!!errors.name}>
-              <FormLabel htmlFor="name">部位の名前</FormLabel>
-              <Input {...register("name")} id="name" />
-              {!!errors.name && (
-                <FormErrorMessage>{errors.name.message}</FormErrorMessage>
-              )}
-            </FormControl>
-            <Button
-              type="submit"
-              isLoading={props.updateMuscleStatus === "loading"}
-              isDisabled={
-                props.updateMuscleStatus === "loading" ||
-                props.deleteMuscleStatus === "loading" ||
-                !isValid
-              }
-            >
-              変更を保存
-            </Button>
-            <Button
-              onClick={onClickDelete}
-              isLoading={props.deleteMuscleStatus === "loading"}
-              isDisabled={
-                props.updateMuscleStatus === "loading" ||
-                props.deleteMuscleStatus === "loading"
-              }
-            >
-              種目を削除
-            </Button>
-          </Stack>
-        </form>
-      </Stack>
+      </form>
     </Container>
   );
 };
