@@ -19,19 +19,9 @@ const componentMeta: Meta = {
 export default componentMeta;
 
 const Wrapper: FC<Partial<Props>> = (props) => {
-  const [updateMutationStatus, setUpdateMutationStatus] =
-    useState<MutationState>("idle");
   const [deleteMutationStatus, setDeleteMutationStatus] =
     useState<MutationState>("idle");
 
-  const dummyUpdateExercise: Props["updateExercise"] = (exercise) => {
-    (async (): Promise<void> => {
-      setUpdateMutationStatus("loading");
-      await sleep(1000);
-      action("update exercise")(exercise);
-      setUpdateMutationStatus("success");
-    })();
-  };
   const dummyDeleteExercise: Props["deleteExercise"] = (id) => {
     (async (): Promise<void> => {
       setDeleteMutationStatus("loading");
@@ -55,23 +45,7 @@ const Wrapper: FC<Partial<Props>> = (props) => {
         },
       ],
     },
-    targets: props.targets ?? [
-      {
-        id: "id-m-1",
-        name: "大胸筋",
-      },
-      {
-        id: "id-m-2",
-        name: "上腕三頭筋",
-      },
-      {
-        id: "id-m-3",
-        name: "三角筋前部",
-      },
-    ],
-    updateExercise: props.updateExercise ?? dummyUpdateExercise,
     deleteExercise: props.deleteExercise ?? dummyDeleteExercise,
-    updateExerciseStatus: props.updateExerciseStatus ?? updateMutationStatus,
     deleteExerciseStatus: props.deleteExerciseStatus ?? deleteMutationStatus,
   };
 
