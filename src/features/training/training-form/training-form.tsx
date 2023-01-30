@@ -333,7 +333,6 @@ const SetForm: FC<SetFormProps> = (props) => {
               {...props.register(
                 `records.${props.recordIndex}.sets.${props.setIndex}.weight`
               )}
-              type="number"
               pattern="^([1-9]\d*|0)(\.\d+)?$"
             />
             <InputRightElement>kg</InputRightElement>
@@ -364,7 +363,7 @@ const SetForm: FC<SetFormProps> = (props) => {
                 `records.${props.recordIndex}.sets.${props.setIndex}.repetition`
               )}
               type="number"
-              pattern="^([1-9]\d*|0)(\.\d+)?$"
+              pattern="[0-9]*"
             />
             <InputRightElement>回</InputRightElement>
           </InputGroup>
