@@ -152,8 +152,8 @@ const TrainingView: FC<ViewProps> = (props) => {
             {
               exercise,
               sets: record.sets.map((set) => ({
-                weight: parseInt(set.weight),
-                repetition: parseInt(set.repetition),
+                weight: Number(set.weight),
+                repetition: Number(set.repetition),
               })),
               memo: record.memo,
             },

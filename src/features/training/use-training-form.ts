@@ -20,7 +20,7 @@ const trainingFieldSchema = z.object({
             z.object({
               weight: string()
                 .min(1, "重量を入力してください")
-                .regex(/^[0-9]+$/, "数字で入力してください"),
+                .regex(/^([1-9]\d*|0)(\.\d+)?$/, "数字で入力してください"),
               repetition: string()
                 .min(1, "回数を入力してください")
                 .regex(/^[0-9]+$/, "数字で入力してください"),
