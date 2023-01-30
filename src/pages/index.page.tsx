@@ -13,12 +13,14 @@ import type { FC, ReactElement } from "react";
 
 const IndexPage: NextPageWithLayout = () => {
   return (
-    <RequireLogin>
+    <>
       <Head>
         <title>training-log</title>
       </Head>
-      <Index />
-    </RequireLogin>
+      <RequireLogin>
+        <Index />
+      </RequireLogin>
+    </>
   );
 };
 IndexPage.getLayout = (page): ReactElement => {

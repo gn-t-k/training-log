@@ -38,12 +38,14 @@ const RegisterMusclePage: NextPageWithLayout = () => {
   };
 
   return (
-    <RequireLogin>
+    <>
       <Head>
         <title>部位を登録する | training-log</title>
       </Head>
-      <RegisterMuscle goToMusclesPage={goToMusclesPage} />
-    </RequireLogin>
+      <RequireLogin>
+        <RegisterMuscle goToMusclesPage={goToMusclesPage} />
+      </RequireLogin>
+    </>
   );
 };
 RegisterMusclePage.getLayout = (page): ReactElement => {

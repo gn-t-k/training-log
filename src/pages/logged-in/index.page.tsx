@@ -11,12 +11,14 @@ import type { FC } from "react";
 
 const LoggedInPage: NextPage = () => {
   return (
-    <RequireLogin>
+    <>
       <Head>
         <title>トレーニー情報を取得中 | training-log</title>
       </Head>
-      <LoggedIn />
-    </RequireLogin>
+      <RequireLogin>
+        <LoggedIn />
+      </RequireLogin>
+    </>
   );
 };
 export default LoggedInPage;

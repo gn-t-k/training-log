@@ -132,7 +132,7 @@ model Record {
 model Set {
   id         String @id
   recordId   String
-  weight     Int
+  weight     Float
   repetition Int
 
   record Record @relation(fields: [recordId], references: [id])
