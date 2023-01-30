@@ -1,29 +1,25 @@
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { Button, Container } from "@chakra-ui/react";
-import { format } from "date-fns";
+import { Button, Container, Stack } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
-import type { UpdateTrainingInput } from "@/libs/trpc/server/routes/training";
 
 import type { NextPageWithLayout } from "@/pages/_app.page";
+
+import type { MutationState } from "@/utils/mutation-state";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 import { HeaderNavigation } from "@/features/navigation/header-navigation/header-navigation";
 import { Redirect } from "@/features/navigation/redirect/redirect";
-import { Training } from "@/features/training/training";
-import { TrainingForm } from "@/features/training/training-form/training-form";
+import { UpdateTrainingForm } from "@/features/training/update-training-form/update-training-form";
 import { useGetTrainingId } from "@/features/training/use-get-training-id";
 
-import type { Exercise } from "@/features/exercise/exercise";
-import type { TrainingField } from "@/features/training/use-training-form";
-import type { FC, ReactElement } from "react";
-import type { SubmitHandler } from "react-hook-form";
+import type { FC, ReactElement, MouseEventHandler } from "react";
 
 const TrainingPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -73,19 +69,17 @@ type Props = {
 const Training: FC<Props> = (props) => {
   const util = trpc.useContext();
   const trainingQuery = trpc.training.getById.useQuery({ id: props.id });
-  const exerciseQuery = trpc.exercise.getAll.useQuery();
-  const updateTrainingMutation = trpc.training.update.useMutation({
+  const deleteTrainingMutation = trpc.training.deleteTraining.useMutation({
     onSuccess: () => {
       util.training.invalidate();
       props.goToTrainingsPage();
     },
   });
-  const updateTraining = useCallback<ViewProps["updateTraining"]>(
-    (variants) => {
-      updateTrainingMutation.mutate(variants);
-    },
-    [updateTrainingMutation]
-  );
+  const deleteTraining = useCallback<ViewProps["deleteTraining"]>(() => {
+    deleteTrainingMutation.mutate({
+      id: props.id,
+    });
+  }, [deleteTrainingMutation, props.id]);
 
   switch (trainingQuery.status) {
     case "loading":
@@ -96,82 +90,40 @@ const Training: FC<Props> = (props) => {
       return <p>トレーニングデータの取得に失敗しました</p>;
   }
 
-  switch (exerciseQuery.status) {
-    case "loading":
-      // TODO
-      return <p>種目データを取得中</p>;
-    case "error":
-      // TODO
-      return <p>種目データの取得に失敗しました</p>;
-  }
-
   return (
     <TrainingView
-      training={trainingQuery.data}
-      exercises={exerciseQuery.data}
-      updateTraining={updateTraining}
-      isProcessing={updateTrainingMutation.status === "loading"}
+      UpdateTrainingForm={<UpdateTrainingForm training={trainingQuery.data} />}
+      deleteTraining={deleteTraining}
+      deleteTrainingStatus={deleteTrainingMutation.status}
     />
   );
 };
 
 type ViewProps = {
-  training: Training;
-  exercises: Exercise[];
-  updateTraining: (training: UpdateTrainingInput) => void;
-  isProcessing: boolean;
+  UpdateTrainingForm: JSX.Element;
+  deleteTraining: () => void;
+  deleteTrainingStatus: MutationState;
 };
 const TrainingView: FC<ViewProps> = (props) => {
-  const trainingField = useMemo<TrainingField>(
-    () => ({
-      date: format(props.training.createdAt, "yyyy-MM-dd"),
-      records: props.training.records.map((record) => ({
-        exerciseId: record.exercise.id,
-        sets: record.sets.map((set) => ({
-          weight: String(set.weight),
-          repetition: String(set.repetition),
-        })),
-        memo: record.memo,
-      })),
-    }),
-    [props.training.createdAt, props.training.records]
-  );
-  const onSubmit = useCallback<SubmitHandler<TrainingField>>(
-    (fieldValues) => {
-      props.updateTraining({
-        trainingId: props.training.id,
-        records: fieldValues.records.flatMap((record) => {
-          const exercise = props.exercises.find(
-            (exercise) => exercise.id === record.exerciseId
-          );
-          if (exercise === undefined) {
-            return [];
-          }
-
-          return [
-            {
-              exercise,
-              sets: record.sets.map((set) => ({
-                weight: Number(set.weight),
-                repetition: Number(set.repetition),
-              })),
-              memo: record.memo,
-            },
-          ];
-        }),
-      });
+  const onClickDelete = useCallback<MouseEventHandler>(
+    (_) => {
+      props.deleteTraining();
     },
     [props]
   );
 
   return (
     <Container>
-      <TrainingForm
-        defaultValues={trainingField}
-        exercises={props.exercises}
-        onSubmit={onSubmit}
-        isProcessing={props.isProcessing}
-      />
+      <Stack direction="column">
+        {props.UpdateTrainingForm}
+        <Button
+          onClick={onClickDelete}
+          isLoading={props.deleteTrainingStatus === "loading"}
+          isDisabled={props.deleteTrainingStatus === "loading"}
+        >
+          トレーニング記録を削除
+        </Button>
+      </Stack>
     </Container>
   );
 };
