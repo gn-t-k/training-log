@@ -334,7 +334,7 @@ const SetForm: FC<SetFormProps> = (props) => {
                 `records.${props.recordIndex}.sets.${props.setIndex}.weight`
               )}
               type="number"
-              pattern="^([1-9]\d*|0)(\.\d+)?$"
+              step="0.01"
             />
             <InputRightElement>kg</InputRightElement>
           </InputGroup>
