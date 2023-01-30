@@ -1,9 +1,9 @@
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { Button, Container, Spinner, useToast } from "@chakra-ui/react";
+import { Button, Container, Stack, useToast } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
@@ -128,19 +128,28 @@ export const ExerciseView: FC<ViewProps> = (props) => {
     }
   }, [props.deleteExerciseStatus, toast]);
 
-  const onClickDelete: MouseEventHandler = (e) => {
-    e.preventDefault();
+  const onClickDelete = useCallback<MouseEventHandler>(
+    (_) => {
+      props.deleteExercise(props.exercise.id);
+    },
+    [props]
+  );
 
-    props.deleteExercise(props.exercise.id);
-  };
   const isLoading = props.deleteExerciseStatus === "loading";
 
   return (
     <Container>
-      <UpdateExerciseForm exercise={props.exercise} />
-      <Button onClick={onClickDelete} isDisabled={isLoading}>
-        {isLoading ? <Spinner /> : "種目を削除"}
-      </Button>
+      <Stack direction="column">
+        <UpdateExerciseForm exercise={props.exercise} />
+        {/* TODO: confirm用意して別コンポーネントに分ける */}
+        <Button
+          onClick={onClickDelete}
+          isDisabled={isLoading}
+          isLoading={isLoading}
+        >
+          種目を削除
+        </Button>
+      </Stack>
     </Container>
   );
 };
