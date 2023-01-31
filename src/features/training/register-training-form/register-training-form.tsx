@@ -28,8 +28,15 @@ import {
   Text,
   Textarea,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 import { useFieldArray } from "react-hook-form";
+
+import { pagesPath } from "@/libs/pathpida/$path";
+import { trpc } from "@/libs/trpc/client/trpc";
+import type { RegisterTrainingInput } from "@/libs/trpc/server/routes/training";
+
+import type { MutationState } from "@/utils/mutation-state";
 
 import { useTrainingFrom } from "../use-training-form";
 
@@ -42,37 +49,54 @@ import type {
   UseFormReturn,
 } from "react-hook-form";
 
-type Props = {
-  defaultValues?: TrainingField;
-  exercises: Exercise[];
-  onSubmit: SubmitHandler<TrainingField>;
-  isProcessing: boolean;
-};
-export const TrainingForm: FC<Props> = (props) => {
+export const RegisterTrainingForm: FC = () => {
+  const router = useRouter();
+  const util = trpc.useContext();
+  const exercisesQuery = trpc.exercise.getAll.useQuery();
+  const registerTrainingMutation = trpc.training.register.useMutation({
+    onSuccess: () => {
+      util.training.invalidate();
+      router.push(pagesPath.trainings.$url());
+    },
+  });
+  const registerTraining = useCallback<ViewProps["registerTraining"]>(
+    (variants) => {
+      registerTrainingMutation.mutate(variants);
+    },
+    [registerTrainingMutation]
+  );
+
+  switch (exercisesQuery.status) {
+    case "loading":
+      // TODO
+      return <p>種目データを取得中</p>;
+    case "error":
+      // TODO
+      return <p>種目データの取得に失敗しました</p>;
+  }
+
   return (
-    <TrainingFormView
-      defaultValues={props.defaultValues}
-      onSubmit={props.onSubmit}
-      exercises={props.exercises}
-      isProcessing={props.isProcessing}
+    <RegisterTrainingFormView
+      registerTraining={registerTraining}
+      registerTrainingStatus={registerTrainingMutation.status}
+      exercises={exercisesQuery.data}
     />
   );
 };
 
 type ViewProps = {
-  defaultValues?: TrainingField;
-  onSubmit: SubmitHandler<TrainingField>;
+  registerTraining: (training: RegisterTrainingInput) => void;
+  registerTrainingStatus: MutationState;
   exercises: Exercise[];
-  isProcessing: boolean;
 };
-export const TrainingFormView: FC<ViewProps> = (props) => {
+export const RegisterTrainingFormView: FC<ViewProps> = (props) => {
   const {
     handleSubmit,
     formState: { errors },
     register,
     setValue,
     control,
-  } = useTrainingFrom(props.defaultValues);
+  } = useTrainingFrom();
   const { fields, append, remove } = useFieldArray({
     control: control,
     name: "records",
@@ -94,8 +118,44 @@ export const TrainingFormView: FC<ViewProps> = (props) => {
     [append]
   );
 
+  const onSubmit = useCallback<SubmitHandler<TrainingField>>(
+    (fieldValues) => {
+      const createdAt = new Date();
+      const records = fieldValues.records.flatMap((record) => {
+        const exercise = props.exercises.find(
+          (exercise) => exercise.id === record.exerciseId
+        );
+
+        if (exercise === undefined) {
+          return [];
+        }
+
+        const sets = record.sets.map((set) => ({
+          weight: Number(set.weight),
+          repetition: Number(set.repetition),
+        }));
+
+        return [
+          {
+            exercise,
+            sets,
+            memo: record.memo,
+          },
+        ];
+      });
+
+      props.registerTraining({
+        createdAt,
+        records,
+      });
+    },
+    [props]
+  );
+
+  const isProcessing = props.registerTrainingStatus === "loading";
+
   return (
-    <form onSubmit={handleSubmit(props.onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Stack direction="column" gap={8}>
         <FormControl isInvalid={!!errors.date}>
           <FormLabel htmlFor="date">日付</FormLabel>
@@ -133,8 +193,8 @@ export const TrainingFormView: FC<ViewProps> = (props) => {
         </Stack>
         <Button
           type="submit"
-          isLoading={props.isProcessing}
-          isDisabled={props.isProcessing}
+          isLoading={isProcessing}
+          isDisabled={isProcessing}
         >
           保存
         </Button>
