@@ -79,12 +79,14 @@ export const RegisterMuscleFormView: FC<ViewProps> = (props) => {
         toast({
           title: "部位を登録しました",
           status: "success",
+          isClosable: true,
         });
         return;
       case "error":
         toast({
           title: "部位の登録に失敗しました",
           status: "error",
+          isClosable: true,
         });
         return;
     }

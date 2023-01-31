@@ -113,12 +113,14 @@ const MuscleView: FC<ViewProps> = (props) => {
         toast({
           title: "部位を削除しました",
           status: "success",
+          isClosable: true,
         });
         return;
       case "error":
         toast({
           title: "部位の削除に失敗しました",
           status: "error",
+          isClosable: true,
         });
         return;
     }

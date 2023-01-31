@@ -131,12 +131,14 @@ export const UpdateExerciseFormView: FC<ViewProps> = (props) => {
         toast({
           title: "種目の変更を保存しました",
           status: "success",
+          isClosable: true,
         });
         return;
       case "error":
         toast({
           title: "種目の変更の保存に失敗しました",
           status: "error",
+          isClosable: true,
         });
         return;
     }

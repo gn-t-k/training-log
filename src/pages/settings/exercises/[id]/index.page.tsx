@@ -1,38 +1,29 @@
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { Button, Container, Stack, useToast } from "@chakra-ui/react";
+import { Button, Container, Stack } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
-import { useRouter } from "next/router";
-import { useCallback, useEffect } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
 import type { NextPageWithLayout } from "@/pages/_app.page";
 
-import type { MutationState } from "@/utils/mutation-state";
-
 import { RequireLogin } from "@/features/auth/require-login/require-login";
+import { DeleteExerciseButtonAndDialog } from "@/features/exercise/delete-exercise-button-and-dialog/delete-exercise-button-and-dialog";
 import { UpdateExerciseForm } from "@/features/exercise/update-exercise-form/update-exercise-form";
 import { useGetExerciseId } from "@/features/exercise/use-get-exercise-id";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 import { HeaderNavigation } from "@/features/navigation/header-navigation/header-navigation";
 import { Redirect } from "@/features/navigation/redirect/redirect";
 
-import type { Exercise } from "@/features/exercise/exercise";
-import type { FC, MouseEventHandler, ReactElement } from "react";
+import type { FC, ReactElement } from "react";
 
 const ExercisePage: NextPageWithLayout = () => {
   const id = useGetExerciseId();
-  const router = useRouter();
 
   if (id === null) {
     return <Redirect redirectTo={pagesPath.settings.exercises.$url()} />;
   }
-
-  const goToExercisesPage: Props["goToExercisesPage"] = () => {
-    router.push(pagesPath.settings.exercises.$url());
-  };
 
   return (
     <>
@@ -40,7 +31,7 @@ const ExercisePage: NextPageWithLayout = () => {
         <title>種目を編集する | training-log</title>
       </Head>
       <RequireLogin>
-        <ExerciseComponent id={id} goToExercisesPage={goToExercisesPage} />
+        <ExerciseComponent id={id} />
       </RequireLogin>
     </>
   );
@@ -65,23 +56,11 @@ export default ExercisePage;
 
 type Props = {
   id: string;
-  goToExercisesPage: () => void;
 };
 const ExerciseComponent: FC<Props> = (props) => {
-  const util = trpc.useContext();
   const exerciseQuery = trpc.exercise.getById.useQuery({
     id: props.id,
   });
-  const deleteExerciseMutation = trpc.exercise.delete.useMutation({
-    onSuccess: () => {
-      util.exercise.invalidate();
-      props.goToExercisesPage();
-    },
-  });
-
-  const deleteExercise: ViewProps["deleteExercise"] = (id) => {
-    deleteExerciseMutation.mutate({ id });
-  };
 
   switch (exerciseQuery.status) {
     case "loading":
@@ -94,61 +73,24 @@ const ExerciseComponent: FC<Props> = (props) => {
 
   return (
     <ExerciseView
-      exercise={exerciseQuery.data}
-      deleteExercise={deleteExercise}
-      deleteExerciseStatus={deleteExerciseMutation.status}
+      UpdateExerciseForm={<UpdateExerciseForm exercise={exerciseQuery.data} />}
+      DeleteExerciseButtonAndDialog={
+        <DeleteExerciseButtonAndDialog exercise={exerciseQuery.data} />
+      }
     />
   );
 };
 
 type ViewProps = {
-  exercise: Exercise;
-  deleteExercise: (id: string) => void;
-  deleteExerciseStatus: MutationState;
+  UpdateExerciseForm: JSX.Element;
+  DeleteExerciseButtonAndDialog: JSX.Element;
 };
 export const ExerciseView: FC<ViewProps> = (props) => {
-  const toast = useToast();
-  useEffect(() => {
-    switch (props.deleteExerciseStatus) {
-      case "idle":
-      case "loading":
-        return;
-      case "success":
-        toast({
-          title: "種目を削除しました",
-          status: "success",
-        });
-        return;
-      case "error":
-        toast({
-          title: "種目の削除に失敗しました",
-          status: "error",
-        });
-        return;
-    }
-  }, [props.deleteExerciseStatus, toast]);
-
-  const onClickDelete = useCallback<MouseEventHandler>(
-    (_) => {
-      props.deleteExercise(props.exercise.id);
-    },
-    [props]
-  );
-
-  const isLoading = props.deleteExerciseStatus === "loading";
-
   return (
     <Container>
       <Stack direction="column">
-        <UpdateExerciseForm exercise={props.exercise} />
-        {/* TODO: confirm用意して別コンポーネントに分ける */}
-        <Button
-          onClick={onClickDelete}
-          isDisabled={isLoading}
-          isLoading={isLoading}
-        >
-          種目を削除
-        </Button>
+        {props.UpdateExerciseForm}
+        {props.DeleteExerciseButtonAndDialog}
       </Stack>
     </Container>
   );

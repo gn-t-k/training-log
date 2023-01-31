@@ -4,52 +4,47 @@ import { useState } from "react";
 import type { MutationState } from "@/utils/mutation-state";
 import { sleep } from "@/utils/sleep";
 
-import { ExerciseView } from "./index.page";
+import { DeleteExerciseButtonAndDialogView } from "./delete-exercise-button-and-dialog";
 
 import type { ComponentMeta, ComponentStoryObj } from "@storybook/react";
 import type { ComponentProps, FC } from "react";
 
-type Meta = ComponentMeta<typeof ExerciseView>;
-type Props = ComponentProps<typeof ExerciseView>;
-type Story = ComponentStoryObj<typeof ExerciseView>;
+type Meta = ComponentMeta<typeof DeleteExerciseButtonAndDialogView>;
+type Props = ComponentProps<typeof DeleteExerciseButtonAndDialogView>;
+type Story = ComponentStoryObj<typeof DeleteExerciseButtonAndDialogView>;
 
 const componentMeta: Meta = {
-  component: ExerciseView,
+  component: DeleteExerciseButtonAndDialogView,
 };
 export default componentMeta;
 
 const Wrapper: FC<Partial<Props>> = (props) => {
-  const [deleteMutationStatus, setDeleteMutationStatus] =
+  const [deleteExerciseStatus, setDeleteExerciseStatus] =
     useState<MutationState>("idle");
-
-  const dummyDeleteExercise: Props["deleteExercise"] = () => {
+  const deleteExercise: Props["deleteExercise"] = () => {
     (async (): Promise<void> => {
-      setDeleteMutationStatus("loading");
+      setDeleteExerciseStatus("loading");
       await sleep(1000);
       action("delete exercise")();
-      setDeleteMutationStatus("success");
+      setDeleteExerciseStatus("success");
     })();
   };
   const args: Props = {
-    exercise: props.exercise ?? {
+    exercise: {
       id: "id-e-1",
-      name: "ベンチプレス",
+      name: "アームカール",
       targets: [
         {
           id: "id-m-1",
-          name: "大胸筋",
-        },
-        {
-          id: "id-m-2",
-          name: "上腕三頭筋",
+          name: "上腕二頭筋",
         },
       ],
     },
-    deleteExercise: props.deleteExercise ?? dummyDeleteExercise,
-    deleteExerciseStatus: props.deleteExerciseStatus ?? deleteMutationStatus,
+    deleteExercise: props.deleteExercise ?? deleteExercise,
+    deleteExerciseStatus: props.deleteExerciseStatus ?? deleteExerciseStatus,
   };
 
-  return <ExerciseView {...args} />;
+  return <DeleteExerciseButtonAndDialogView {...args} />;
 };
 
 const Template: Story = {

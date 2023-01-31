@@ -84,12 +84,14 @@ export const UpdateMuscleFormView: FC<ViewProps> = (props) => {
         toast({
           title: "部位の変更を保存しました",
           status: "success",
+          isClosable: true,
         });
         return;
       case "error":
         toast({
           title: "部位の変更の保存に失敗しました",
           status: "error",
+          isClosable: true,
         });
         return;
     }

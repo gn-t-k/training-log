@@ -80,19 +80,18 @@ export const RegisterExerciseFormView: FC<ViewProps> = (props) => {
 
   useEffect(() => {
     switch (props.registerExerciseStatus) {
-      case "idle":
-      case "loading":
-        return;
       case "success":
         toast({
           title: "種目を登録しました",
           status: "success",
+          isClosable: true,
         });
         return;
       case "error":
         toast({
           title: "種目の登録に失敗しました",
           status: "error",
+          isClosable: true,
         });
         return;
     }
