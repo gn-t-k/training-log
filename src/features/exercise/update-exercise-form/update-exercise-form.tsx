@@ -100,7 +100,10 @@ export const UpdateExerciseFormView: FC<ViewProps> = (props) => {
       const isSameNameExerciseExist = props.registeredExercises.some(
         (exercise) => exercise.name === fieldValues.name
       );
-      if (isSameNameExerciseExist) {
+      if (
+        fieldValues.name !== props.currentExercise.name &&
+        isSameNameExerciseExist
+      ) {
         setError("name", {
           type: "custom",
           message: `種目「${fieldValues.name}」はすでに登録されています`,
