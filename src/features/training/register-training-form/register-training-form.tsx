@@ -1,4 +1,12 @@
 import { useToast } from "@chakra-ui/react";
+import {
+  getDate,
+  getMonth,
+  getYear,
+  setDate,
+  setMonth,
+  setYear,
+} from "date-fns";
 import { useRouter } from "next/router";
 import { useCallback, useEffect } from "react";
 
@@ -79,7 +87,18 @@ export const RegisterTrainingFormView: FC<ViewProps> = (props) => {
 
   const onSubmit = useCallback<SubmitHandler<TrainingField>>(
     (fieldValues) => {
-      const createdAt = new Date();
+      const createdAt = ((): Date => {
+        const currentTime = new Date();
+        const inputDate = new Date(fieldValues.date);
+        const [year, month, date] = [
+          getYear(inputDate),
+          getMonth(inputDate),
+          getDate(inputDate),
+        ];
+
+        return setDate(setMonth(setYear(currentTime, year), month), date);
+      })();
+
       const records = fieldValues.records.flatMap((record) => {
         const exercise = props.exercises.find(
           (exercise) => exercise.id === record.exerciseId
