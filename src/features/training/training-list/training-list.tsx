@@ -6,7 +6,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { getDate, getMonth, getYear } from "date-fns";
+import { addMinutes, getDate, getMonth, getYear } from "date-fns";
 import NextLink from "next/link";
 
 import { pagesPath } from "@/libs/pathpida/$path";
@@ -17,7 +17,9 @@ import type { FC } from "react";
 
 export const TrainingList: FC = () => {
   const today = new Date();
-  const [thisYear, thisMonth] = [getYear(today), getMonth(today)];
+  // サーバー側の時間はUTCなので合わせる
+  const utcToday = addMinutes(today, today.getTimezoneOffset());
+  const [thisYear, thisMonth] = [getYear(utcToday), getMonth(utcToday)];
   const getTrainingsQuery = trpc.training.getMonthlyTrainings.useQuery({
     year: thisYear,
     month: thisMonth,
