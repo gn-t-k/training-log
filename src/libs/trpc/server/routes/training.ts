@@ -113,7 +113,7 @@ export const trainingRouter = router({
         records: input.records,
       });
     }),
-  deleteTraining: initializedProcedure
+  delete: initializedProcedure
     .input(
       z.object({
         id: z.string(),
