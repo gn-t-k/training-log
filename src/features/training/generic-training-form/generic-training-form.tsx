@@ -44,17 +44,17 @@ import type {
 
 type Props = {
   defaultValues?: TrainingField;
-  exercises: Exercise[];
   onSubmit: SubmitHandler<TrainingField>;
   isProcessing: boolean;
+  exercises: Exercise[];
 };
-export const TrainingForm: FC<Props> = (props) => {
+export const GenericTrainingForm: FC<Props> = (props) => {
   return (
-    <TrainingFormView
+    <GenericTrainingFormView
       defaultValues={props.defaultValues}
       onSubmit={props.onSubmit}
-      exercises={props.exercises}
       isProcessing={props.isProcessing}
+      exercises={props.exercises}
     />
   );
 };
@@ -62,10 +62,10 @@ export const TrainingForm: FC<Props> = (props) => {
 type ViewProps = {
   defaultValues?: TrainingField;
   onSubmit: SubmitHandler<TrainingField>;
-  exercises: Exercise[];
   isProcessing: boolean;
+  exercises: Exercise[];
 };
-export const TrainingFormView: FC<ViewProps> = (props) => {
+export const GenericTrainingFormView: FC<ViewProps> = (props) => {
   const {
     handleSubmit,
     formState: { errors },

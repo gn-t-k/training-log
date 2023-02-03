@@ -25,7 +25,6 @@ const Template: Story = {
           name: "上腕三頭筋",
         },
       ],
-      isFetching: props.isFetching ?? false,
     };
 
     return <MuscleListView {...args} />;

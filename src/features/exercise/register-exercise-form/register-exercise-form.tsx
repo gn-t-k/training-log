@@ -10,7 +10,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
@@ -73,56 +73,58 @@ export const RegisterExerciseFormView: FC<ViewProps> = (props) => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
     setError,
   } = useExerciseForm();
   const toast = useToast();
 
   useEffect(() => {
     switch (props.registerExerciseStatus) {
-      case "idle":
-      case "loading":
-        return;
       case "success":
         toast({
           title: "種目を登録しました",
           status: "success",
+          isClosable: true,
         });
         return;
       case "error":
         toast({
           title: "種目の登録に失敗しました",
           status: "error",
+          isClosable: true,
         });
         return;
     }
   }, [props.registerExerciseStatus, toast]);
 
-  const isProcessing = props.registerExerciseStatus === "loading";
+  const onSubmit = useCallback<SubmitHandler<ExerciseField>>(
+    (formValue) => {
+      const isSameNameExerciseExist = props.registeredExercises.some(
+        (exercise) => exercise.name === formValue.name
+      );
+      if (isSameNameExerciseExist) {
+        setError("name", {
+          type: "custom",
+          message: `種目「${formValue.name}」はすでに登録されています`,
+        });
+        return;
+      }
 
-  const onSubmit: SubmitHandler<ExerciseField> = (formValue) => {
-    const isSameNameExerciseExist = props.registeredExercises.some(
-      (exercise) => exercise.name === formValue.name
-    );
-    if (isSameNameExerciseExist) {
-      setError("name", {
-        type: "custom",
-        message: `種目「${formValue.name}」はすでに登録されています`,
+      const targets: Muscle[] = formValue.muscleIds.flatMap((id) => {
+        const muscle = props.targets.find((m) => m.id === id);
+
+        return muscle ? [muscle] : [];
       });
-      return;
-    }
 
-    const targets: Muscle[] = formValue.muscleIds.flatMap((id) => {
-      const muscle = props.targets.find((m) => m.id === id);
+      props.registerExercise({
+        name: formValue.name,
+        targets,
+      });
+    },
+    [props, setError]
+  );
 
-      return muscle ? [muscle] : [];
-    });
-
-    props.registerExercise({
-      name: formValue.name,
-      targets,
-    });
-  };
+  const isProcessing = props.registerExerciseStatus === "loading";
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -156,7 +158,7 @@ export const RegisterExerciseFormView: FC<ViewProps> = (props) => {
         <Button
           type="submit"
           isLoading={isProcessing}
-          isDisabled={isProcessing || !isValid}
+          isDisabled={isProcessing}
         >
           種目を登録
         </Button>

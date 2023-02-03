@@ -1,9 +1,9 @@
 import { composeStories } from "@storybook/testing-react";
 import { render } from "@testing-library/react";
 
-import * as stories from "./edit-muscle-modal.stories";
+import * as stories from "./update-exercise-form.stories";
 
-describe("EditMuscleModal", () => {
+describe("UpdateExerciseForm", () => {
   const Stories = composeStories(stories);
 
   describe("初期状態", () => {
@@ -11,6 +11,6 @@ describe("EditMuscleModal", () => {
       render(<Stories.Default />);
     });
 
-    test.todo("初期状態のテスト");
+    test.todo("テスト");
   });
 });

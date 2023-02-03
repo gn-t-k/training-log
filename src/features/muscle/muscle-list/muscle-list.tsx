@@ -1,14 +1,5 @@
 import { ChevronRightIcon } from "@chakra-ui/icons";
-import {
-  Button,
-  Divider,
-  List,
-  Spacer,
-  Spinner,
-  Stack,
-  Text,
-  UnorderedList,
-} from "@chakra-ui/react";
+import { Button, Heading, Spacer, Stack, StackDivider } from "@chakra-ui/react";
 import NextLink from "next/link";
 
 import { pagesPath } from "@/libs/pathpida/$path";
@@ -27,12 +18,7 @@ export const MuscleList: FC = () => {
     case "success": {
       const muscles = musclesQuery.data;
 
-      return (
-        <MuscleListView
-          muscles={muscles}
-          isFetching={musclesQuery.isFetching}
-        />
-      );
+      return <MuscleListView muscles={muscles} />;
     }
     case "error":
       // TODO
@@ -42,33 +28,24 @@ export const MuscleList: FC = () => {
 
 type ViewProps = {
   muscles: Muscle[];
-  isFetching: boolean;
 };
 export const MuscleListView: FC<ViewProps> = (props) => {
   return (
-    <Stack direction="column">
-      {props.isFetching && <Spinner />}
-      <UnorderedList>
-        {props.muscles.map((muscle) => {
-          return (
-            <List key={muscle.id} mb={4}>
-              <Stack direction="column">
-                <Stack direction="row">
-                  <Text>{muscle.name}</Text>
-                  <Spacer />
-                  <Button
-                    as={NextLink}
-                    href={pagesPath.settings.muscles._id(muscle.id).$url()}
-                  >
-                    <ChevronRightIcon />
-                  </Button>
-                </Stack>
-                <Divider />
-              </Stack>
-            </List>
-          );
-        })}
-      </UnorderedList>
+    <Stack direction="column" divider={<StackDivider />} spacing={4}>
+      {props.muscles.map((muscle) => {
+        return (
+          <Stack key={muscle.id} direction="row">
+            <Heading size="sm">{muscle.name}</Heading>
+            <Spacer />
+            <Button
+              as={NextLink}
+              href={pagesPath.settings.muscles._id(muscle.id).$url()}
+            >
+              <ChevronRightIcon />
+            </Button>
+          </Stack>
+        );
+      })}
     </Stack>
   );
 };

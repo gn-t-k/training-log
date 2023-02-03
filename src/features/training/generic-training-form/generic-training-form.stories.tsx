@@ -3,27 +3,27 @@ import { useState } from "react";
 
 import { sleep } from "@/utils/sleep";
 
-import { TrainingFormView } from "./training-form";
+import { GenericTrainingFormView } from "./generic-training-form";
 
 import type { ComponentMeta, ComponentStoryObj } from "@storybook/react";
-import type { ComponentProps, FC} from "react";
+import type { ComponentProps, FC } from "react";
 
-type Meta = ComponentMeta<typeof TrainingFormView>;
-type Props = ComponentProps<typeof TrainingFormView>;
-type Story = ComponentStoryObj<typeof TrainingFormView>;
+type Meta = ComponentMeta<typeof GenericTrainingFormView>;
+type Props = ComponentProps<typeof GenericTrainingFormView>;
+type Story = ComponentStoryObj<typeof GenericTrainingFormView>;
 
 const componentMeta: Meta = {
-  component: TrainingFormView,
+  component: GenericTrainingFormView,
 };
 export default componentMeta;
 
 const Wrapper: FC<Partial<Props>> = (props) => {
   const [isProcessing, setIsProcessing] = useState(false);
-  const dummyOnSubmit: Props["onSubmit"] = (fieldValue) => {
+  const onSubmit: Props["onSubmit"] = (props) => {
     (async (): Promise<void> => {
       setIsProcessing(true);
       await sleep(1000);
-      action("submit")(fieldValue);
+      action("on submit")(props);
       setIsProcessing(false);
     })();
   };
@@ -38,24 +38,32 @@ const Wrapper: FC<Partial<Props>> = (props) => {
             id: "id-m-1",
             name: "大胸筋",
           },
+          {
+            id: "id-m-2",
+            name: "上腕三頭筋",
+          },
+          {
+            id: "id-m-3",
+            name: "三角筋前部",
+          },
         ],
       },
       {
         id: "id-e-2",
-        name: "スクワット",
+        name: "アームカール",
         targets: [
           {
-            id: "id-m-2",
-            name: "大腿四頭筋",
+            id: "id-m-4",
+            name: "上腕二頭筋",
           },
         ],
       },
     ],
+    onSubmit: props.onSubmit ?? onSubmit,
     isProcessing: props.isProcessing ?? isProcessing,
-    onSubmit: props.onSubmit ?? dummyOnSubmit,
   };
 
-  return <TrainingFormView {...args} />;
+  return <GenericTrainingFormView {...args} />;
 };
 
 const Template: Story = {
