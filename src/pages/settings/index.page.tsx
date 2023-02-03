@@ -18,6 +18,8 @@ import { useCallback } from "react";
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
+import { Loading } from "@/ui/loading/loading";
+
 import { getBaseUrl } from "@/utils/get-base-url";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
@@ -67,8 +69,7 @@ const Settings: FC = () => {
 
   switch (traineeQuery.status) {
     case "loading":
-      // TODO
-      return <p>トレーニー情報を取得中</p>;
+      return <Loading description="トレーニー情報を取得しています" />;
     case "error":
       // TODO
       return <p>トレーニー情報の取得に失敗しました</p>;
@@ -76,8 +77,7 @@ const Settings: FC = () => {
 
   switch (exercisesQuery.status) {
     case "loading":
-      // TODO
-      return <p>種目データを取得中</p>;
+      return <Loading description="種目データを取得しています" />;
     case "error":
       // TODO
       return <p>種目データの取得に失敗しました</p>;
@@ -85,8 +85,7 @@ const Settings: FC = () => {
 
   switch (musclesQuery.status) {
     case "loading":
-      // TODO
-      return <p>部位データを取得中</p>;
+      return <Loading description="部位データを取得しています" />;
     case "error":
       // TODO
       return <p>部位データの取得に失敗しました</p>;

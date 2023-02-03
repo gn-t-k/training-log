@@ -5,6 +5,8 @@ import NextLink from "next/link";
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
+import { Loading } from "@/ui/loading/loading";
+
 import type { Muscle } from "../muscle";
 import type { FC } from "react";
 
@@ -13,8 +15,7 @@ export const MuscleList: FC = () => {
 
   switch (musclesQuery.status) {
     case "loading":
-      // TODO
-      return <p>部位データを取得中</p>;
+      return <Loading description="部位データを取得しています" />;
     case "success": {
       const muscles = musclesQuery.data;
 

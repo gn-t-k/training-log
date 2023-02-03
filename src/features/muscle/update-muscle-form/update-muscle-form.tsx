@@ -11,6 +11,8 @@ import { useCallback, useEffect } from "react";
 
 import { trpc } from "@/libs/trpc/client/trpc";
 
+import { Loading } from "@/ui/loading/loading";
+
 import type { MutationState } from "@/utils/mutation-state";
 
 import { useMuscleForm } from "@/features/muscle/use-muscle-form";
@@ -44,8 +46,7 @@ export const UpdateMuscleForm: FC<Props> = (props) => {
 
   switch (musclesQuery.status) {
     case "loading":
-      // TODO
-      return <p>部位データを取得中</p>;
+      return <Loading description="部位データを取得しています" />;
     case "error":
       // TODO
       return <p>部位データの取得に失敗しました</p>;

@@ -2,6 +2,8 @@ import { Container, Text } from "@chakra-ui/react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
+import { Loading } from "@/ui/loading/loading";
+
 import { Redirect } from "@/features/navigation/redirect/redirect";
 
 import { SessionContextProvider } from "../session-context/session-context";
@@ -18,7 +20,7 @@ export const RequireLogin: FC<Props> = ({ children }) => {
     <SessionContextProvider
       Loading={
         <Container>
-          <Loading />
+          <Loading description="認証情報を取得しています" />
         </Container>
       }
       Failure={
@@ -32,11 +34,6 @@ export const RequireLogin: FC<Props> = ({ children }) => {
       {children}
     </SessionContextProvider>
   );
-};
-
-const Loading: FC = () => {
-  // TODO
-  return <Text>セッション情報を取得中</Text>;
 };
 
 const Failure: FC = () => {

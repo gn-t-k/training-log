@@ -3,6 +3,8 @@ import Head from "next/head";
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
+import { Loading } from "@/ui/loading/loading";
+
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { Redirect } from "@/features/navigation/redirect/redirect";
 
@@ -28,8 +30,7 @@ const LoggedIn: FC = () => {
 
   switch (traineeQuery.status) {
     case "loading":
-      // TODO
-      return <p>トレーニー情報を取得中</p>;
+      return <Loading description="トレーニー情報を取得しています" />;
     case "success":
       return (
         <Redirect
