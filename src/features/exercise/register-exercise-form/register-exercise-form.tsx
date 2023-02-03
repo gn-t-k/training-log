@@ -15,6 +15,8 @@ import { useCallback, useEffect } from "react";
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
+import { Loading } from "@/ui/loading/loading";
+
 import type { MutationState } from "@/utils/mutation-state";
 
 import { useExerciseForm } from "../use-exercise-form";
@@ -46,8 +48,7 @@ export const RegisterExerciseForm: FC = () => {
 
   switch (musclesQuery.status) {
     case "loading":
-      // TODO
-      return <p>部位データを取得中</p>;
+      return <Loading description="部位データを取得しています" />;
     case "success":
       return (
         <RegisterExerciseFormView

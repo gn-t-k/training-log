@@ -5,6 +5,8 @@ import { useCallback, useEffect } from "react";
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
+import { Loading } from "@/ui/loading/loading";
+
 import type { MutationState } from "@/utils/mutation-state";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
@@ -42,8 +44,7 @@ const Onboarding: FC = () => {
 
   switch (traineeQuery.status) {
     case "loading":
-      // TODO
-      return <p>トレーニー情報を取得中</p>;
+      return <Loading description="トレーニー情報を取得しています" />;
     case "success":
       return traineeQuery.data === null ? (
         <OnboardingView
@@ -81,11 +82,9 @@ const OnboardingView: FC<ViewProps> = ({
 
   switch (registerTraineeStatus) {
     case "idle":
-      // TODO
-      return <p>待機中</p>;
+      return <Loading description="処理を待機しています" />;
     case "loading":
-      // TODO
-      return <p>トレーニー情報を登録中</p>;
+      return <Loading description="トレーニー情報を登録しています" />;
     case "success":
       return <Redirect redirectTo={pagesPath.$url()} />;
     case "error":

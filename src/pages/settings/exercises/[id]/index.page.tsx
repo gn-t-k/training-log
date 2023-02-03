@@ -8,6 +8,8 @@ import { trpc } from "@/libs/trpc/client/trpc";
 
 import type { NextPageWithLayout } from "@/pages/_app.page";
 
+import { Loading } from "@/ui/loading/loading";
+
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { DeleteExerciseButtonAndDialog } from "@/features/exercise/delete-exercise-button-and-dialog/delete-exercise-button-and-dialog";
 import { UpdateExerciseForm } from "@/features/exercise/update-exercise-form/update-exercise-form";
@@ -64,8 +66,7 @@ const ExerciseComponent: FC<Props> = (props) => {
 
   switch (exerciseQuery.status) {
     case "loading":
-      // TODO
-      return <p>種目データを取得中</p>;
+      return <Loading description="種目データを取得しています" />;
     case "error":
       // TODO
       return <p>種目データの取得に失敗しました</p>;

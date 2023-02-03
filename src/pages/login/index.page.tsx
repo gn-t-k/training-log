@@ -1,9 +1,11 @@
-import { Button, Text } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import { signIn, useSession } from "next-auth/react";
 import Head from "next/head";
 import { useCallback } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
+
+import { Loading } from "@/ui/loading/loading";
 
 import { getBaseUrl } from "@/utils/get-base-url";
 
@@ -52,11 +54,11 @@ const LoginView: FC<ViewProps> = (props) => {
 
   switch (props.sessionStatus) {
     case "loading":
-      // TODO
-      return <Text>セッション情報を確認中</Text>;
+      return <Loading description="認証情報を確認しています" />;
     case "authenticated":
       return <Redirect redirectTo={pagesPath.logged_in.$url()} />;
     case "unauthenticated":
+      // TODO
       return <Button onClick={onClickLogin}>ログイン</Button>;
   }
 };
