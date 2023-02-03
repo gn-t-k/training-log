@@ -15,6 +15,8 @@ import { Controller } from "react-hook-form";
 
 import { trpc } from "@/libs/trpc/client/trpc";
 
+import { Loading } from "@/ui/loading/loading";
+
 import type { MutationState } from "@/utils/mutation-state";
 
 import { useExerciseForm } from "../use-exercise-form";
@@ -47,16 +49,14 @@ export const UpdateExerciseForm: FC<Props> = (props) => {
 
   switch (musclesQuery.status) {
     case "loading":
-      // TODO
-      return <p>部位データを取得中</p>;
+      return <Loading description="部位データを取得しています" />;
     case "error":
       // TODO
       return <p>部位データの取得に失敗しました</p>;
   }
   switch (exercisesQuery.status) {
     case "loading":
-      // TODO
-      return <p>種目データを取得中</p>;
+      return <Loading description="種目データを取得しています" />;
     case "error":
       // TODO
       return <p>種目データの取得に失敗しました</p>;

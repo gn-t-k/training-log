@@ -8,6 +8,8 @@ import { trpc } from "@/libs/trpc/client/trpc";
 
 import type { NextPageWithLayout } from "@/pages/_app.page";
 
+import { Loading } from "@/ui/loading/loading";
+
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 import { HeaderNavigation } from "@/features/navigation/header-navigation/header-navigation";
@@ -62,8 +64,7 @@ const Training: FC<Props> = (props) => {
 
   switch (trainingQuery.status) {
     case "loading":
-      // TODO
-      return <p>トレーニングデータを取得中</p>;
+      return <Loading description="トレーニングデータを取得しています" />;
     case "error":
       // TODO
       return <p>トレーニングデータの取得に失敗しました</p>;

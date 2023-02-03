@@ -12,6 +12,8 @@ import NextLink from "next/link";
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
+import { Loading } from "@/ui/loading/loading";
+
 import type { Exercise } from "@/features/exercise/exercise";
 import type { FC } from "react";
 
@@ -20,8 +22,7 @@ export const ExerciseList: FC = () => {
 
   switch (exercisesQuery.status) {
     case "loading":
-      // TODO
-      return <p>種目データを取得中</p>;
+      return <Loading description="種目データを取得しています" />;
     case "success":
       return <ExerciseListView exercises={exercisesQuery.data} />;
     case "error":

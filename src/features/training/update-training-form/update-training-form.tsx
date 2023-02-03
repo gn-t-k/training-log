@@ -5,6 +5,8 @@ import { useCallback, useEffect, useMemo } from "react";
 import { trpc } from "@/libs/trpc/client/trpc";
 import type { UpdateTrainingInput } from "@/libs/trpc/server/routes/training";
 
+import { Loading } from "@/ui/loading/loading";
+
 import type { MutationState } from "@/utils/mutation-state";
 
 import { GenericTrainingForm } from "../generic-training-form/generic-training-form";
@@ -35,8 +37,7 @@ export const UpdateTrainingForm: FC<Props> = (props) => {
 
   switch (exercisesQuery.status) {
     case "loading":
-      // TODO
-      return <p>種目データを取得中</p>;
+      return <Loading description="種目データを取得しています" />;
     case "error":
       // TODO
       return <p>種目データの取得に失敗しました</p>;
