@@ -1,14 +1,14 @@
-import { TrainingCalendarView } from "./training-calendar";
+import { TrainingMonthlyCalendarView } from "./training-monthly-calendar";
 
 import type { ComponentMeta, ComponentStoryObj } from "@storybook/react";
 import type { ComponentProps, FC } from "react";
 
-type Meta = ComponentMeta<typeof TrainingCalendarView>;
-type Props = ComponentProps<typeof TrainingCalendarView>;
-type Story = ComponentStoryObj<typeof TrainingCalendarView>;
+type Meta = ComponentMeta<typeof TrainingMonthlyCalendarView>;
+type Props = ComponentProps<typeof TrainingMonthlyCalendarView>;
+type Story = ComponentStoryObj<typeof TrainingMonthlyCalendarView>;
 
 const componentMeta: Meta = {
-  component: TrainingCalendarView,
+  component: TrainingMonthlyCalendarView,
 };
 export default componentMeta;
 
@@ -17,7 +17,7 @@ const Wrapper: FC<Partial<Props>> = (props) => {
     today: props.today ?? new Date(),
   };
 
-  return <TrainingCalendarView {...args} />;
+  return <TrainingMonthlyCalendarView {...args} />;
 };
 
 const Template: Story = {
