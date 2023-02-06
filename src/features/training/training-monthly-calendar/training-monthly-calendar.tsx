@@ -1,17 +1,21 @@
-import { Box, Stack } from "@chakra-ui/react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { Box, Button, Heading, Stack } from "@chakra-ui/react";
 import {
   addDays,
   getDate,
   getDay,
   getMonth,
+  getYear,
   startOfMonth,
   subDays,
 } from "date-fns";
-// import NextLink from "next/link";
+import { useCallback } from "react";
 
-// import { pagesPath } from "@/libs/pathpida/$path";
+import type { Month } from "@/utils/date";
 
-import type { FC } from "react";
+import { useMonthlyCalendar } from "./use-monthly-calendar";
+
+import type { FC, MouseEventHandler } from "react";
 
 export const TrainingMonthlyCalendar: FC = () => {
   const today = new Date();
@@ -23,19 +27,50 @@ type ViewProps = {
   today: Date;
 };
 export const TrainingMonthlyCalendarView: FC<ViewProps> = (props) => {
+  const [{ year, month }, { next, prev }] = useMonthlyCalendar({
+    today: props.today,
+  });
+
   // 6週間表示
   const weeks = [0, 1, 2, 3, 4, 5] as const;
   // その月の1日のDate
-  const startOfMonthDate = startOfMonth(props.today);
+  const startOfMonthDate = startOfMonth(new Date(year, month, 1));
   // カレンダーの左上のマスのDate
   const topLeftDate = subDays(startOfMonthDate, getDay(startOfMonthDate));
 
+  const onClickNext = useCallback<MouseEventHandler>(
+    (_) => {
+      next();
+    },
+    [next]
+  );
+  const onClickPrev = useCallback<MouseEventHandler>(
+    (_) => {
+      prev();
+    },
+    [prev]
+  );
+
   return (
     <Stack direction="column">
+      <Stack direction="row">
+        <Heading size="lg">
+          {year}年{month + 1}月
+        </Heading>
+        <Button onClick={onClickPrev}>
+          <ChevronLeftIcon />
+        </Button>
+        <Button onClick={onClickNext}>
+          <ChevronRightIcon />
+        </Button>
+      </Stack>
       {weeks.map((week) => {
         const start = addDays(topLeftDate, week * 7);
+        const month = getMonth(startOfMonthDate) as Month;
 
-        return <Week key={week} start={start} today={props.today} />;
+        return (
+          <Week key={week} start={start} today={props.today} month={month} />
+        );
       })}
     </Stack>
   );
@@ -44,6 +79,7 @@ export const TrainingMonthlyCalendarView: FC<ViewProps> = (props) => {
 type WeekProps = {
   start: Date;
   today: Date;
+  month: Month;
 };
 const Week: FC<WeekProps> = (props) => {
   const days = [0, 1, 2, 3, 4, 5, 6] as const;
@@ -53,9 +89,10 @@ const Week: FC<WeekProps> = (props) => {
       {days.map((day) => {
         const date = addDays(props.start, day);
         const isToday =
-          getDate(date) === getDate(props.today) &&
-          getMonth(date) === getMonth(props.today);
-        const isThisMonth = getMonth(date) === getMonth(props.today);
+          getYear(date) === getYear(props.today) &&
+          getMonth(date) === getMonth(props.today) &&
+          getDate(date) === getDate(props.today);
+        const isThisMonth = getMonth(date) === props.month;
 
         return (
           <Box
