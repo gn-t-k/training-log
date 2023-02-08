@@ -33,6 +33,11 @@ export const pagesPath = {
     _id: (id: string | number) => ({
       $url: (url?: { hash?: string }) => ({ pathname: '/trainings/[id]' as const, query: { id }, hash: url?.hash })
     }),
+    "dates": {
+      _date: (date: string | number) => ({
+        $url: (url?: { hash?: string }) => ({ pathname: '/trainings/dates/[date]' as const, query: { date }, hash: url?.hash })
+      })
+    },
     "register": {
       $url: (url?: { hash?: string }) => ({ pathname: '/trainings/register' as const, hash: url?.hash })
     },

@@ -1,9 +1,9 @@
 import { composeStories } from "@storybook/testing-react";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 
-import * as stories from "./training-monthly-calendar.stories";
+import * as stories from "./weekly-training-calendar.stories";
 
-describe("TrainingMonthlyCalendar", () => {
+describe("WeeklyTrainingCalendar", () => {
   const Stories = composeStories(stories);
 
   describe("初期状態", () => {
@@ -11,6 +11,6 @@ describe("TrainingMonthlyCalendar", () => {
       render(<Stories.Default />);
     });
 
-    test.todo("テスト");
+    test.todo("", () => {});
   });
 });

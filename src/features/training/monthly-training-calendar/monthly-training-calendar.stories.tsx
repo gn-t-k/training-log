@@ -1,4 +1,8 @@
-import { TrainingMonthlyCalendarView } from "./training-monthly-calendar";
+import { endOfMonth, getMonth, getYear, startOfMonth } from "date-fns";
+
+import type { Month } from "@/utils/date";
+
+import { TrainingMonthlyCalendarView } from "./monthly-training-calendar";
 
 import type { ComponentMeta, ComponentStoryObj } from "@storybook/react";
 import type { ComponentProps, FC } from "react";
@@ -13,8 +17,13 @@ const componentMeta: Meta = {
 export default componentMeta;
 
 const Wrapper: FC<Partial<Props>> = (props) => {
+  const today = new Date();
+  const trainingDates = [startOfMonth(today), endOfMonth(today)];
   const args: Props = {
-    today: props.today ?? new Date(),
+    today: props.today ?? today,
+    year: props.year ?? getYear(today),
+    month: props.month ?? (getMonth(today) as Month),
+    trainingDates: props.trainingDates ?? trainingDates,
   };
 
   return <TrainingMonthlyCalendarView {...args} />;
