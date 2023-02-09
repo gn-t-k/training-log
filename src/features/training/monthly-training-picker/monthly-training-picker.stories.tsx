@@ -1,8 +1,8 @@
-import { endOfMonth, startOfMonth } from "date-fns";
+import { addDays, endOfMonth, startOfMonth } from "date-fns";
 
-import { TrainingMonthlyCalendarView } from "../monthly-training-calendar/monthly-training-calendar";
-import { useMonthlyCalendar } from "../monthly-training-calendar/use-monthly-calendar";
+import { TrainingCalendarMonthView } from "../training-calendar-month/training-calendar-month";
 import { MonthlyTrainingPickerView } from "./monthly-training-picker";
+import { useMonthlyCalendar } from "./use-monthly-calendar";
 
 import type { ComponentMeta, ComponentStoryObj } from "@storybook/react";
 import type { ComponentProps, FC } from "react";
@@ -18,6 +18,7 @@ export default componentMeta;
 
 const Wrapper: FC<Partial<Props>> = (props) => {
   const today = new Date();
+  const selected = addDays(today, 2);
   const trainingDates = [startOfMonth(today), endOfMonth(today)];
   const [{ year, month }, { next, prev }] = useMonthlyCalendar({
     today,
@@ -25,11 +26,12 @@ const Wrapper: FC<Partial<Props>> = (props) => {
   const args: Props = {
     today: props.today ?? today,
     TrainingMonthlyCalendar: props.TrainingMonthlyCalendar ?? (
-      <TrainingMonthlyCalendarView
+      <TrainingCalendarMonthView
         year={year}
         month={month}
         today={today}
         trainingDates={trainingDates}
+        selected={selected}
       />
     ),
     year: props.year ?? year,

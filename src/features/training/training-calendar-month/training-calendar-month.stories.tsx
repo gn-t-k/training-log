@@ -1,32 +1,34 @@
-import { endOfMonth, getMonth, getYear, startOfMonth } from "date-fns";
+import { addDays, endOfMonth, getMonth, getYear, startOfMonth } from "date-fns";
 
 import type { Month } from "@/utils/date";
 
-import { TrainingMonthlyCalendarView } from "./monthly-training-calendar";
+import { TrainingCalendarMonthView } from "./training-calendar-month";
 
 import type { ComponentMeta, ComponentStoryObj } from "@storybook/react";
 import type { ComponentProps, FC } from "react";
 
-type Meta = ComponentMeta<typeof TrainingMonthlyCalendarView>;
-type Props = ComponentProps<typeof TrainingMonthlyCalendarView>;
-type Story = ComponentStoryObj<typeof TrainingMonthlyCalendarView>;
+type Meta = ComponentMeta<typeof TrainingCalendarMonthView>;
+type Props = ComponentProps<typeof TrainingCalendarMonthView>;
+type Story = ComponentStoryObj<typeof TrainingCalendarMonthView>;
 
 const componentMeta: Meta = {
-  component: TrainingMonthlyCalendarView,
+  component: TrainingCalendarMonthView,
 };
 export default componentMeta;
 
 const Wrapper: FC<Partial<Props>> = (props) => {
   const today = new Date();
+  const selected = addDays(today, 2);
   const trainingDates = [startOfMonth(today), endOfMonth(today)];
   const args: Props = {
     today: props.today ?? today,
     year: props.year ?? getYear(today),
     month: props.month ?? (getMonth(today) as Month),
     trainingDates: props.trainingDates ?? trainingDates,
+    selected: props.selected ?? selected,
   };
 
-  return <TrainingMonthlyCalendarView {...args} />;
+  return <TrainingCalendarMonthView {...args} />;
 };
 
 const Template: Story = {

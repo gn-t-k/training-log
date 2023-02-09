@@ -4,12 +4,15 @@ import { useCallback } from "react";
 
 import type { Month, Year } from "@/utils/date";
 
-import { TrainingMonthlyCalendar } from "../monthly-training-calendar/monthly-training-calendar";
-import { useMonthlyCalendar } from "../monthly-training-calendar/use-monthly-calendar";
+import { TrainingCalendarMonth } from "../training-calendar-month/training-calendar-month";
+import { useMonthlyCalendar } from "./use-monthly-calendar";
 
 import type { FC, MouseEventHandler } from "react";
 
-export const MonthlyTrainingPicker: FC = () => {
+type Props = {
+  selected: Date;
+};
+export const MonthlyTrainingPicker: FC<Props> = (props) => {
   const today = new Date();
   const [{ year, month }, { next, prev }] = useMonthlyCalendar({
     today,
@@ -19,7 +22,12 @@ export const MonthlyTrainingPicker: FC = () => {
     <MonthlyTrainingPickerView
       today={today}
       TrainingMonthlyCalendar={
-        <TrainingMonthlyCalendar year={year} month={month} today={today} />
+        <TrainingCalendarMonth
+          year={year}
+          month={month}
+          today={today}
+          selected={props.selected}
+        />
       }
       year={year}
       month={month}
