@@ -1,9 +1,9 @@
 import { composeStories } from "@storybook/testing-react";
 import { render } from "@testing-library/react";
 
-import * as stories from "./training-monthly-calendar.stories";
+import * as stories from "./training-calendar-date.stories";
 
-describe("TrainingMonthlyCalendar", () => {
+describe("TrainingCalendarDate", () => {
   const Stories = composeStories(stories);
 
   describe("初期状態", () => {
