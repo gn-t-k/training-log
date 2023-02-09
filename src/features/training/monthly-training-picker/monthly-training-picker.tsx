@@ -21,7 +21,7 @@ export const MonthlyTrainingPicker: FC<Props> = (props) => {
   return (
     <MonthlyTrainingPickerView
       today={today}
-      TrainingMonthlyCalendar={
+      TrainingCalendarMonth={
         <TrainingCalendarMonth
           year={year}
           month={month}
@@ -39,7 +39,7 @@ export const MonthlyTrainingPicker: FC<Props> = (props) => {
 
 type ViewProps = {
   today: Date;
-  TrainingMonthlyCalendar: JSX.Element;
+  TrainingCalendarMonth: JSX.Element;
   year: Year;
   month: Month;
   next: () => void;
@@ -73,7 +73,7 @@ export const MonthlyTrainingPickerView: FC<ViewProps> = (props) => {
           <ChevronRightIcon />
         </Button>
       </Stack>
-      {props.TrainingMonthlyCalendar}
+      {props.TrainingCalendarMonth}
     </Stack>
   );
 };

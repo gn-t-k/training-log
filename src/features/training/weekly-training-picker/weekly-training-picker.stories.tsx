@@ -2,6 +2,9 @@ import { addDays, getDay, getMonth, subDays } from "date-fns";
 
 import type { Month } from "@/utils/date";
 
+import { MonthlyTrainingPickerView } from "../monthly-training-picker/monthly-training-picker";
+import { useMonthlyCalendar } from "../monthly-training-picker/use-monthly-calendar";
+import { TrainingCalendarMonthView } from "../training-calendar-month/training-calendar-month";
 import { TrainingCalendarWeekView } from "../training-calendar-week/training-calendar-week";
 import { WeeklyTrainingPickerView } from "./weekly-training-picker";
 
@@ -27,7 +30,7 @@ const Wrapper: FC<Partial<Props>> = (props) => {
 
   const args: Props = {
     selected: props.selected ?? selected,
-    TrainingCalendarWeek: (
+    TrainingCalendarWeek: props.TrainingCalendarWeek ?? (
       <TrainingCalendarWeekView
         start={start}
         today={today}
@@ -36,9 +39,46 @@ const Wrapper: FC<Partial<Props>> = (props) => {
         trainingDates={trainingDates}
       />
     ),
+    MonthlyTrainingPicker: props.MonthlyTrainingPicker ?? (
+      <MockMonthlyTrainingPicker
+        today={today}
+        selected={selected}
+        trainingDates={trainingDates}
+      />
+    ),
   };
 
   return <WeeklyTrainingPickerView {...args} />;
+};
+
+type MockMonthlyTrainingPicker = {
+  today: Date;
+  selected: Date;
+  trainingDates: Date[];
+};
+const MockMonthlyTrainingPicker: FC<MockMonthlyTrainingPicker> = (props) => {
+  const [{ year, month }, { next, prev }] = useMonthlyCalendar({
+    today: props.today,
+  });
+
+  return (
+    <MonthlyTrainingPickerView
+      today={props.today}
+      TrainingCalendarMonth={
+        <TrainingCalendarMonthView
+          year={year}
+          month={month}
+          today={props.today}
+          selected={props.selected}
+          trainingDates={props.trainingDates}
+        />
+      }
+      year={year}
+      month={month}
+      next={next}
+      prev={prev}
+    />
+  );
 };
 
 const Template: Story = {

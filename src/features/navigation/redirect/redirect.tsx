@@ -2,8 +2,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-import { getBaseUrl } from "@/utils/get-base-url";
-
 import type { FC } from "react";
 import type { UrlObject } from "url";
 
@@ -24,9 +22,5 @@ type ViewProps = {
   redirectTo: UrlObject;
 };
 export const RedirectView: FC<ViewProps> = (props) => {
-  return (
-    <Link href={props.redirectTo}>{`${
-      typeof window !== "undefined" ? window.location.origin : getBaseUrl()
-    }${props.redirectTo.pathname} に移動しています...`}</Link>
-  );
+  return <Link href={props.redirectTo}>移動しています</Link>;
 };

@@ -1,7 +1,11 @@
 import { Stack } from "@chakra-ui/react";
 import { addDays, getDate, getMonth, getYear } from "date-fns";
 
-import type { Month } from "@/utils/date";
+import { trpc } from "@/libs/trpc/client/trpc";
+
+import { Loading } from "@/ui/loading/loading";
+
+import type { Month, Year } from "@/utils/date";
 
 import { TrainingCalendarDate } from "../training-calendar-date/training-calendar-date";
 
@@ -10,21 +14,37 @@ import type { FC } from "react";
 type Props = {
   start: Date;
   today: Date;
+  year: Year;
   month: Month;
   selected: Date;
 };
 export const TrainingCalendarWeek: FC<Props> = (props) => {
-  const trainingDates: Date[] = []; // TODO
+  // TODO: 日付だけ取得するquery作る
+  // TODO: 前後の月もとらないと表示おかしくなる
+  const trainingQuery = trpc.training.getMonthlyTrainings.useQuery({
+    year: props.year,
+    month: props.month,
+  });
 
-  return (
-    <TrainingCalendarWeekView
-      start={props.start}
-      today={props.today}
-      month={props.month}
-      selected={props.selected}
-      trainingDates={trainingDates}
-    />
-  );
+  switch (trainingQuery.status) {
+    case "loading":
+      return <Loading description="トレーニングデータを取得中です" />;
+    case "success":
+      return (
+        <TrainingCalendarWeekView
+          start={props.start}
+          today={props.today}
+          month={props.month}
+          selected={props.selected}
+          trainingDates={trainingQuery.data.map(
+            (training) => training.createdAt
+          )}
+        />
+      );
+    case "error":
+      // TODO
+      return <p>トレーニングデータの取得に失敗しました</p>;
+  }
 };
 
 type ViewProps = {
