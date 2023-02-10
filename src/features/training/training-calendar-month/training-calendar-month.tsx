@@ -3,8 +3,6 @@ import { addDays, getDay, startOfMonth, subDays } from "date-fns";
 
 import { trpc } from "@/libs/trpc/client/trpc";
 
-import { Loading } from "@/ui/loading/loading";
-
 import type { Month, Year } from "@/utils/date";
 
 import { TrainingCalendarWeekView } from "../training-calendar-week/training-calendar-week";
@@ -26,7 +24,6 @@ export const TrainingCalendarMonth: FC<Props> = (props) => {
 
   switch (trainingQuery.status) {
     case "loading":
-      return <Loading description="トレーニングデータを取得中です" />;
     case "success":
       return (
         <TrainingCalendarMonthView
@@ -34,9 +31,9 @@ export const TrainingCalendarMonth: FC<Props> = (props) => {
           month={props.month}
           today={props.today}
           selected={props.selected}
-          trainingDates={trainingQuery.data.map(
-            (training) => training.createdAt
-          )}
+          trainingDates={
+            trainingQuery.data?.map((training) => training.createdAt) ?? []
+          }
         />
       );
     case "error":

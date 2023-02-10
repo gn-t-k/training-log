@@ -22,10 +22,11 @@ const Wrapper: FC<Partial<Props>> = (props) => {
   const trainingDates = [startOfMonth(today), endOfMonth(today)];
   const [{ year, month }, { next, prev }] = useMonthlyCalendar({
     today,
+    selected,
   });
   const args: Props = {
     today: props.today ?? today,
-    TrainingMonthlyCalendar: props.TrainingMonthlyCalendar ?? (
+    TrainingCalendarMonth: props.TrainingCalendarMonth ?? (
       <TrainingCalendarMonthView
         year={year}
         month={month}
