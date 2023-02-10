@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { addDays, format, getDay, getMonth, getYear, subDays } from "date-fns";
 import NextLink from "next/link";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
@@ -66,16 +66,21 @@ type ViewProps = {
 export const WeeklyTrainingPickerView: FC<ViewProps> = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const heading = format(props.selected, "yyyy年M月d日");
+
   const prevUrl = useMemo(() => {
     const prevDate = format(subDays(props.selected, 1), "yyyy-MM-dd");
-
     return pagesPath.trainings.dates._date(prevDate).$url();
   }, [props.selected]);
   const nextUrl = useMemo(() => {
     const nextDate = format(addDays(props.selected, 1), "yyyy-MM-dd");
-
     return pagesPath.trainings.dates._date(nextDate).$url();
   }, [props.selected]);
+
+  useEffect(() => {
+    // 日付を選択したらDrawerを閉じる
+    onClose();
+  }, [onClose, props.selected]);
+
   const onClickCalendarIcon = useCallback<MouseEventHandler>(
     (_) => {
       onOpen();
