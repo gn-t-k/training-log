@@ -59,6 +59,7 @@ type MockMonthlyTrainingPicker = {
 const MockMonthlyTrainingPicker: FC<MockMonthlyTrainingPicker> = (props) => {
   const [{ year, month }, { next, prev }] = useMonthlyCalendar({
     today: props.today,
+    selected: props.selected,
   });
 
   return (

@@ -16,6 +16,7 @@ export const MonthlyTrainingPicker: FC<Props> = (props) => {
   const today = new Date();
   const [{ year, month }, { next, prev }] = useMonthlyCalendar({
     today,
+    selected: props.selected,
   });
 
   return (
