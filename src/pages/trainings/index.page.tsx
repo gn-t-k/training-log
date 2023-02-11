@@ -8,7 +8,7 @@ import { pagesPath } from "@/libs/pathpida/$path";
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 import { HeaderNavigation } from "@/features/navigation/header-navigation/header-navigation";
-import { TrainingList } from "@/features/training/training-list/training-list";
+import { MonthlyTrainingPicker } from "@/features/training/monthly-training-picker/monthly-training-picker";
 
 import type { NextPageWithLayout } from "../_app.page";
 import type { FC, ReactElement } from "react";
@@ -44,12 +44,18 @@ TrainingsPage.getLayout = (page): ReactElement => {
 export default TrainingsPage;
 
 const Trainings: FC = () => {
-  return <TrainingsView TrainingList={<TrainingList />} />;
+  const today = new Date();
+
+  return (
+    <TrainingsView
+      MonthlyTrainingPicker={<MonthlyTrainingPicker selected={today} />}
+    />
+  );
 };
 
 type ViewProps = {
-  TrainingList: JSX.Element;
+  MonthlyTrainingPicker: JSX.Element;
 };
 const TrainingsView: FC<ViewProps> = (props) => {
-  return <Container>{props.TrainingList}</Container>;
+  return <Container>{props.MonthlyTrainingPicker}</Container>;
 };
