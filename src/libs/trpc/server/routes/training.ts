@@ -5,6 +5,7 @@ import { registerTrainingCommand } from "@/libs/prisma/commands/register-trainin
 import { updateTrainingCommand } from "@/libs/prisma/commands/update-training-command";
 import { getMonthlyTrainingsQuery } from "@/libs/prisma/queries/get-monthly-trainings-query";
 import { getTrainingByIdQuery } from "@/libs/prisma/queries/get-training-by-id-query";
+import { getTrainingsByDateQuery } from "@/libs/prisma/queries/get-trainings-by-date-query";
 
 import { exerciseSchema } from "@/features/exercise/exercise";
 import { trainingSchema } from "@/features/training/training";
@@ -12,6 +13,7 @@ import { trainingSchema } from "@/features/training/training";
 import { deleteTrainingResolver } from "../resolvers/delete-training-resolver/delete-training-resolver";
 import { getMonthlyTrainingsResolver } from "../resolvers/get-monthly-trainings-resolver/get-monthly-trainings-resolver";
 import { getTrainingByIdResolver } from "../resolvers/get-training-by-id-resolver/get-training-by-id-resolver";
+import { getTrainingsByDateResolver } from "../resolvers/get-trainings-by-date-resolver/get-trainings-by-date-resolver";
 import { registerTrainingResolver } from "../resolvers/register-training-resolver/register-training-resolver";
 import { updateTrainingResolver } from "../resolvers/update-training-resolver/update-training-resolver";
 import { initializedProcedure, router } from "../trpc";
@@ -86,6 +88,23 @@ export const trainingRouter = router({
       });
 
       return training;
+    }),
+  getByDate: initializedProcedure
+    .input(
+      z.object({
+        date: z.date(),
+      })
+    )
+    .output(z.array(trainingSchema))
+    .query(async ({ input, ctx }) => {
+      const trainings = await getTrainingsByDateResolver({
+        getTrainingsByDateQuery,
+      })({
+        date: input.date,
+        traineeId: ctx.trainee.id,
+      });
+
+      return trainings;
     }),
   getMonthlyTrainings: initializedProcedure
     .input(z.object({ year: z.number(), month: z.number() }))
