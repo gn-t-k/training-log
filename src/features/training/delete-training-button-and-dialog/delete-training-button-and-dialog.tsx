@@ -7,7 +7,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Stack,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -94,7 +93,7 @@ export const DeleteTrainingButtonAndDialogView: FC<ViewProps> = (props) => {
   const isProcessing = props.deleteTrainingStatus === "loading";
 
   return (
-    <Stack direction="column">
+    <>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -122,6 +121,6 @@ export const DeleteTrainingButtonAndDialogView: FC<ViewProps> = (props) => {
         </ModalContent>
       </Modal>
       <Button onClick={onClickButton}>トレーニング記録を削除</Button>
-    </Stack>
+    </>
   );
 };
