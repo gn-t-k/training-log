@@ -1,13 +1,13 @@
-import { Button, Card, CardBody, Heading, Stack, Text } from "@chakra-ui/react";
+import { Card, CardBody, Heading, Stack, Text } from "@chakra-ui/react";
 import { addMinutes } from "date-fns";
-import NextLink from "next/link";
 
-import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 
 import { Loading } from "@/ui/loading/loading";
 
 import { DeleteTrainingButtonAndDialog } from "@/features/training/delete-training-button-and-dialog/delete-training-button-and-dialog";
+
+import { EditTrainingButtonAndModal } from "../edit-training-button-and-modal/edit-training-button-and-modal";
 
 import type { Training } from "@/features/training/training";
 import type { FC } from "react";
@@ -62,12 +62,7 @@ export const TrainingListView: FC<ViewProps> = (props) => {
                 </Card>
               );
             })}
-            <Button
-              as={NextLink}
-              href={pagesPath.trainings._id(training.id).$url()}
-            >
-              トレーニング記録を編集
-            </Button>
+            <EditTrainingButtonAndModal training={training} />
             <DeleteTrainingButtonAndDialog training={training} />
           </Stack>
         );
