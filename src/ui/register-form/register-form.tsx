@@ -3,6 +3,7 @@ import {
   Container,
   FormControl,
   FormErrorMessage,
+  FormHelperText,
   FormLabel,
   Heading,
   Input,
@@ -82,6 +83,9 @@ export const RegisterForm: FC<Props> = (props) => {
             </FormControl>
             <FormControl isInvalid={!!errors.password}>
               <FormLabel htmlFor="password">パスワード</FormLabel>
+              <FormHelperText>
+                数字・小文字・大文字をそれぞれ1文字以上含めて、8文字以上で入力してください
+              </FormHelperText>
               <Input type="password" id="password" {...register("password")} />
               {!!errors.password && (
                 <FormErrorMessage>{errors.password.message}</FormErrorMessage>
