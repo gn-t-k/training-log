@@ -3,17 +3,23 @@ import { z } from "zod";
 import { deleteTrainingCommand } from "@/libs/prisma/commands/delete-training-command";
 import { registerTrainingCommand } from "@/libs/prisma/commands/register-training-command";
 import { updateTrainingCommand } from "@/libs/prisma/commands/update-training-command";
+import { getMonthlyTrainingDatesQuery } from "@/libs/prisma/queries/get-monthly-training-dates-query";
 import { getMonthlyTrainingsQuery } from "@/libs/prisma/queries/get-monthly-trainings-query";
 import { getTrainingByIdQuery } from "@/libs/prisma/queries/get-training-by-id-query";
 import { getTrainingsByDateQuery } from "@/libs/prisma/queries/get-trainings-by-date-query";
+import { getWeeklyTrainingDatesQuery } from "@/libs/prisma/queries/get-weekly-training-dates-query";
+
+import { monthSchema, yearSchema } from "@/utils/date";
 
 import { exerciseSchema } from "@/features/exercise/exercise";
 import { trainingSchema } from "@/features/training/training";
 
 import { deleteTrainingResolver } from "../resolvers/delete-training-resolver/delete-training-resolver";
+import { getMonthlyTrainingDatesResolver } from "../resolvers/get-monthly-training-dates-resolver/get-monthly-training-dates-resolver";
 import { getMonthlyTrainingsResolver } from "../resolvers/get-monthly-trainings-resolver/get-monthly-trainings-resolver";
 import { getTrainingByIdResolver } from "../resolvers/get-training-by-id-resolver/get-training-by-id-resolver";
 import { getTrainingsByDateResolver } from "../resolvers/get-trainings-by-date-resolver/get-trainings-by-date-resolver";
+import { getWeeklyTrainingDatesResolver } from "../resolvers/get-weekly-training-dates-resolver/get-weekly-training-dates-resolver";
 import { registerTrainingResolver } from "../resolvers/register-training-resolver/register-training-resolver";
 import { updateTrainingResolver } from "../resolvers/update-training-resolver/update-training-resolver";
 import { initializedProcedure, router } from "../trpc";
@@ -119,6 +125,42 @@ export const trainingRouter = router({
       });
 
       return trainings;
+    }),
+  getWeeklyTrainingDates: initializedProcedure
+    .input(
+      z.object({
+        start: z.date(),
+      })
+    )
+    .output(z.array(z.date()))
+    .query(async ({ input, ctx }) => {
+      const trainingDates = await getWeeklyTrainingDatesResolver({
+        getWeeklyTrainingDatesQuery,
+      })({
+        start: input.start,
+        traineeId: ctx.trainee.id,
+      });
+
+      return trainingDates;
+    }),
+  getMonthlyTrainingDates: initializedProcedure
+    .input(
+      z.object({
+        year: yearSchema,
+        month: monthSchema,
+      })
+    )
+    .output(z.array(z.date()))
+    .query(async ({ input, ctx }) => {
+      const trainingDates = await getMonthlyTrainingDatesResolver({
+        getMonthlyTrainingDatesQuery,
+      })({
+        year: input.year,
+        month: input.month,
+        traineeId: ctx.trainee.id,
+      });
+
+      return trainingDates;
     }),
   update: initializedProcedure
     .input(updateTrainingInputSchema)

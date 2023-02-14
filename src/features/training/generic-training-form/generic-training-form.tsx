@@ -123,8 +123,7 @@ export const GenericTrainingFormView: FC<ViewProps> = (props) => {
               );
             })}
           </Stack>
-          <Button onClick={onClickAddExercise}>種目から追加</Button>
-          <Button isDisabled={true}>テンプレートから追加</Button>
+          <Button onClick={onClickAddExercise}>種目を追加</Button>
           <FormControl isInvalid={!!errors.records}>
             {!!errors.records && (
               <FormErrorMessage>{errors.records.message}</FormErrorMessage>
