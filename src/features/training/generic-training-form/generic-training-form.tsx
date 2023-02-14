@@ -88,7 +88,7 @@ export const GenericTrainingFormView: FC<ViewProps> = (props) => {
 
   return (
     <form onSubmit={handleSubmit(props.onSubmit)}>
-      <Stack direction="column" gap={8}>
+      <Stack direction="column" gap={4}>
         <FormControl isInvalid={!!errors.date}>
           <FormLabel htmlFor="date">日付</FormLabel>
           <Input id="date" {...register("date")} type="date" />
@@ -303,6 +303,7 @@ const SetForm: FC<SetFormProps> = (props) => {
               )}
               type="number"
               step="0.01"
+              placeholder="0.00"
             />
             <InputRightElement>kg</InputRightElement>
           </InputGroup>
@@ -332,6 +333,7 @@ const SetForm: FC<SetFormProps> = (props) => {
               )}
               type="number"
               pattern="[0-9]*"
+              placeholder="000"
             />
             <InputRightElement>回</InputRightElement>
           </InputGroup>

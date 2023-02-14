@@ -18,7 +18,7 @@ const RegisterTrainingPage: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>トレーニングを登録する | training-log</title>
+        <title>トレーニングを記録する | training-log</title>
       </Head>
       <RequireLogin>
         <RegisterTraining />
@@ -30,7 +30,7 @@ RegisterTrainingPage.getLayout = (page): ReactElement => {
   return (
     <FooterNavigation>
       <HeaderNavigation
-        title="トレーニングを登録する"
+        title="トレーニングを記録する"
         leftItem={
           <Button as={NextLink} href={pagesPath.trainings.$url()}>
             <ChevronLeftIcon />
