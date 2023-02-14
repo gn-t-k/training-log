@@ -1,34 +1,26 @@
-import {
-  CloseIcon,
-  EditIcon,
-  HamburgerIcon,
-  InfoOutlineIcon,
-  SmallCloseIcon,
-} from "@chakra-ui/icons";
+import { InfoOutlineIcon } from "@chakra-ui/icons";
 import {
   Button,
   Card,
   CardBody,
   CardHeader,
+  CloseButton,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Grid,
   GridItem,
+  IconButton,
   Input,
   InputGroup,
   InputRightElement,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Select,
   Spacer,
   Stack,
   Text,
   Textarea,
 } from "@chakra-ui/react";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useFieldArray } from "react-hook-form";
 
 import { useTrainingFrom } from "../use-training-form";
@@ -96,7 +88,7 @@ export const GenericTrainingFormView: FC<ViewProps> = (props) => {
 
   return (
     <form onSubmit={handleSubmit(props.onSubmit)}>
-      <Stack direction="column" gap={8}>
+      <Stack direction="column" gap={4}>
         <FormControl isInvalid={!!errors.date}>
           <FormLabel htmlFor="date">日付</FormLabel>
           <Input id="date" {...register("date")} type="date" />
@@ -161,7 +153,6 @@ const RecordForm: FC<RecordFormProps> = (props) => {
     control: props.control,
     name: `records.${props.recordIndex}.sets`,
   });
-  const [isMemoAppeared, setIsMemoAppeared] = useState(false);
 
   const onClickAddSet = useCallback<MouseEventHandler>(
     (_) => {
@@ -171,16 +162,6 @@ const RecordForm: FC<RecordFormProps> = (props) => {
       });
     },
     [append]
-  );
-  const onClickAddMemo = useCallback<MouseEventHandler>((_) => {
-    setIsMemoAppeared(true);
-  }, []);
-  const onClickDeleteMemo = useCallback<MouseEventHandler>(
-    (_) => {
-      setIsMemoAppeared(false);
-      props.setValue(`records.${props.recordIndex}.memo`, "");
-    },
-    [props]
   );
   const onClickDeleteExercise = useCallback<MouseEventHandler>(
     (_) => {
@@ -192,14 +173,19 @@ const RecordForm: FC<RecordFormProps> = (props) => {
   return (
     <Card>
       <CardHeader>
-        <Stack direction="column">
-          <Stack direction="row">
-            <FormControl
-              isInvalid={
-                !!props.errors.records?.[props.recordIndex]?.exerciseId
-              }
-            >
-              <FormLabel>種目を選択</FormLabel>
+        <Stack direction="row">
+          <Spacer />
+          <CloseButton
+            onClick={onClickDeleteExercise}
+            isDisabled={props.isLastRecord}
+          />
+        </Stack>
+        <Stack direction="row">
+          <FormControl
+            isInvalid={!!props.errors.records?.[props.recordIndex]?.exerciseId}
+          >
+            <FormLabel>種目を選択</FormLabel>
+            <Stack direction="row" alignItems="center">
               <Select
                 {...props.register(`records.${props.recordIndex}.exerciseId`)}
               >
@@ -211,74 +197,55 @@ const RecordForm: FC<RecordFormProps> = (props) => {
                   );
                 })}
               </Select>
-              {!!props.errors.records?.[props.recordIndex]?.exerciseId && (
-                <FormErrorMessage>
-                  {
-                    props.errors.records?.[props.recordIndex]?.exerciseId
-                      ?.message
-                  }
-                </FormErrorMessage>
-              )}
-            </FormControl>
-            <Spacer />
-            <Menu>
-              <MenuButton as={Button}>
-                <HamburgerIcon />
-              </MenuButton>
-              <MenuList>
-                <MenuItem justifyContent="center">
-                  <InfoOutlineIcon />
-                  <span>種目の詳細</span>
-                </MenuItem>
-                {isMemoAppeared ? (
-                  <MenuItem justifyContent="center" onClick={onClickDeleteMemo}>
-                    <EditIcon />
-                    <span>メモを削除</span>
-                  </MenuItem>
-                ) : (
-                  <MenuItem justifyContent="center" onClick={onClickAddMemo}>
-                    <EditIcon />
-                    <span>メモを追加</span>
-                  </MenuItem>
-                )}
-                <MenuItem
-                  justifyContent="center"
-                  onClick={onClickDeleteExercise}
-                  isDisabled={props.isLastRecord}
-                >
-                  <CloseIcon />
-                  <span>種目を削除</span>
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          </Stack>
-          {isMemoAppeared && (
-            <Textarea
-              {...props.register(`records.${props.recordIndex}.memo`)}
-              placeholder="メモ"
-              border="none"
-            />
-          )}
+              {/* TODO: 前回の重量とかそういうの出るようにする */}
+              <IconButton
+                icon={<InfoOutlineIcon />}
+                isDisabled={true}
+                aria-label="種目の情報"
+                variant="unstyled"
+              />
+            </Stack>
+            {!!props.errors.records?.[props.recordIndex]?.exerciseId && (
+              <FormErrorMessage>
+                {props.errors.records?.[props.recordIndex]?.exerciseId?.message}
+              </FormErrorMessage>
+            )}
+          </FormControl>
         </Stack>
       </CardHeader>
       <CardBody>
-        <Stack direction="column">
-          {fields.map((field, setIndex) => {
-            const isLastSet = setIndex === 0 && fields.length === 1;
-            return (
-              <SetForm
-                key={field.id}
-                control={props.control}
-                errors={props.errors}
-                register={props.register}
-                removeSet={removeSet}
-                recordIndex={props.recordIndex}
-                setIndex={setIndex}
-                isLastSet={isLastSet}
-              />
-            );
-          })}
-          <Button onClick={onClickAddSet}>セットを追加</Button>
+        <Stack direction="column" gap={4}>
+          <Stack direction="column">
+            <Grid templateColumns="2fr 3fr 3fr 1fr">
+              <GridItem>
+                <Text>セット</Text>
+              </GridItem>
+              <GridItem>
+                <FormLabel as="legend">重さ</FormLabel>
+              </GridItem>
+              <GridItem>
+                <FormLabel as="legend">回数</FormLabel>
+              </GridItem>
+            </Grid>
+            <Stack direction="column">
+              {fields.map((field, setIndex) => {
+                const isLastSet = setIndex === 0 && fields.length === 1;
+                return (
+                  <SetForm
+                    key={field.id}
+                    control={props.control}
+                    errors={props.errors}
+                    register={props.register}
+                    removeSet={removeSet}
+                    recordIndex={props.recordIndex}
+                    setIndex={setIndex}
+                    isLastSet={isLastSet}
+                  />
+                );
+              })}
+            </Stack>
+            <Button onClick={onClickAddSet}>セットを追加</Button>
+          </Stack>
           {!!props.errors.records?.[props.recordIndex]?.sets && (
             <FormControl
               isInvalid={!!props.errors.records[props.recordIndex]?.sets}
@@ -288,6 +255,10 @@ const RecordForm: FC<RecordFormProps> = (props) => {
               </FormErrorMessage>
             </FormControl>
           )}
+          <Textarea
+            {...props.register(`records.${props.recordIndex}.memo`)}
+            placeholder="メモ"
+          />
         </Stack>
       </CardBody>
     </Card>
@@ -315,7 +286,6 @@ const SetForm: FC<SetFormProps> = (props) => {
     <Grid templateColumns="2fr 3fr 3fr 1fr" gap={2}>
       <GridItem>
         <Stack direction="column">
-          <Text>セット</Text>
           <Text>{props.setIndex + 1}</Text>
         </Stack>
       </GridItem>
@@ -326,7 +296,6 @@ const SetForm: FC<SetFormProps> = (props) => {
               ?.weight
           }
         >
-          <FormLabel>重さ</FormLabel>
           <InputGroup>
             <Input
               {...props.register(
@@ -334,6 +303,7 @@ const SetForm: FC<SetFormProps> = (props) => {
               )}
               type="number"
               step="0.01"
+              placeholder="0.00"
             />
             <InputRightElement>kg</InputRightElement>
           </InputGroup>
@@ -356,7 +326,6 @@ const SetForm: FC<SetFormProps> = (props) => {
               ?.repetition
           }
         >
-          <FormLabel>回数</FormLabel>
           <InputGroup>
             <Input
               {...props.register(
@@ -364,6 +333,7 @@ const SetForm: FC<SetFormProps> = (props) => {
               )}
               type="number"
               pattern="[0-9]*"
+              placeholder="000"
             />
             <InputRightElement>回</InputRightElement>
           </InputGroup>
@@ -380,9 +350,7 @@ const SetForm: FC<SetFormProps> = (props) => {
         </FormControl>
       </GridItem>
       <GridItem>
-        <Button onClick={onClickDeleteSet} isDisabled={props.isLastSet}>
-          <SmallCloseIcon />
-        </Button>
+        <CloseButton onClick={onClickDeleteSet} isDisabled={props.isLastSet} />
       </GridItem>
     </Grid>
   );

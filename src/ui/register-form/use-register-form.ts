@@ -11,7 +11,13 @@ const registerFieldSchema = z.object({
     .string()
     .min(1, "メールアドレスを入力してください")
     .email("メールアドレスの形式で入力してください"),
-  password: z.string().min(8, "パスワードは8文字以上で入力してください"),
+  password: z
+    .string()
+    .min(8, "パスワードは8文字以上で入力してください")
+    .regex(
+      /^(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9_.?/-]/,
+      "数字・小文字・大文字をそれぞれ1文字以上含めて入力してください"
+    ),
 });
 export type RegisterField = z.infer<typeof registerFieldSchema>;
 

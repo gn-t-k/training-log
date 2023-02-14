@@ -11,7 +11,7 @@ import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 import { HeaderNavigation } from "@/features/navigation/header-navigation/header-navigation";
 import { Redirect } from "@/features/navigation/redirect/redirect";
-import { RegisterTrainingButton } from "@/features/training/register-training-button/register-training-button";
+import { RegisterTrainingButtonAndModal } from "@/features/training/register-training-button-and-modal/register-training-button-and-modal";
 import { TrainingList } from "@/features/training/training-list/training-list";
 import { useGetTrainingDate } from "@/features/training/use-get-training-date";
 import { WeeklyTrainingPicker } from "@/features/training/weekly-training-picker/weekly-training-picker";
@@ -62,6 +62,7 @@ const TrainingsOnDate: FC<Props> = (props) => {
     <TrainingsOnDateView
       WeeklyTrainingPicker={<WeeklyTrainingPicker selected={props.date} />}
       TrainingList={<TrainingList date={props.date} />}
+      RegisterTrainingButtonAndModal={<RegisterTrainingButtonAndModal />}
     />
   );
 };
@@ -69,11 +70,12 @@ const TrainingsOnDate: FC<Props> = (props) => {
 type ViewProps = {
   WeeklyTrainingPicker: JSX.Element;
   TrainingList: JSX.Element;
+  RegisterTrainingButtonAndModal: JSX.Element;
 };
 const TrainingsOnDateView: FC<ViewProps> = (props) => {
   return (
     <Box>
-      <RegisterTrainingButton />
+      {props.RegisterTrainingButtonAndModal}
       {props.WeeklyTrainingPicker}
       {props.TrainingList}
     </Box>

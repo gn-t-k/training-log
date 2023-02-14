@@ -72,14 +72,14 @@ export const RegisterTrainingFormView: FC<ViewProps> = (props) => {
     switch (props.registerTrainingStatus) {
       case "success":
         toast({
-          title: "トレーニング記録を登録しました",
+          title: "トレーニングを記録しました",
           status: "success",
           isClosable: true,
         });
         return;
       case "error":
         toast({
-          title: "トレーニング記録の登録に失敗しました",
+          title: "トレーニング機の記録に失敗しました",
           status: "error",
           isClosable: true,
         });

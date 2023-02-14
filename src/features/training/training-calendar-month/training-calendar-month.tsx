@@ -105,12 +105,12 @@ export const TrainingCalendarMonthView: FC<ViewProps> = (props) => {
 
   return (
     <Stack direction="column">
-      {weeks.map((week) => {
+      {weeks.map((week, index) => {
         const start = addDays(topLeftDate, week * 7);
 
         return (
           <Box key={week}>
-            <Divider mb={2} />
+            {index !== 0 && <Divider mb={2} />}
             <TrainingCalendarWeekView
               start={start}
               today={props.today}
