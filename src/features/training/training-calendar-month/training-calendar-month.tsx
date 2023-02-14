@@ -1,5 +1,16 @@
 import { Box, Divider, Stack } from "@chakra-ui/react";
-import { addDays, getDay, startOfMonth, subDays } from "date-fns";
+import {
+  addDays,
+  addMinutes,
+  addMonths,
+  getDay,
+  getMonth,
+  getYear,
+  startOfMonth,
+  subDays,
+  subMonths,
+} from "date-fns";
+import { useMemo } from "react";
 
 import { trpc } from "@/libs/trpc/client/trpc";
 
@@ -16,30 +27,65 @@ type Props = {
   selected: Date;
 };
 export const TrainingCalendarMonth: FC<Props> = (props) => {
-  // TODO: 日付だけ取得するquery作る
-  const trainingQuery = trpc.training.getMonthlyTrainings.useQuery({
-    year: props.year,
-    month: props.month,
+  const { useQuery } = trpc.training.getMonthlyTrainingDates;
+  const monthDate = new Date(props.year, props.month, 1);
+  const utcDate = addMinutes(monthDate, monthDate.getTimezoneOffset());
+  const lastMonth = subMonths(utcDate, 1);
+  const nextMonth = addMonths(utcDate, 1);
+  const [lastMonthYear, lastMonthMonth] = [
+    getYear(lastMonth),
+    getMonth(lastMonth) as Month,
+  ];
+  const [thisMonthYear, thisMonthMonth] = [
+    getYear(utcDate),
+    getMonth(utcDate) as Month,
+  ];
+  const [nextMonthYear, nextMonthMonth] = [
+    getYear(nextMonth),
+    getMonth(nextMonth) as Month,
+  ];
+  const lastMonthTrainingDatesQuery = useQuery({
+    year: lastMonthYear,
+    month: lastMonthMonth,
   });
+  const thisMonthTrainingDatesQuery = useQuery({
+    year: thisMonthYear,
+    month: thisMonthMonth,
+  });
+  const nextMonthTrainingDatesQuery = useQuery({
+    year: nextMonthYear,
+    month: nextMonthMonth,
+  });
+  const trainingDates = useMemo<Date[]>(() => {
+    const lastMonth = lastMonthTrainingDatesQuery.data ?? [];
+    const thisMonth = thisMonthTrainingDatesQuery.data ?? [];
+    const nextMonth = nextMonthTrainingDatesQuery.data ?? [];
 
-  switch (trainingQuery.status) {
-    case "loading":
-    case "success":
-      return (
-        <TrainingCalendarMonthView
-          year={props.year}
-          month={props.month}
-          today={props.today}
-          selected={props.selected}
-          trainingDates={
-            trainingQuery.data?.map((training) => training.createdAt) ?? []
-          }
-        />
-      );
-    case "error":
-      // TODO
-      return <p>トレーニングデータの取得に失敗しました</p>;
+    return [...lastMonth, ...thisMonth, ...nextMonth];
+  }, [
+    lastMonthTrainingDatesQuery.data,
+    nextMonthTrainingDatesQuery.data,
+    thisMonthTrainingDatesQuery.data,
+  ]);
+
+  if (
+    lastMonthTrainingDatesQuery.isError ||
+    thisMonthTrainingDatesQuery.isError ||
+    nextMonthTrainingDatesQuery.isError
+  ) {
+    // TODO
+    return <p>トレーニングデータの取得に失敗しました</p>;
   }
+
+  return (
+    <TrainingCalendarMonthView
+      year={props.year}
+      month={props.month}
+      today={props.today}
+      selected={props.selected}
+      trainingDates={trainingDates}
+    />
+  );
 };
 
 type ViewProps = {

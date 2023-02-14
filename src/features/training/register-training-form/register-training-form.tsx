@@ -1,5 +1,6 @@
 import { useToast } from "@chakra-ui/react";
 import {
+  format,
   getDate,
   getMonth,
   getYear,
@@ -8,7 +9,7 @@ import {
   setYear,
 } from "date-fns";
 import { useRouter } from "next/router";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
@@ -22,7 +23,7 @@ import { GenericTrainingForm } from "../generic-training-form/generic-training-f
 
 import type { TrainingField } from "../use-training-form";
 import type { Exercise } from "@/features/exercise/exercise";
-import type { FC } from "react";
+import type { FC, ComponentProps } from "react";
 import type { SubmitHandler } from "react-hook-form";
 
 export const RegisterTrainingForm: FC = () => {
@@ -132,12 +133,33 @@ export const RegisterTrainingFormView: FC<ViewProps> = (props) => {
   );
 
   const isProcessing = props.registerTrainingStatus === "loading";
+  const initialValue: NonNullable<
+    ComponentProps<typeof GenericTrainingForm>["defaultValues"]
+  > = useMemo(() => {
+    const today = new Date();
+    return {
+      date: format(today, "yyyy-MM-dd"),
+      records: [
+        {
+          exerciseId: "",
+          memo: "",
+          sets: [
+            {
+              weight: "",
+              repetition: "",
+            },
+          ],
+        },
+      ],
+    };
+  }, []);
 
   return (
     <GenericTrainingForm
       onSubmit={onSubmit}
       isProcessing={isProcessing}
       exercises={props.exercises}
+      defaultValues={initialValue}
     />
   );
 };

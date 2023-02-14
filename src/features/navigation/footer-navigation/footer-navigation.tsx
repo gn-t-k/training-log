@@ -38,21 +38,12 @@ export const FooterNavigationView: FC<ViewProps> = (props) => {
       >
         <Container height="full">
           <Grid
-            templateColumns="1fr 1fr 1fr"
+            templateColumns="1fr 1fr"
             as="nav"
             bg="white"
             height="full"
             alignItems="center"
           >
-            <GridItem>
-              <Button
-                w="full"
-                disabled
-                fontWeight={props.current === "templates" ? "bold" : "normal"}
-              >
-                テンプレート
-              </Button>
-            </GridItem>
             <GridItem>
               <Button
                 as={NextLink}

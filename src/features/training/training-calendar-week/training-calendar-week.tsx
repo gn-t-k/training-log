@@ -1,5 +1,5 @@
 import { Stack } from "@chakra-ui/react";
-import { addDays, getDate, getMonth, getYear } from "date-fns";
+import { addDays, addMinutes, getDate, getMonth, getYear } from "date-fns";
 
 import { trpc } from "@/libs/trpc/client/trpc";
 
@@ -17,14 +17,12 @@ type Props = {
   selected: Date;
 };
 export const TrainingCalendarWeek: FC<Props> = (props) => {
-  // TODO: 日付だけ取得するquery作る
-  // TODO: 前後の月もとらないと表示おかしくなる
-  const trainingQuery = trpc.training.getMonthlyTrainings.useQuery({
-    year: props.year,
-    month: props.month,
+  const utcStart = addMinutes(props.start, props.start.getTimezoneOffset());
+  const trainingDatesQuery = trpc.training.getWeeklyTrainingDates.useQuery({
+    start: utcStart,
   });
 
-  switch (trainingQuery.status) {
+  switch (trainingDatesQuery.status) {
     case "loading":
     case "success":
       return (
@@ -33,9 +31,7 @@ export const TrainingCalendarWeek: FC<Props> = (props) => {
           today={props.today}
           month={props.month}
           selected={props.selected}
-          trainingDates={
-            trainingQuery.data?.map((training) => training.createdAt) ?? []
-          }
+          trainingDates={trainingDatesQuery.data ?? []}
         />
       );
     case "error":
