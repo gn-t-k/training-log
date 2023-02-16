@@ -1,10 +1,9 @@
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import {
   Button,
+  Center,
   Container,
-  Flex,
   Heading,
-  Image,
   List,
   ListItem,
   Spacer,
@@ -25,12 +24,11 @@ import { getBaseUrl } from "@/utils/get-base-url";
 import { RequireLogin } from "@/features/auth/require-login/require-login";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 import { HeaderNavigation } from "@/features/navigation/header-navigation/header-navigation";
-import { Redirect } from "@/features/navigation/redirect/redirect";
+import { AvatarIconAndName } from "@/features/trainee/avatar-icon-and-name/avatar-icon-and-name";
 
 import type { NextPageWithLayout } from "../_app.page";
 import type { Exercise } from "@/features/exercise/exercise";
 import type { Muscle } from "@/features/muscle/muscle";
-import type { Trainee } from "@/features/trainee/trainee";
 import type { FC, MouseEventHandler, ReactElement } from "react";
 
 const SettingsPage: NextPageWithLayout = () => {
@@ -55,7 +53,6 @@ SettingsPage.getLayout = (page): ReactElement => {
 export default SettingsPage;
 
 const Settings: FC = () => {
-  const traineeQuery = trpc.trainee.getBySession.useQuery();
   const exercisesQuery = trpc.exercise.getAll.useQuery();
   const musclesQuery = trpc.muscle.getAll.useQuery();
 
@@ -66,14 +63,6 @@ const Settings: FC = () => {
       }${pagesPath.login.$url().pathname}`,
     });
   };
-
-  switch (traineeQuery.status) {
-    case "loading":
-      return <Loading description="トレーニー情報を取得しています" />;
-    case "error":
-      // TODO
-      return <p>トレーニー情報の取得に失敗しました</p>;
-  }
 
   switch (exercisesQuery.status) {
     case "loading":
@@ -91,11 +80,9 @@ const Settings: FC = () => {
       return <p>部位データの取得に失敗しました</p>;
   }
 
-  return traineeQuery.data === null ? (
-    <Redirect redirectTo={pagesPath.onboarding.$url()} />
-  ) : (
+  return (
     <SettingsView
-      trainee={traineeQuery.data}
+      AvatarIconAndName={<AvatarIconAndName />}
       exercises={exercisesQuery.data}
       muscles={musclesQuery.data}
       logout={logout}
@@ -104,7 +91,7 @@ const Settings: FC = () => {
 };
 
 type ViewProps = {
-  trainee: Trainee;
+  AvatarIconAndName: JSX.Element;
   muscles: Muscle[];
   exercises: Exercise[];
   logout: () => void;
@@ -120,18 +107,7 @@ const SettingsView: FC<ViewProps> = (props) => {
   return (
     <Container>
       <Stack direction="column">
-        <Flex justifyContent="center">
-          <Stack direction="column">
-            <Image
-              src={props.trainee.image}
-              alt={props.trainee.name}
-              borderRadius="full"
-              boxSize="48px"
-              alignSelf="center"
-            />
-            <span>{props.trainee.name}</span>
-          </Stack>
-        </Flex>
+        <Center>{props.AvatarIconAndName}</Center>
         <Stack direction="row">
           <Heading as="h2" size="md">
             種目({props.exercises.length})
