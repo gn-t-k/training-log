@@ -2,6 +2,8 @@ import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { Button, Container } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
+import { useCallback } from "react";
 
 import { pagesPath } from "@/libs/pathpida/$path";
 
@@ -12,7 +14,7 @@ import { FooterNavigation } from "@/features/navigation/footer-navigation/footer
 import { HeaderNavigation } from "@/features/navigation/header-navigation/header-navigation";
 import { RegisterTrainingForm } from "@/features/training/register-training-form/register-training-form";
 
-import type { FC, ReactElement } from "react";
+import type { ComponentProps, FC, ReactElement } from "react";
 
 const RegisterTrainingPage: NextPageWithLayout = () => {
   return (
@@ -45,8 +47,19 @@ RegisterTrainingPage.getLayout = (page): ReactElement => {
 export default RegisterTrainingPage;
 
 const RegisterTraining: FC = () => {
+  const router = useRouter();
+  const exitTrainingForm = useCallback<
+    ComponentProps<typeof RegisterTrainingForm>["exitTrainingForm"]
+  >(() => {
+    router.push(pagesPath.trainings.$url());
+  }, [router]);
+
   return (
-    <RegisterTrainingView RegisterTrainingForm={<RegisterTrainingForm />} />
+    <RegisterTrainingView
+      RegisterTrainingForm={
+        <RegisterTrainingForm exitTrainingForm={exitTrainingForm} />
+      }
+    />
   );
 };
 
