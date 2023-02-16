@@ -1,5 +1,5 @@
 import { composeStories } from "@storybook/testing-react";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 
 import * as stories from "./register-form.stories";
 
@@ -11,6 +11,10 @@ describe("RegisterForm", () => {
       render(<Stories.Default />);
     });
 
-    test.todo("テスト");
+    test("名前フィールド", () => {
+      const nameField = screen.getByLabelText("名前");
+
+      expect(nameField).toBeInTheDocument();
+    });
   });
 });

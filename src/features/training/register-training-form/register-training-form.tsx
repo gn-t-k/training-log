@@ -8,10 +8,8 @@ import {
   setMonth,
   setYear,
 } from "date-fns";
-import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo } from "react";
 
-import { pagesPath } from "@/libs/pathpida/$path";
 import { trpc } from "@/libs/trpc/client/trpc";
 import type { RegisterTrainingInput } from "@/libs/trpc/server/routes/training";
 
@@ -26,14 +24,16 @@ import type { Exercise } from "@/features/exercise/exercise";
 import type { FC, ComponentProps } from "react";
 import type { SubmitHandler } from "react-hook-form";
 
-export const RegisterTrainingForm: FC = () => {
-  const router = useRouter();
+type Props = {
+  exitTrainingForm: () => void;
+};
+export const RegisterTrainingForm: FC<Props> = (props) => {
   const util = trpc.useContext();
   const exercisesQuery = trpc.exercise.getAll.useQuery();
   const registerTrainingMutation = trpc.training.register.useMutation({
     onSuccess: () => {
       util.training.invalidate();
-      router.push(pagesPath.trainings.$url());
+      props.exitTrainingForm();
     },
   });
   const registerTraining = useCallback<ViewProps["registerTraining"]>(

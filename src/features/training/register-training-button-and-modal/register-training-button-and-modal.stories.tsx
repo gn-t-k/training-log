@@ -1,3 +1,4 @@
+import { useDisclosure } from "@chakra-ui/react";
 import { action } from "@storybook/addon-actions";
 import { useState } from "react";
 
@@ -32,6 +33,7 @@ const Wrapper: FC<Partial<Props>> = (props) => {
       setRegisterTrainingStatus("success");
     })();
   };
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const args: Props = {
     RegisterTrainingForm: props.RegisterTrainingForm ?? (
       <RegisterTrainingFormView
@@ -69,6 +71,9 @@ const Wrapper: FC<Partial<Props>> = (props) => {
         ]}
       />
     ),
+    isOpen: props.isOpen ?? isOpen,
+    onOpen: props.onOpen ?? onOpen,
+    onClose: props.onClose ?? onClose,
   };
 
   return <RegisterTrainingButtonAndModalView {...args} />;
