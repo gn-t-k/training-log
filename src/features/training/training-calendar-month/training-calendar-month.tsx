@@ -14,6 +14,8 @@ import { useMemo } from "react";
 
 import { trpc } from "@/libs/trpc/client/trpc";
 
+import { Loading } from "@/ui/loading/loading";
+
 import type { Month, Year } from "@/utils/date";
 
 import { TrainingCalendarWeekView } from "../training-calendar-week/training-calendar-week";
@@ -75,6 +77,14 @@ export const TrainingCalendarMonth: FC<Props> = (props) => {
   ) {
     // TODO
     return <p>トレーニングデータの取得に失敗しました</p>;
+  }
+
+  if (
+    lastMonthTrainingDatesQuery.isLoading ||
+    thisMonthTrainingDatesQuery.isLoading ||
+    nextMonthTrainingDatesQuery.isLoading
+  ) {
+    return <Loading description="トレーニング記録を取得しています" />;
   }
 
   return (

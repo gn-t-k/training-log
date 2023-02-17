@@ -1,5 +1,5 @@
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { Box, Button } from "@chakra-ui/react";
+import { Button, Container } from "@chakra-ui/react";
 import Head from "next/head";
 import NextLink from "next/link";
 
@@ -74,10 +74,10 @@ type ViewProps = {
 };
 const TrainingsOnDateView: FC<ViewProps> = (props) => {
   return (
-    <Box>
+    <Container>
       {props.RegisterTrainingButtonAndModal}
       {props.WeeklyTrainingPicker}
       {props.TrainingList}
-    </Box>
+    </Container>
   );
 };
