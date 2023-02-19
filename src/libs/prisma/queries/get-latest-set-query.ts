@@ -22,6 +22,9 @@ export const getLatestSetQuery: GetLatestSetQuery = async (props) => {
     select: {
       traineeId: true,
       records: {
+        where: {
+          exerciseId: props.exerciseId,
+        },
         select: {
           id: true,
           sets: true,
