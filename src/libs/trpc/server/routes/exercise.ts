@@ -6,19 +6,19 @@ import { updateExerciseNameCommand } from "@/libs/prisma/commands/update-exercis
 import { updateExerciseTargetsCommand } from "@/libs/prisma/commands/update-exercise-targets-command";
 import { getExerciseByIdQuery } from "@/libs/prisma/queries/get-exercise-by-id-query";
 import { getExercisesByTraineeIdQuery } from "@/libs/prisma/queries/get-exercises-by-trainee-id-query";
-import { getLatestSetQuery } from "@/libs/prisma/queries/get-latest-set-query";
+import { getLatestRecordQuery } from "@/libs/prisma/queries/get-latest-record-query";
 import { getMusclesByIdsQuery } from "@/libs/prisma/queries/get-muscles-by-ids-query";
 import { getSetsByExerciseIdQuery } from "@/libs/prisma/queries/get-sets-by-exercise-id-query";
 import { getTraineeByIdQuery } from "@/libs/prisma/queries/get-trainee-by-id-query";
 
 import { exerciseSchema } from "@/features/exercise/exercise";
-import { setSchema } from "@/features/training/training";
+import { recordSchema } from "@/features/training/training";
 
 import { deleteExerciseResolver } from "../resolvers/delete-exercise-resolver/delete-exercise-resolver";
 import { getAllExercisesResolver } from "../resolvers/get-all-exercises-resolver/get-all-exercises-resolver";
 import { getEstimatedMaximumWeightResolver } from "../resolvers/get-estimated-maximum-weight-resolver/get-estimated-maximum-weight-resolver";
 import { getExerciseByIdResolver } from "../resolvers/get-exercise-by-id-resolver/get-exercise-by-id-resolver";
-import { getLatestSetResolver } from "../resolvers/get-latest-set-resolver/get-latest-set-resolver";
+import { getLatestRecordResolver } from "../resolvers/get-latest-record-resolver/get-latest-record-resolver";
 import { registerExerciseResolver } from "../resolvers/register-exercise-resolver/register-exercise-resolver";
 import { updateExerciseResolver } from "../resolvers/update-exercise-resolver/update-exercise-resolver";
 import { initializedProcedure, router } from "../trpc";
@@ -82,22 +82,22 @@ export const exerciseRouter = router({
 
       return estimatedMaximumWeight;
     }),
-  getLatestSet: initializedProcedure
+  getLatestRecord: initializedProcedure
     .input(
       z.object({
         id: z.string(),
       })
     )
-    .output(z.union([z.null(), setSchema]))
+    .output(z.union([z.null(), recordSchema]))
     .query(async ({ input, ctx }) => {
-      const latestSet = await getLatestSetResolver({
-        getLatestSetQuery,
+      const latestRecord = await getLatestRecordResolver({
+        getLatestRecordQuery: getLatestRecordQuery,
       })({
         traineeId: ctx.trainee.id,
         exerciseId: input.id,
       });
 
-      return latestSet;
+      return latestRecord;
     }),
   update: initializedProcedure
     .input(
