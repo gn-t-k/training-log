@@ -10,10 +10,16 @@ import {
   FormLabel,
   Grid,
   GridItem,
+  Heading,
   IconButton,
   Input,
   InputGroup,
   InputRightElement,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   Spacer,
   Stack,
@@ -21,7 +27,10 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { useCallback } from "react";
-import { useFieldArray } from "react-hook-form";
+import { useFieldArray, useWatch } from "react-hook-form";
+
+import { EstimatedMaximumWeightText } from "@/features/exercise/estimated-maximum-weight-text/estimated-maximum-weight-text";
+import { LatestSetText } from "@/features/exercise/latest-set-text/latest-set-text";
 
 import { useTrainingFrom } from "../use-training-form";
 
@@ -153,6 +162,10 @@ const RecordForm: FC<RecordFormProps> = (props) => {
     control: props.control,
     name: `records.${props.recordIndex}.sets`,
   });
+  const exerciseId = useWatch({
+    control: props.control,
+    name: `records.${props.recordIndex}.exerciseId`,
+  });
 
   const onClickAddSet = useCallback<MouseEventHandler>(
     (_) => {
@@ -197,13 +210,27 @@ const RecordForm: FC<RecordFormProps> = (props) => {
                   );
                 })}
               </Select>
-              {/* TODO: 前回の重量とかそういうの出るようにする */}
-              <IconButton
-                icon={<InfoOutlineIcon />}
-                isDisabled={true}
-                aria-label="種目の情報"
-                variant="unstyled"
-              />
+              <Popover>
+                <PopoverTrigger>
+                  <IconButton
+                    icon={<InfoOutlineIcon />}
+                    variant="unstyled"
+                    aria-label="種目の情報"
+                    isDisabled={exerciseId === ""}
+                  />
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverArrow />
+                  <PopoverBody>
+                    <Heading size="sm">推定1RM</Heading>
+                    {/* FIXME: ↓のせいでstorybookぶっ壊れてるのでなんとかしたい */}
+                    <EstimatedMaximumWeightText exerciseId={exerciseId} />
+                    <Heading size="sm">前回の記録</Heading>
+                    {/* FIXME: ↓のせいでstorybookぶっ壊れてるのでなんとかしたい */}
+                    <LatestSetText exerciseId={exerciseId} />
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
             </Stack>
             {!!props.errors.records?.[props.recordIndex]?.exerciseId && (
               <FormErrorMessage>

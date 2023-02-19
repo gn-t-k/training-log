@@ -2,12 +2,12 @@ import { z } from "zod";
 
 import { exerciseSchema } from "../exercise/exercise";
 
-const setSchema = z.object({
+export const setSchema = z.object({
   id: z.string(),
   weight: z.number(),
   repetition: z.number(),
 });
-const recordSchema = z.object({
+export const recordSchema = z.object({
   id: z.string(),
   exercise: exerciseSchema,
   sets: z.array(setSchema),
@@ -19,4 +19,6 @@ export const trainingSchema = z.object({
   records: z.array(recordSchema),
 });
 
+export type Set = z.infer<typeof setSchema>;
+export type Record = z.infer<typeof recordSchema>;
 export type Training = z.infer<typeof trainingSchema>;
