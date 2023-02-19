@@ -14,6 +14,11 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   Spacer,
   Stack,
@@ -62,6 +67,7 @@ export const GenericTrainingFormView: FC<ViewProps> = (props) => {
     handleSubmit,
     formState: { errors },
     register,
+    getValues,
     setValue,
     control,
   } = useTrainingFrom(props.defaultValues);
@@ -69,6 +75,7 @@ export const GenericTrainingFormView: FC<ViewProps> = (props) => {
     control: control,
     name: "records",
   });
+  console.log({ fields });
 
   const onClickAddExercise = useCallback<MouseEventHandler>(
     (_) => {
@@ -107,6 +114,7 @@ export const GenericTrainingFormView: FC<ViewProps> = (props) => {
                   control={control}
                   errors={errors}
                   register={register}
+                  getValues={getValues}
                   setValue={setValue}
                   removeRecord={remove}
                   exercises={props.exercises}
@@ -139,6 +147,8 @@ type RecordFormProps = {
   control: UseFormReturn<TrainingField>["control"];
   errors: UseFormReturn<TrainingField>["formState"]["errors"];
   register: UseFormReturn<TrainingField>["register"];
+  // TODO: infoボタンをdisabledにする方法考える
+  getValues: UseFormReturn<TrainingField>["getValues"];
   setValue: UseFormReturn<TrainingField>["setValue"];
   removeRecord: UseFieldArrayRemove;
   exercises: Exercise[];
@@ -198,12 +208,23 @@ const RecordForm: FC<RecordFormProps> = (props) => {
                 })}
               </Select>
               {/* TODO: 前回の重量とかそういうの出るようにする */}
-              <IconButton
-                icon={<InfoOutlineIcon />}
-                isDisabled={true}
-                aria-label="種目の情報"
-                variant="unstyled"
-              />
+              <Popover>
+                <PopoverTrigger>
+                  <IconButton
+                    icon={<InfoOutlineIcon />}
+                    variant="unstyled"
+                    aria-label="種目の情報"
+                  />
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverArrow />
+                  <PopoverBody>
+                    <Stack direction="column">
+                      <Text>推定1RM: xxx</Text>
+                    </Stack>
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
             </Stack>
             {!!props.errors.records?.[props.recordIndex]?.exerciseId && (
               <FormErrorMessage>

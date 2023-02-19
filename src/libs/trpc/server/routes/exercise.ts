@@ -7,12 +7,14 @@ import { updateExerciseTargetsCommand } from "@/libs/prisma/commands/update-exer
 import { getExerciseByIdQuery } from "@/libs/prisma/queries/get-exercise-by-id-query";
 import { getExercisesByTraineeIdQuery } from "@/libs/prisma/queries/get-exercises-by-trainee-id-query";
 import { getMusclesByIdsQuery } from "@/libs/prisma/queries/get-muscles-by-ids-query";
+import { getSetsByExerciseIdQuery } from "@/libs/prisma/queries/get-sets-by-exercise-id-query";
 import { getTraineeByIdQuery } from "@/libs/prisma/queries/get-trainee-by-id-query";
 
 import { exerciseSchema } from "@/features/exercise/exercise";
 
 import { deleteExerciseResolver } from "../resolvers/delete-exercise-resolver/delete-exercise-resolver";
 import { getAllExercisesResolver } from "../resolvers/get-all-exercises-resolver/get-all-exercises-resolver";
+import { getEstimatedMaximumWeightResolver } from "../resolvers/get-estimated-maximum-weight-resolver/get-estimated-maximum-weight-resolver";
 import { getExerciseByIdResolver } from "../resolvers/get-exercise-by-id-resolver/get-exercise-by-id-resolver";
 import { registerExerciseResolver } from "../resolvers/register-exercise-resolver/register-exercise-resolver";
 import { updateExerciseResolver } from "../resolvers/update-exercise-resolver/update-exercise-resolver";
@@ -63,6 +65,19 @@ export const exerciseRouter = router({
       });
 
       return exercise;
+    }),
+  getEstimatedMaximumWeight: initializedProcedure
+    .input(z.object({ id: z.string() }))
+    .output(z.union([z.number(), z.null()]))
+    .query(async ({ input, ctx }) => {
+      const estimatedMaximumWeight = await getEstimatedMaximumWeightResolver({
+        getSetsByExerciseIdQuery,
+      })({
+        traineeId: ctx.trainee.id,
+        exerciseId: input.id,
+      });
+
+      return estimatedMaximumWeight;
     }),
   update: initializedProcedure
     .input(
