@@ -38,6 +38,7 @@ export const MuscleListView: FC<ViewProps> = (props) => {
           <Stack key={muscle.id} direction="row">
             <Heading size="sm">{muscle.name}</Heading>
             <Spacer />
+            {/* FIXME: dynamic linkのせいでテスト落ちてる */}
             <Button
               as={NextLink}
               href={pagesPath.settings.muscles._id(muscle.id).$url()}

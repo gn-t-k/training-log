@@ -2,12 +2,12 @@ import { decodeTime } from "ulid";
 
 import prisma from "../client";
 
-import type { Set } from "@/features/training/training";
+import type { Record } from "@/features/training/training";
 
-export type GetLatestSetQuery = (props: {
+export type GetLatestRecordQuery = (props: {
   exerciseId: string;
-}) => Promise<{ traineeId: string; set: Set } | null>;
-export const getLatestSetQuery: GetLatestSetQuery = async (props) => {
+}) => Promise<{ traineeId: string; record: Record } | null>;
+export const getLatestRecordQuery: GetLatestRecordQuery = async (props) => {
   const data = await prisma.training.findFirst({
     where: {
       records: {
@@ -25,8 +25,12 @@ export const getLatestSetQuery: GetLatestSetQuery = async (props) => {
         where: {
           exerciseId: props.exerciseId,
         },
-        select: {
-          id: true,
+        include: {
+          exercise: {
+            include: {
+              targets: true,
+            },
+          },
           sets: true,
         },
       },
@@ -37,16 +41,14 @@ export const getLatestSetQuery: GetLatestSetQuery = async (props) => {
     return null;
   }
 
-  const sets = data.records.flatMap((record) => record.sets);
-
-  const latestSet = sets.sort(
+  const latestRecord = data.records.sort(
     (left, right) => decodeTime(right.id) - decodeTime(left.id)
   )[0];
 
-  return latestSet === undefined
+  return latestRecord === undefined
     ? null
     : {
         traineeId: data.traineeId,
-        set: latestSet,
+        record: latestRecord,
       };
 };
