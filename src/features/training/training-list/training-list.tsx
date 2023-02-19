@@ -53,7 +53,7 @@ export const TrainingListView: FC<ViewProps> = (props) => {
                         return (
                           <Stack key={index} direction="row">
                             <Text>{set.weight}kg</Text>
-                            <Text>{set.repetition} rep</Text>
+                            <Text>{set.repetition}回</Text>
                           </Stack>
                         );
                       })}

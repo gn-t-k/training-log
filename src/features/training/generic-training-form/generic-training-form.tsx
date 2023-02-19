@@ -10,6 +10,7 @@ import {
   FormLabel,
   Grid,
   GridItem,
+  Heading,
   IconButton,
   Input,
   InputGroup,
@@ -26,7 +27,10 @@ import {
   Textarea,
 } from "@chakra-ui/react";
 import { useCallback } from "react";
-import { useFieldArray } from "react-hook-form";
+import { useFieldArray, useWatch } from "react-hook-form";
+
+import { EstimatedMaximumWeightText } from "@/features/exercise/estimated-maximum-weight-text/estimated-maximum-weight-text";
+import { LatestSetText } from "@/features/exercise/latest-set-text/latest-set-text";
 
 import { useTrainingFrom } from "../use-training-form";
 
@@ -67,7 +71,6 @@ export const GenericTrainingFormView: FC<ViewProps> = (props) => {
     handleSubmit,
     formState: { errors },
     register,
-    getValues,
     setValue,
     control,
   } = useTrainingFrom(props.defaultValues);
@@ -75,7 +78,6 @@ export const GenericTrainingFormView: FC<ViewProps> = (props) => {
     control: control,
     name: "records",
   });
-  console.log({ fields });
 
   const onClickAddExercise = useCallback<MouseEventHandler>(
     (_) => {
@@ -114,7 +116,6 @@ export const GenericTrainingFormView: FC<ViewProps> = (props) => {
                   control={control}
                   errors={errors}
                   register={register}
-                  getValues={getValues}
                   setValue={setValue}
                   removeRecord={remove}
                   exercises={props.exercises}
@@ -147,8 +148,6 @@ type RecordFormProps = {
   control: UseFormReturn<TrainingField>["control"];
   errors: UseFormReturn<TrainingField>["formState"]["errors"];
   register: UseFormReturn<TrainingField>["register"];
-  // TODO: infoボタンをdisabledにする方法考える
-  getValues: UseFormReturn<TrainingField>["getValues"];
   setValue: UseFormReturn<TrainingField>["setValue"];
   removeRecord: UseFieldArrayRemove;
   exercises: Exercise[];
@@ -162,6 +161,10 @@ const RecordForm: FC<RecordFormProps> = (props) => {
   } = useFieldArray({
     control: props.control,
     name: `records.${props.recordIndex}.sets`,
+  });
+  const exerciseId = useWatch({
+    control: props.control,
+    name: `records.${props.recordIndex}.exerciseId`,
   });
 
   const onClickAddSet = useCallback<MouseEventHandler>(
@@ -207,21 +210,24 @@ const RecordForm: FC<RecordFormProps> = (props) => {
                   );
                 })}
               </Select>
-              {/* TODO: 前回の重量とかそういうの出るようにする */}
               <Popover>
                 <PopoverTrigger>
                   <IconButton
                     icon={<InfoOutlineIcon />}
                     variant="unstyled"
                     aria-label="種目の情報"
+                    isDisabled={exerciseId === ""}
                   />
                 </PopoverTrigger>
                 <PopoverContent>
                   <PopoverArrow />
                   <PopoverBody>
-                    <Stack direction="column">
-                      <Text>推定1RM: xxx</Text>
-                    </Stack>
+                    <Heading size="sm">推定1RM</Heading>
+                    {/* FIXME: ↓のせいでstorybookぶっ壊れてるのでなんとかしたい */}
+                    <EstimatedMaximumWeightText exerciseId={exerciseId} />
+                    <Heading size="sm">前回の記録</Heading>
+                    {/* FIXME: ↓のせいでstorybookぶっ壊れてるのでなんとかしたい */}
+                    <LatestSetText exerciseId={exerciseId} />
                   </PopoverBody>
                 </PopoverContent>
               </Popover>
