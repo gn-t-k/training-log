@@ -30,7 +30,7 @@ import { useCallback } from "react";
 import { useFieldArray, useWatch } from "react-hook-form";
 
 import { EstimatedMaximumWeightText } from "@/features/exercise/estimated-maximum-weight-text/estimated-maximum-weight-text";
-import { LatestSetText } from "@/features/exercise/latest-set-text/latest-set-text";
+import { LatestRecordText } from "@/features/exercise/latest-record-text/latest-record-text";
 
 import { useTrainingFrom } from "../use-training-form";
 
@@ -222,12 +222,18 @@ const RecordForm: FC<RecordFormProps> = (props) => {
                 <PopoverContent>
                   <PopoverArrow />
                   <PopoverBody>
-                    <Heading size="sm">推定1RM</Heading>
-                    {/* FIXME: ↓のせいでstorybookぶっ壊れてるのでなんとかしたい */}
-                    <EstimatedMaximumWeightText exerciseId={exerciseId} />
-                    <Heading size="sm">前回の記録</Heading>
-                    {/* FIXME: ↓のせいでstorybookぶっ壊れてるのでなんとかしたい */}
-                    <LatestSetText exerciseId={exerciseId} />
+                    <Stack direction="column" gap={4}>
+                      <Stack direction="column" gap={2}>
+                        <Heading size="sm">推定1RM</Heading>
+                        {/* FIXME: ↓のせいでstorybookぶっ壊れてるのでなんとかしたい */}
+                        <EstimatedMaximumWeightText exerciseId={exerciseId} />
+                      </Stack>
+                      <Stack direction="column" gap={2}>
+                        <Heading size="sm">前回の記録</Heading>
+                        {/* FIXME: ↓のせいでstorybookぶっ壊れてるのでなんとかしたい */}
+                        <LatestRecordText exerciseId={exerciseId} />
+                      </Stack>
+                    </Stack>
                   </PopoverBody>
                 </PopoverContent>
               </Popover>
