@@ -1,10 +1,11 @@
-import { Container, Heading, Stack, Text } from "@chakra-ui/react";
-import { getMonth, getYear } from "date-fns";
+import { Container, Heading, Stack } from "@chakra-ui/react";
+import { getDay, getMonth, getYear, subDays } from "date-fns";
 import Head from "next/head";
 
 import type { Month } from "@/utils/date";
 
 import { RequireLogin } from "@/features/auth/require-login/require-login";
+import { WeeklyNumberOfSetsList } from "@/features/muscle/weekly-number-of-sets-list/weekly-number-of-sets-list";
 import { FooterNavigation } from "@/features/navigation/footer-navigation/footer-navigation";
 import { HeaderNavigation } from "@/features/navigation/header-navigation/header-navigation";
 import { RegisterTrainingButtonAndModal } from "@/features/training/register-training-button-and-modal/register-training-button-and-modal";
@@ -38,6 +39,7 @@ const Trainings: FC = () => {
   const today = new Date();
   const year = getYear(today);
   const month = getMonth(today) as Month;
+  const startOfWeekDate = subDays(today, getDay(today));
 
   return (
     <TrainingsView
@@ -50,6 +52,9 @@ const Trainings: FC = () => {
           month={month}
         />
       }
+      WeeklyNumberOfSetsList={
+        <WeeklyNumberOfSetsList start={startOfWeekDate} />
+      }
       RegisterTrainingButtonAndModal={<RegisterTrainingButtonAndModal />}
     />
   );
@@ -58,6 +63,7 @@ const Trainings: FC = () => {
 type ViewProps = {
   TrainingCalendarMonth: JSX.Element;
   RegisterTrainingButtonAndModal: JSX.Element;
+  WeeklyNumberOfSetsList: JSX.Element;
   month: Month;
 };
 const TrainingsView: FC<ViewProps> = (props) => {
@@ -71,7 +77,7 @@ const TrainingsView: FC<ViewProps> = (props) => {
         </Stack>
         <Stack as="section" direction="column" gap={2}>
           <Heading size="md">今週の合計セット数</Heading>
-          <Text>coming soon</Text>
+          {props.WeeklyNumberOfSetsList}
         </Stack>
       </Stack>
     </Container>
