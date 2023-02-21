@@ -1,12 +1,8 @@
-import { action } from "@storybook/addon-actions";
-import { ComponentMeta, ComponentStoryObj } from "@storybook/react";
-import { within } from "@storybook/testing-library";
-import userEvent from "@testing-library/user-event";
-import { ComponentProps, FC } from "react";
-
-import { sleep } from "@/utils/sleep";
-
+import { WeeklyNumberOfSetsItemView } from "../weekly-number-of-sets-item/weekly-number-of-sets-item";
 import { WeeklyNumberOfSetsListView } from "./weekly-number-of-sets-list";
+
+import type { ComponentMeta, ComponentStoryObj } from "@storybook/react";
+import type { ComponentProps, FC } from "react";
 
 type Meta = ComponentMeta<typeof WeeklyNumberOfSetsListView>;
 type Props = ComponentProps<typeof WeeklyNumberOfSetsListView>;
@@ -18,11 +14,32 @@ const componentMeta: Meta = {
 export default componentMeta;
 
 const Wrapper: FC<Partial<Props>> = (props) => {
+  const WeeklyNumberOfSetsItem: Props["WeeklyNumberOfSetsItem"] = (props) => {
+    return (
+      <WeeklyNumberOfSetsItemView
+        muscleName={props.muscle.name}
+        weeklyNumberOfSets={2}
+      />
+    );
+  };
   const args: Props = {
-  }
+    start: props.start ?? new Date(),
+    muscles: props.muscles ?? [
+      {
+        id: "id-m-1",
+        name: "大胸筋",
+      },
+      {
+        id: "id-m-2",
+        name: "広背筋",
+      },
+    ],
+    WeeklyNumberOfSetsItem:
+      props.WeeklyNumberOfSetsItem ?? WeeklyNumberOfSetsItem,
+  };
 
-  return <WeeklyNumberOfSetsListView {...args} />
-}
+  return <WeeklyNumberOfSetsListView {...args} />;
+};
 
 const Template: Story = {
   render: (props: Partial<Props>) => {
