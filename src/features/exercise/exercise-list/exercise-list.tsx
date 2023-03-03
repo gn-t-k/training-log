@@ -6,6 +6,7 @@ import {
   Stack,
   StackDivider,
   Tag,
+  Text,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 
@@ -37,27 +38,39 @@ type ViewProps = {
 export const ExerciseListView: FC<ViewProps> = (props) => {
   return (
     <Stack direction="column" divider={<StackDivider />} spacing={4}>
-      {props.exercises.map((exercise) => {
-        return (
-          <Stack key={exercise.id} direction="row">
-            <Stack direction="column">
-              <Heading size="sm">{exercise.name}</Heading>
-              <Stack direction="row">
-                {exercise.targets.map((target) => {
-                  return <Tag key={target.id}>{target.name}</Tag>;
-                })}
+      {props.exercises.length === 0 ? (
+        <Stack direction="column">
+          <Text>まだ種目が登録されていません</Text>
+          <Text>
+            <NextLink href={pagesPath.settings.exercises.register.$url()}>
+              種目を登録
+            </NextLink>
+            しましょう
+          </Text>
+        </Stack>
+      ) : (
+        props.exercises.map((exercise) => {
+          return (
+            <Stack key={exercise.id} direction="row">
+              <Stack direction="column">
+                <Heading size="sm">{exercise.name}</Heading>
+                <Stack direction="row">
+                  {exercise.targets.map((target) => {
+                    return <Tag key={target.id}>{target.name}</Tag>;
+                  })}
+                </Stack>
               </Stack>
+              <Spacer />
+              <Button
+                as={NextLink}
+                href={pagesPath.settings.exercises._id(exercise.id).$url()}
+              >
+                <ChevronRightIcon />
+              </Button>
             </Stack>
-            <Spacer />
-            <Button
-              as={NextLink}
-              href={pagesPath.settings.exercises._id(exercise.id).$url()}
-            >
-              <ChevronRightIcon />
-            </Button>
-          </Stack>
-        );
-      })}
+          );
+        })
+      )}
     </Stack>
   );
 };
