@@ -90,6 +90,12 @@
         "prefer": "type-imports",
         "fixStyle": "separate-type-imports"
       }
+    ],
+    "@typescript-eslint/no-floating-promises": "error"
+  },
+  "parserOptions": {
+    "project": [
+      "./tsconfig.json"
     ]
   }
 }
