@@ -8,7 +8,6 @@ import { getEnv } from "@/utils/get-env";
 import type { NextAuthOptions } from "next-auth";
 
 export const nextAuthOptions: NextAuthOptions = {
-  debug: true,
   providers: [
     GoogleProvider({
       clientId: getEnv().GOOGLE_CLIENT_ID,
@@ -17,15 +16,15 @@ export const nextAuthOptions: NextAuthOptions = {
   ],
   adapter: PrismaAdapter(client),
   callbacks: {
-    session: ({ session, user }) => {
-      return {
+    session: async ({ session, user }) => {
+      return Promise.resolve({
         ...session,
         user: {
           ...session.user,
           id: user.id,
         },
-      };
+      });
     },
   },
-  secret: getEnv().NEXTAUTH_SECRET,
+  secret: getEnv().NEXT_AUTH_SECRET,
 };

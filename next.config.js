@@ -2,9 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  experimental: {
-    typedRoutes: true,
-  },
-};
+  pageExtensions: ['page.tsx', 'api.ts'],
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig
